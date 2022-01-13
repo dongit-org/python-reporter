@@ -25,7 +25,8 @@ class AssessmentManager(object):
         """
         self.reporter = reporter
 
-    def list(self, filter: Optional[Dict[str, str]]) -> List[Assessment]:
+    def list(self,
+             filter: Optional[Dict[str, str]] = None) -> List[Assessment]:
         """Retrieve a list of assessments.
 
         Args:

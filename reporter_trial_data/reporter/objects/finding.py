@@ -25,7 +25,7 @@ class FindingManager(object):
         """
         self.reporter = reporter
 
-    def list(self, filter: Optional[Dict[str, str]]) -> List[Finding]:
+    def list(self, filter: Optional[Dict[str, str]] = None) -> List[Finding]:
         """Retrieve a list of findings.
 
         Args:
