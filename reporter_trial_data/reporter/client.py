@@ -16,6 +16,7 @@ class Reporter(object):
     """
 
     api_token: str
+    ssl_verify: bool
     url: str
 
     session: requests.Session
@@ -23,9 +24,11 @@ class Reporter(object):
     def __init__(
         self,
         api_token: str,
+        ssl_verify: bool = True,
         url: Optional[str] = None,
     ) -> None:
         self.api_token = api_token
+        self.ssl_verify = ssl_verify
         self.url = url or "https://reporter.dongit.nl"
 
         self.session = requests.Session()
@@ -69,6 +72,7 @@ class Reporter(object):
             url=url,
             params=query_data,
             json=post_data,
+            verify=self.ssl_verify,
         )
 
         if 200 <= result.status_code < 300:
