@@ -34,7 +34,8 @@ class Reporter(object):
         self.session = requests.Session()
         self.session.headers.update({
             "Accept": "application/json",
-            "Authorization": f"Bearer {api_token}"
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_token}",
         })
 
         # Delay import until now to avoid circular import errors
