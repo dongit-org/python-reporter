@@ -1,7 +1,26 @@
-from typing import Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type
 
 from reporter.base import RESTObject
 from reporter.client import Reporter
+
+
+class CreateMixin(object):
+    _path: str
+    _obj_cls: Type[RESTObject]
+    reporter: Reporter
+
+    def create(self, attrs: Dict[str, Any]) -> RESTObject:
+        """Create an object of type self._obj_cls.
+
+        Args:
+            attrs: Attributes for the created object
+        """
+
+        result = self.reporter.http_request(verb="post",
+                                            path=self._path,
+                                            query_data=attrs)
+
+        return self._obj_cls(attrs=result.json())
 
 
 class ListMixin(object):

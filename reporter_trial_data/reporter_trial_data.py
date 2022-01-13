@@ -34,6 +34,11 @@ def main():
     reporter = Reporter(api_token=api_token,
                         ssl_verify=args["ssl_verify"],
                         url=args["url"])
-    result = reporter.assessments.list()
+
+    attrs = {
+        "assessment_type_id": "owasp_top10_2021",
+        "title": "Test Assessment",
+    }
+    reporter.assessments.create(attrs=attrs)
 
     import pdb; pdb.set_trace()

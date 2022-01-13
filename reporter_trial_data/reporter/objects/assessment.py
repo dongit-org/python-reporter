@@ -1,11 +1,11 @@
 from reporter.base import RESTManager, RESTObject
-from reporter.mixins import ListMixin
+from reporter.mixins import CreateMixin, ListMixin
 
 
 class Assessment(RESTObject):
     pass
 
 
-class AssessmentManager(RESTManager, ListMixin):
+class AssessmentManager(RESTManager, CreateMixin, ListMixin):
     _path = "assessments"
     _obj_cls = Assessment
