@@ -6,6 +6,7 @@ authors = ["Alexander Krigsman <alexander.krigsman@dongit.nl>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+requests = "^2.27.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
