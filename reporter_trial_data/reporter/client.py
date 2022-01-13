@@ -34,6 +34,7 @@ class Reporter(object):
         # Delay import until now to avoid circular import errors
         import reporter.objects as objects
 
+        self.assessments = objects.AssessmentManager(self)
         self.findings = objects.FindingManager(self)
 
     def http_request(
