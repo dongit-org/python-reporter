@@ -29,7 +29,10 @@ class Reporter(object):
         self.url = url or "https://reporter.dongit.nl"
 
         self.session = requests.Session()
-        self.session.headers.update({"Authorization": f"Bearer {api_token}"})
+        self.session.headers.update({
+            "Accept": "application/json",
+            "Authorization": f"Bearer {api_token}"
+        })
 
         # Delay import until now to avoid circular import errors
         import reporter.objects as objects
@@ -66,9 +69,6 @@ class Reporter(object):
             url=url,
             params=query_data,
             json=post_data,
-            # Reporter returns with a redirect to /login if unauthorized.
-            # TODO Remove this when fixed in Reporter.
-            allow_redirects=False,
         )
 
         if 200 <= result.status_code < 300:
