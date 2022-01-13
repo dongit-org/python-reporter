@@ -31,6 +31,11 @@ class Reporter(object):
         self.session = requests.Session()
         self.session.headers.update({"Authorization": f"Bearer {api_token}"})
 
+        # Delay import until now to avoid circular import errors
+        import reporter.objects as objects
+
+        self.findings = objects.FindingManager(self)
+
     def http_request(
         self,
         verb: str,
