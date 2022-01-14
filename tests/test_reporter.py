@@ -1,4 +1,4 @@
-from reporter_trial_data import __version__
+from reporter import __version__
 
 
 def test_version():

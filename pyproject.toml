@@ -1,8 +1,11 @@
 [tool.poetry]
-name = "reporter-trial-data"
+name = "python-reporter"
 version = "0.1.0"
 description = ""
 authors = ["Alexander Krigsman <alexander.krigsman@dongit.nl>"]
+packages = [
+    { include = "reporter" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
