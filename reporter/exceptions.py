@@ -11,7 +11,11 @@ class ReporterError(Exception):
     ) -> None:
         Exception.__init__(self, error_message)
 
-        self.error_message = error_message
+        if isinstance(error_message, bytes):
+            self.error_message = error_message.decode()
+        else:
+            self.error_message = error_message
+
         self.response_code = response_code
         self.response_body = response_body
 
