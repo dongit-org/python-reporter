@@ -18,7 +18,7 @@ class CreateMixin(object):
 
         result = self.reporter.http_request(verb="post",
                                             path=self._path,
-                                            query_data=attrs)
+                                            post_data=attrs)
 
         return self._obj_cls(attrs=result.json())
 
