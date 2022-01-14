@@ -42,6 +42,7 @@ class Reporter(object):
         import reporter.objects as objects
 
         self.assessments = objects.AssessmentManager(self)
+        self.clients = objects.ClientManager(self)
         self.findings = objects.FindingManager(self)
 
     def http_request(

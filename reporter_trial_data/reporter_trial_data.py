@@ -36,9 +36,17 @@ def main():
                         url=args["url"])
 
     attrs = {
-        "assessment_type_id": "owasp_top10_2021",
-        "title": "Test Assessment",
+        "name": "Example Client",
+        "description": "Example Client description",
     }
-    reporter.assessments.create(attrs=attrs)
+    client = reporter.clients.create(attrs=attrs)
+
+    attrs = {
+        "assessment_type_id": "owasp_top10_2021",
+        "client_id": client.attrs["id"],
+        "title": "Test Assessment",
+        "status": 2,
+    }
+    assessment = reporter.assessments.create(attrs=attrs)
 
     import pdb; pdb.set_trace()
