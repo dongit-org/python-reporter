@@ -49,4 +49,12 @@ def main():
     }
     assessment = reporter.assessments.create(attrs=attrs)
 
+    attrs = {
+        "assessment_id": assessment.attrs["id"],
+        "description": "https://example.com/",
+        "name": "Example Target",
+        "target_type": 1,
+    }
+    target = reporter.targets.create(attrs=attrs)
+
     import pdb; pdb.set_trace()

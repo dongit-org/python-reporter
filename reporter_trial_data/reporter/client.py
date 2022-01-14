@@ -45,6 +45,7 @@ class Reporter(object):
         self.clients = objects.ClientManager(self)
         self.findings = objects.FindingManager(self)
         self.finding_templates = objects.FindingTemplateManager(self)
+        self.targets = objects.TargetManager(self)
 
     def http_request(
         self,
