@@ -23,6 +23,25 @@ class CreateMixin(object):
         return self._obj_cls(attrs=result.json())
 
 
+class GetMixin(object):
+    _path: str
+    _obj_cls: Type[RESTObject]
+    reporter: Reporter
+
+    def get(self, id: str) -> RESTObject:
+        """Retrieve a single object.
+
+        Args:
+            id: object ID
+        """
+
+        path = f"{self._path}/{id}"
+
+        result = self.reporter.http_request(verb="get", path=path)
+
+        return self._obj_cls(attrs=result.json())
+
+
 class ListMixin(object):
     _path: str
     _obj_cls: Type[RESTObject]
