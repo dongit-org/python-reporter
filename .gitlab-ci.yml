@@ -1,0 +1,23 @@
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
+
+cache:
+  key: $CI_COMMIT_REF_SLUG-$CI_JOB_NAME
+  paths:
+    - $PIP_CACHE_DIR
+
+stages:
+  - test
+
+image: python:3
+
+yapf:
+  script:
+    # https://github.com/google/yapf/issues/936
+    - pip install --upgrade toml yapf
+    - yapf --recursive --diff .
+
+mypy:
+  script:
+    - pip install --upgrade mypy
+    - mypy --install-types --non-interactive .
