@@ -32,11 +32,13 @@ class Reporter(object):
         self.url = url or "https://reporter.dongit.nl"
 
         self.session = requests.Session()
-        self.session.headers.update({
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {api_token}",
-        })
+        self.session.headers.update(
+            {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_token}",
+            }
+        )
 
         # Delay import until now to avoid circular import errors
         import reporter.objects as objects

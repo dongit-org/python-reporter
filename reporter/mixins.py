@@ -16,9 +16,9 @@ class CreateMixin(object):
             attrs: Attributes for the created object
         """
 
-        result = self.reporter.http_request(verb="post",
-                                            path=self._path,
-                                            post_data=attrs)
+        result = self.reporter.http_request(
+            verb="post", path=self._path, post_data=attrs
+        )
 
         return self._obj_cls(attrs=result.json())
 
@@ -47,8 +47,7 @@ class ListMixin(object):
     _obj_cls: Type[RESTObject]
     reporter: Reporter
 
-    def list(self,
-             filter: Optional[Dict[str, str]] = None) -> List[RESTObject]:
+    def list(self, filter: Optional[Dict[str, str]] = None) -> List[RESTObject]:
         """Retrieve a list of objects.
 
         Args:
@@ -56,15 +55,12 @@ class ListMixin(object):
                 filter[field]
         """
         if filter is not None:
-            query_data = {
-                f"filter[{key}]": value
-                for (key, value) in filter.items()
-            }
+            query_data = {f"filter[{key}]": value for (key, value) in filter.items()}
         else:
             query_data = {}
 
-        result = self.reporter.http_request(verb="get",
-                                            path=self._path,
-                                            query_data=query_data)
+        result = self.reporter.http_request(
+            verb="get", path=self._path, query_data=query_data
+        )
 
         return [self._obj_cls(attrs=data) for data in result.json()["data"]]

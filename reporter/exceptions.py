@@ -2,7 +2,6 @@ from typing import Optional, Union
 
 
 class ReporterError(Exception):
-
     def __init__(
         self,
         error_message: Union[bytes, str] = "",

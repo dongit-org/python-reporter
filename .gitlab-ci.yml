@@ -11,11 +11,10 @@ stages:
 
 image: python:3
 
-yapf:
+black:
   script:
-    # https://github.com/google/yapf/issues/936
-    - pip install --upgrade toml yapf
-    - yapf --recursive --diff .
+    - pip install --upgrade black
+    - black --check .
 
 mypy:
   script:
