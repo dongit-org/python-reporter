@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, List, Optional, Type
 
 from reporter.base import RESTList, RESTObject
 from reporter.client import Reporter
@@ -50,6 +50,7 @@ class ListMixin(object):
     def list(
         self,
         filter: Dict[str, str] = {},
+        includes: List[str] = [],
         page: Optional[int] = None,
         page_size: Optional[int] = None,
     ) -> RESTList:
@@ -58,6 +59,7 @@ class ListMixin(object):
         Args:
             filter: query string parameters for HTTP request of the form
                 filter[field]
+            includes: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
         """
@@ -65,6 +67,9 @@ class ListMixin(object):
 
         for (key, value) in filter.items():
             query_data[f"filter[{key}]"] = value
+
+        if includes:
+            query_data["include"] = ",".join(includes)
 
         if page is not None:
             query_data[f"page[number]"] = str(page)
