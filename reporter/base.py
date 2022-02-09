@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterable
+from collections.abc import Sequence
+from typing import Any, Dict, Iterable, List
 
 from reporter.client import Reporter
 
@@ -24,6 +25,38 @@ class RESTObject(object):
 
     def __dir__(self) -> Iterable[str]:
         return set(self._attrs.keys()).union(super(RESTObject, self).__dir__())
+
+
+class RESTList(Sequence):
+    """Represents a list of objects built from server data.
+
+    Includes associated links and metadata.
+
+    Args:
+        data: List of RESTObject instances
+        links: Dict of links (see Reporter API docs)
+        meta: Dict of metadata (see Reporter API docs)
+    """
+
+    _data: List[RESTObject]
+    links: Dict[str, str]
+    meta: Dict[str, str]
+
+    def __init__(
+        self,
+        data: List[RESTObject],
+        links: Dict[str, str],
+        meta: Dict[str, str],
+    ) -> None:
+        self._data = data
+        self.links = links
+        self.meta = meta
+
+    def __getitem__(self, index):
+        return self._data[index]
+
+    def __len__(self):
+        return len(self._data)
 
 
 class RESTManager(object):

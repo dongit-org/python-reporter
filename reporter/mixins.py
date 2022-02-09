@@ -1,6 +1,6 @@
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, Optional, Type
 
-from reporter.base import RESTObject
+from reporter.base import RESTList, RESTObject
 from reporter.client import Reporter
 
 
@@ -47,7 +47,7 @@ class ListMixin(object):
     _obj_cls: Type[RESTObject]
     reporter: Reporter
 
-    def list(self, filter: Optional[Dict[str, str]] = None) -> List[RESTObject]:
+    def list(self, filter: Optional[Dict[str, str]] = None) -> RESTList:
         """Retrieve a list of objects.
 
         Args:
@@ -63,4 +63,9 @@ class ListMixin(object):
             verb="get", path=self._path, query_data=query_data
         )
 
-        return [self._obj_cls(attrs=data) for data in result.json()["data"]]
+        json = result.json()
+        data = [self._obj_cls(attrs=attrs) for attrs in json["data"]]
+        links = json["links"]
+        meta = json["meta"]
+
+        return RESTList(data=data, links=links, meta=meta)
