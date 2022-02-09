@@ -47,17 +47,31 @@ class ListMixin(object):
     _obj_cls: Type[RESTObject]
     reporter: Reporter
 
-    def list(self, filter: Optional[Dict[str, str]] = None) -> RESTList:
+    def list(
+        self,
+        filter: Optional[Dict[str, str]] = None,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
+    ) -> RESTList:
         """Retrieve a list of objects.
 
         Args:
             filter: query string parameters for HTTP request of the form
                 filter[field]
+            page: ID of the page to return - page[number]
+            page_size: Number of items to return per page - page[size]
         """
+        query_data = {}
+
         if filter is not None:
-            query_data = {f"filter[{key}]": value for (key, value) in filter.items()}
-        else:
-            query_data = {}
+            for (key, value) in filter.items():
+                query_data[f"filter[{key}]"] = value
+
+        if page is not None:
+            query_data[f"page[number]"] = str(page)
+
+        if page_size is not None:
+            query_data[f"page[size]"] = str(page_size)
 
         result = self.reporter.http_request(
             verb="get", path=self._path, query_data=query_data
