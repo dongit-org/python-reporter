@@ -49,7 +49,7 @@ class ListMixin(object):
 
     def list(
         self,
-        filter: Optional[Dict[str, str]] = None,
+        filter: Dict[str, str] = {},
         page: Optional[int] = None,
         page_size: Optional[int] = None,
     ) -> RESTList:
@@ -63,9 +63,8 @@ class ListMixin(object):
         """
         query_data = {}
 
-        if filter is not None:
-            for (key, value) in filter.items():
-                query_data[f"filter[{key}]"] = value
+        for (key, value) in filter.items():
+            query_data[f"filter[{key}]"] = value
 
         if page is not None:
             query_data[f"page[number]"] = str(page)
