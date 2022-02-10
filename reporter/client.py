@@ -42,6 +42,7 @@ class Reporter(object):
         # Delay import until now to avoid circular import errors
         import reporter.objects as objects
 
+        self.activities = objects.ActivityManager(self)
         self.assessments = objects.AssessmentManager(self)
         self.clients = objects.ClientManager(self)
         self.documents = objects.DocumentManager(self)

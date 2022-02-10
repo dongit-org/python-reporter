@@ -1,3 +1,4 @@
+from .activity import *
 from .assessment import *
 from .client import *
 from .document import *
