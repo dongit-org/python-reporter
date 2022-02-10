@@ -9,15 +9,25 @@ class CreateMixin(object):
     _obj_cls: Type[RESTObject]
     reporter: Reporter
 
-    def create(self, attrs: Dict[str, Any]) -> RESTObject:
+    def create(
+        self,
+        attrs: Dict[str, Any],
+        file: Optional[Any] = None,
+    ) -> RESTObject:
         """Create an object of type self._obj_cls.
 
         Args:
             attrs: Attributes for the created object
+            file: The file to upload when creating the object
         """
 
+        files = {"file": file} if file is not None else None
+
         result = self.reporter.http_request(
-            verb="post", path=self._path, post_data=attrs
+            verb="post",
+            path=self._path,
+            post_data=attrs,
+            files=files,
         )
 
         return self._obj_cls(attrs=result.json())
@@ -31,6 +41,8 @@ class GetMixin(object):
     def get(self, id: str) -> RESTObject:
         """Retrieve a single object.
 
+        Expects a JSON response from the server.
+
         Args:
             id: object ID
         """
@@ -40,6 +52,31 @@ class GetMixin(object):
         result = self.reporter.http_request(verb="get", path=path)
 
         return self._obj_cls(attrs=result.json())
+
+
+class GetRawMixin(object):
+    _path: str
+    _obj_cls: Type[RESTObject]
+    reporter: Reporter
+
+    def get(self, id: str) -> bytes:
+        """Retrieve a single object.
+
+        Returns the raw response data.
+
+        Args:
+            id: Object ID
+        """
+
+        path = f"{self._path}/{id}"
+
+        result = self.reporter.http_request(
+            verb="get",
+            path=path,
+            headers={"Accept": "*/*"},
+        )
+
+        return result.content
 
 
 class ListMixin(object):

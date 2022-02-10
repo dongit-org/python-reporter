@@ -35,7 +35,6 @@ class Reporter(object):
         self.session.headers.update(
             {
                 "Accept": "application/json",
-                "Content-Type": "application/json",
                 "Authorization": f"Bearer {api_token}",
             }
         )
@@ -45,6 +44,7 @@ class Reporter(object):
 
         self.assessments = objects.AssessmentManager(self)
         self.clients = objects.ClientManager(self)
+        self.documents = objects.DocumentManager(self)
         self.findings = objects.FindingManager(self)
         self.finding_templates = objects.FindingTemplateManager(self)
         self.targets = objects.TargetManager(self)
@@ -54,16 +54,22 @@ class Reporter(object):
         self,
         verb: str,
         path: str,
+        headers: Dict[str, str] = {},
         query_data: Optional[Dict[str, Any]] = None,
         post_data: Optional[Dict[str, Any]] = None,
+        files: Optional[Dict[str, Any]] = None,
     ) -> requests.Response:
         """Make an HTTP request to the Reporter server.
 
         Args:
             verb: The HTTP method to call ('get', 'post', 'put', 'delete')
             path: Path to query ('findings')
+            headers: Extra HTTP headers; will overwrite default headers
             query_data: Data to send as query string parameters
-            post_data: Data to send in the body (will be converted to JSON)
+            post_data: Data to send in the body. This will be converted to JSON unless
+                files is not None.
+            files: The files to send in the request. If this is not None, then the
+                request will be a multipart/form-data request.
 
         Returns:
             A requests Response object
@@ -74,11 +80,22 @@ class Reporter(object):
 
         url = f"{self.url}/api/v1/{path}"
 
+        # If files is present, we don't sent JSON.
+        if files is not None:
+            data = post_data
+            json = None
+        else:
+            data = None
+            json = post_data
+
         result = self.session.request(
             method=verb,
             url=url,
+            headers=headers,
             params=query_data,
-            json=post_data,
+            data=data,
+            json=json,
+            files=files,
             verify=self.ssl_verify,
         )
 
