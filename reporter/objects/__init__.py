@@ -1,5 +1,6 @@
 from .activity import *
 from .assessment import *
+from .assessment_type import *
 from .client import *
 from .document import *
 from .finding import *
