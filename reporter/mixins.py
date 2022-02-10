@@ -50,6 +50,7 @@ class ListMixin(object):
     def list(
         self,
         filter: Dict[str, str] = {},
+        sorts: List[str] = [],
         includes: List[str] = [],
         page: Optional[int] = None,
         page_size: Optional[int] = None,
@@ -59,6 +60,7 @@ class ListMixin(object):
         Args:
             filter: query string parameters for HTTP request of the form
                 filter[field]
+            sorts: How to sort retrieved items
             includes: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
@@ -70,6 +72,9 @@ class ListMixin(object):
 
         if includes:
             query_data["include"] = ",".join(includes)
+
+        if sorts is not None:
+            query_data["sort"] = ",".join(sorts)
 
         if page is not None:
             query_data[f"page[number]"] = str(page)
