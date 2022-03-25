@@ -46,7 +46,11 @@ class GetMixin(object):
     _obj_cls: Type[RESTObject]
     reporter: Reporter
 
-    def get(self, id: str) -> RESTObject:
+    def get(
+        self,
+        id: str,
+        includes: List[str] = [],
+    ) -> RESTObject:
         """Retrieve a single object.
 
         Expects a JSON response from the server.
@@ -55,9 +59,17 @@ class GetMixin(object):
             id: object ID
         """
 
+        query_data = {}
+
+        if includes:
+            query_data["include"] = ",".join(includes)
         path = f"{self._path}/{id}"
 
-        result = self.reporter.http_request(verb="get", path=path)
+        result = self.reporter.http_request(
+            verb="get",
+            path=path,
+            query_data=query_data,
+        )
 
         return self._obj_cls(attrs=result.json())
 
