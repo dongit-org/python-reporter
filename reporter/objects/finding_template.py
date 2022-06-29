@@ -9,5 +9,5 @@ class FindingTemplate(RESTObject):
 class FindingTemplateManager(
     RESTManager, CreateMixin, GetMixin, ListMixin, SearchMixin
 ):
-    _path = "finding_templates"
+    _path = "finding-templates"
     _obj_cls = FindingTemplate

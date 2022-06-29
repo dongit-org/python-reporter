@@ -7,5 +7,5 @@ class AssessmentType(RESTObject):
 
 
 class AssessmentTypeManager(RESTManager, GetMixin, ListMixin):
-    _path = "assessment_types"
+    _path = "assessment-types"
     _obj_cls = AssessmentType
