@@ -1,0 +1,106 @@
+services:
+  nginx:
+    container_name: nginx
+    hostname: nginx
+    image: nginx:1.21
+    restart: unless-stopped
+    depends_on:
+      - phpfpm
+    ports:
+      - "0.0.0.0:8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - public:/var/www/html/public:ro
+      - storage:/var/www/html/storage:ro
+
+  phpfpm:
+    container_name: phpfpm
+    hostname: phpfpm
+    image: registry.gitlab.com/dongit/reporter/php:latest
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - elasticsearch
+      - mysql
+      - horizon
+      - scheduler
+    volumes:
+      - public:/var/www/html/public
+      - storage:/var/www/html/storage
+    cap_drop:
+      - ALL
+    environment:
+      - CONTAINER_ROLE=app
+    env_file:
+      - php.env
+
+  horizon:
+    container_name: horizon
+    hostname: horizon
+    image: registry.gitlab.com/dongit/reporter/php:latest
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - elasticsearch
+      - mysql
+    volumes:
+      - public:/var/www/html/public
+      - storage:/var/www/html/storage
+    cap_drop:
+      - ALL
+    environment:
+      - CONTAINER_ROLE=horizon
+    env_file:
+      - php.env
+
+  scheduler:
+    container_name: scheduler
+    hostname: scheduler
+    image: registry.gitlab.com/dongit/reporter/php:latest
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - elasticsearch
+      - mysql
+    volumes:
+      - public:/var/www/html/public
+      - storage:/var/www/html/storage
+    environment:
+      - CONTAINER_ROLE=scheduler
+    env_file:
+      - php.env
+
+  redis:
+    image: redis:6
+    container_name: redis
+    hostname: redis
+    restart: unless-stopped
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    container_name: elasticsearch
+    hostname: elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    hostname: mysql
+    restart: unless-stopped
+    volumes:
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    cap_add:
+      - SYS_NICE
+    env_file:
+      - db.env
+
+volumes:
+  public:
+  storage:
