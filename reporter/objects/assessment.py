@@ -1,9 +1,16 @@
+from typing import Any, Dict
+
 from reporter.base import RESTManager, RESTObject
 from reporter.mixins import CreateMixin, GetMixin, ListMixin
+from reporter.objects.target import AssessmentTargetManager
 
 
 class Assessment(RESTObject):
-    pass
+    targets: AssessmentTargetManager
+
+    def __init__(self, manager: RESTManager, attrs: Dict[str, Any]) -> None:
+        super().__init__(manager, attrs)
+        self.targets = AssessmentTargetManager(self.manager.reporter, parent=self)
 
 
 class AssessmentManager(RESTManager, GetMixin, ListMixin):
