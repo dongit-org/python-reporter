@@ -6,6 +6,12 @@ class Finding(RESTObject):
     pass
 
 
-class FindingManager(RESTManager, CreateMixin, GetMixin, ListMixin):
+class FindingManager(RESTManager, GetMixin, ListMixin):
     _path = "findings"
+    _obj_cls = Finding
+
+
+class AssessmentFindingManager(RESTManager, CreateMixin):
+    _path = "assessments/{assessment_id}/findings"
+    _parent_attrs = {"assessment_id": "id"}
     _obj_cls = Finding
