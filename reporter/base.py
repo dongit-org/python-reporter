@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, Iterable, List, Optional
 
 from reporter.client import Reporter
 
@@ -11,9 +11,12 @@ class RESTObject(object):
         attrs: Object attributes
     """
 
+    manager: "RESTManager"
+
     _attrs: Dict[str, Any]
 
-    def __init__(self, attrs: Dict[str, Any]) -> None:
+    def __init__(self, manager: "RESTManager", attrs: Dict[str, Any]) -> None:
+        self.manager = manager
         self._attrs = attrs
 
     def __getattr__(self, attr: str) -> Any:
@@ -64,10 +67,32 @@ class RESTManager(object):
 
     reporter: Reporter
 
-    def __init__(self, reporter: Reporter) -> None:
+    _parent: Optional[RESTObject]
+    _parent_attrs: Dict[str, str]
+    _path: str
+    _computed_path: str
+
+    def __init__(
+        self,
+        reporter: Reporter,
+        parent: Optional[RESTObject] = None,
+    ) -> None:
         """RESTManager constructor
 
         Args:
             reporter: connection to use to make requests
+            parent: RESTObject to which the manager is attached, if applicable
         """
         self.reporter = reporter
+        self._parent = parent
+        self._path = self._compute_path()
+
+    def _compute_path(self) -> str:
+        if self._parent is None:
+            return self._path
+
+        data = {
+            pair[0]: getattr(self._parent, pair[1])
+            for pair in self._parent_attrs.items()
+        }
+        return self._path.format(**data)

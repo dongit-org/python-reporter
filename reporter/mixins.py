@@ -1,6 +1,6 @@
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type, TYPE_CHECKING
 
-from reporter.base import RESTList, RESTObject
+from reporter.base import RESTList, RESTManager, RESTObject
 from reporter.client import Reporter
 
 
@@ -38,7 +38,9 @@ class CreateMixin(object):
             files=files,
         )
 
-        return self._obj_cls(attrs=result.json())
+        if TYPE_CHECKING:
+            assert isinstance(self, RESTManager)
+        return self._obj_cls(self, result.json())
 
 
 class GetMixin(object):
@@ -71,7 +73,9 @@ class GetMixin(object):
             query_data=query_data,
         )
 
-        return self._obj_cls(attrs=result.json())
+        if TYPE_CHECKING:
+            assert isinstance(self, RESTManager)
+        return self._obj_cls(self, result.json())
 
 
 class GetRawMixin(object):
@@ -152,7 +156,9 @@ class _ListMixin(object):
         )
 
         json = result.json()
-        data = [self._obj_cls(attrs=attrs) for attrs in json["data"]]
+        if TYPE_CHECKING:
+            assert isinstance(self, RESTManager)
+        data = [self._obj_cls(self, attrs) for attrs in json["data"]]
         links = json["links"]
         meta = json["meta"]
 
