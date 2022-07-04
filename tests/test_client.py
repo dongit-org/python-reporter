@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore
 
 import reporter
 from reporter import Reporter

@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore
 
 from reporter import Reporter
 from reporter.exceptions import ReporterHttpError
