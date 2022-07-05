@@ -45,7 +45,7 @@ def test_finding_template_search(rc: Reporter):
 def test_finding_template_get(rc: Reporter):
     finding_template = create_random_finding_template(rc)
     ft = rc.finding_templates.get(finding_template.id)
-    assert ft.id is not None
+    assert finding_template == ft
 
 
 def test_finding_template_create_invalid(rc: Reporter):

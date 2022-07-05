@@ -29,6 +29,11 @@ class RESTObject(object):
     def __dir__(self) -> Iterable[str]:
         return set(self._attrs.keys()).union(super(RESTObject, self).__dir__())
 
+    def __eq__(self, other: object):
+        if not isinstance(other, RESTObject):
+            return NotImplemented
+        return self.id == other.id
+
 
 class RESTList(Sequence):
     """Represents a list of objects built from server data.

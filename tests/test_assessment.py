@@ -51,7 +51,7 @@ def test_assessment_get(rc: Reporter):
     client = create_random_client(rc)
     assessment = create_random_assessment(rc, client)
     a = rc.assessments.get(assessment.id)
-    assert a.id is not None
+    assert assessment == a
 
 
 def test_assessment_create_invalid(rc: Reporter):

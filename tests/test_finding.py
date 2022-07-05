@@ -66,7 +66,7 @@ def test_finding_get(rc: Reporter):
     assessment = create_random_assessment(rc, client)
     finding = create_random_finding(rc, assessment)
     f = rc.findings.get(finding.id)
-    assert f.id is not None
+    assert finding == f
 
 
 def test_finding_create_invalid(rc: Reporter):

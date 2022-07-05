@@ -12,7 +12,7 @@ def test_assessment_type_get(rc: Reporter):
     types = rc.assessment_types.list()
     for t in types:
         type = rc.assessment_types.get(t.id)
-        assert type.id is not None
+        assert type == t
 
 
 def test_assessment_type_get_invalid(rc: Reporter):

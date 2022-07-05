@@ -48,7 +48,7 @@ def test_target_get(rc: Reporter):
     assessment = create_random_assessment(rc, client)
     target = create_random_target(assessment)
     t = rc.targets.get(target.id)
-    assert t.id is not None
+    assert target == t
 
 
 def test_target_create_invalid(rc: Reporter):
