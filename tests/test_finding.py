@@ -69,6 +69,17 @@ def test_finding_get(rc: Reporter):
     assert finding == f
 
 
+def test_finding_update(rc: Reporter):
+    client = create_random_client(rc)
+    assessment = create_random_assessment(rc, client)
+    finding = create_random_finding(rc, assessment)
+    new_title = helpers.rand_alphanum(32)
+    updated = rc.findings.update(finding.id, {"title": new_title})
+    gotten = rc.findings.get(finding.id)
+    assert finding == updated
+    assert gotten == updated
+
+
 def test_finding_create_invalid(rc: Reporter):
     client = create_random_client(rc)
     assessment = create_random_assessment(rc, client)
@@ -79,3 +90,11 @@ def test_finding_create_invalid(rc: Reporter):
 def test_finding_get_invalid(rc: Reporter):
     with pytest.raises(reporter.ReporterHttpError):
         rc.findings.get("does-not-exist")
+
+
+def test_finding_update_invalid(rc: Reporter):
+    client = create_random_client(rc)
+    assessment = create_random_assessment(rc, client)
+    finding = create_random_finding(rc, assessment)
+    with pytest.raises(reporter.ReporterHttpError):
+        rc.findings.update(finding.id, {"title": None})

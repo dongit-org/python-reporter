@@ -1,5 +1,5 @@
 from reporter.base import RESTManager, RESTObject
-from reporter.mixins import CreateMixin, GetMixin, ListMixin, SearchMixin
+from reporter.mixins import CreateMixin, GetMixin, ListMixin, SearchMixin, UpdateMixin
 
 
 class FindingTemplate(RESTObject):
@@ -7,7 +7,7 @@ class FindingTemplate(RESTObject):
 
 
 class FindingTemplateManager(
-    RESTManager, CreateMixin, GetMixin, ListMixin, SearchMixin
+    RESTManager, CreateMixin, GetMixin, ListMixin, SearchMixin, UpdateMixin
 ):
     _path = "finding-templates"
     _obj_cls = FindingTemplate

@@ -9,6 +9,7 @@ __all__ = [
     "GetMixin",
     "ListMixin",
     "SearchMixin",
+    "UpdateMixin",
 ]
 
 
@@ -225,3 +226,33 @@ class SearchMixin(_ListMixin):
             page_size=page_size,
             term=term,
         )
+
+
+class UpdateMixin(object):
+    _path: str
+    _obj_cls: Type[RESTObject]
+    reporter: Reporter
+
+    def update(
+        self,
+        id: str,
+        attrs: Dict[str, Any],
+    ) -> RESTObject:
+        """Update an object of type self._obj_cls.
+
+        Args:
+            id: ID of the object to update
+            attrs: Attributes to update
+        """
+
+        path = f"{self._path}/{id}"
+
+        result = self.reporter.http_request(
+            verb="patch",
+            path=path,
+            post_data=attrs,
+        )
+
+        if TYPE_CHECKING:
+            assert isinstance(self, RESTManager)
+        return self._obj_cls(self, result.json())

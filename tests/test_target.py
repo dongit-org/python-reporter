@@ -51,6 +51,17 @@ def test_target_get(rc: Reporter):
     assert target == t
 
 
+def test_target_update(rc: Reporter):
+    client = create_random_client(rc)
+    assessment = create_random_assessment(rc, client)
+    target = create_random_target(assessment)
+    new_name = helpers.rand_alphanum(32)
+    updated = rc.targets.update(target.id, {"name": new_name})
+    gotten = rc.targets.get(target.id)
+    assert target == updated
+    assert gotten == updated
+
+
 def test_target_create_invalid(rc: Reporter):
     client = create_random_client(rc)
     assessment = create_random_assessment(rc, client)
@@ -61,3 +72,11 @@ def test_target_create_invalid(rc: Reporter):
 def test_target_get_invalid(rc: Reporter):
     with pytest.raises(reporter.ReporterHttpError):
         rc.targets.get("does-not-exist")
+
+
+def test_target_update_invalid(rc: Reporter):
+    client = create_random_client(rc)
+    assessment = create_random_assessment(rc, client)
+    target = create_random_target(assessment)
+    with pytest.raises(reporter.ReporterHttpError):
+        rc.targets.update(target.id, {"name": None})

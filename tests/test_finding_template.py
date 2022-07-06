@@ -48,6 +48,15 @@ def test_finding_template_get(rc: Reporter):
     assert finding_template == ft
 
 
+def test_finding_template_update(rc: Reporter):
+    finding_template = create_random_finding_template(rc)
+    new_title = helpers.rand_alphanum(32)
+    updated = rc.finding_templates.update(finding_template.id, {"title": new_title})
+    gotten = rc.finding_templates.get(finding_template.id)
+    assert finding_template == updated
+    assert gotten == updated
+
+
 def test_finding_template_create_invalid(rc: Reporter):
     with pytest.raises(reporter.ReporterHttpError):
         rc.finding_templates.create({"asdf": "asdf"})
@@ -56,3 +65,9 @@ def test_finding_template_create_invalid(rc: Reporter):
 def test_finding_template_get_invalid(rc: Reporter):
     with pytest.raises(reporter.ReporterHttpError):
         rc.finding_templates.get("does-not-exist")
+
+
+def test_finding_template_update_invalid(rc: Reporter):
+    finding_template = create_random_finding_template(rc)
+    with pytest.raises(reporter.ReporterHttpError):
+        rc.finding_templates.update(finding_template.id, {"title": None})

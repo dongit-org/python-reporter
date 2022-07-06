@@ -1,12 +1,12 @@
 from reporter.base import RESTManager, RESTObject
-from reporter.mixins import CreateMixin, GetMixin, ListMixin
+from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin
 
 
 class Finding(RESTObject):
     pass
 
 
-class FindingManager(RESTManager, GetMixin, ListMixin):
+class FindingManager(RESTManager, GetMixin, ListMixin, UpdateMixin):
     _path = "findings"
     _obj_cls = Finding
 

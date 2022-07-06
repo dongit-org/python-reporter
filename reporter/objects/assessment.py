@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from reporter.base import RESTManager, RESTObject
-from reporter.mixins import CreateMixin, GetMixin, ListMixin
+from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin
 from reporter.objects.finding import AssessmentFindingManager
 from reporter.objects.target import AssessmentTargetManager
 
@@ -16,7 +16,7 @@ class Assessment(RESTObject):
         self.targets = AssessmentTargetManager(self.manager.reporter, parent=self)
 
 
-class AssessmentManager(RESTManager, GetMixin, ListMixin):
+class AssessmentManager(RESTManager, GetMixin, ListMixin, UpdateMixin):
     _path = "assessments"
     _obj_cls = Assessment
 

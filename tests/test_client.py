@@ -41,6 +41,15 @@ def test_client_get(rc: Reporter):
     assert client.id == c.id
 
 
+def test_client_update(rc: Reporter):
+    client = create_random_client(rc)
+    new_name = helpers.rand_alphanum(32)
+    updated = rc.clients.update(client.id, {"name": new_name})
+    gotten = rc.clients.get(client.id)
+    assert client == updated
+    assert gotten == updated
+
+
 def test_client_create_invalid(rc: Reporter):
     with pytest.raises(reporter.ReporterHttpError):
         rc.clients.create({"asdf": "asdf"})
@@ -49,3 +58,9 @@ def test_client_create_invalid(rc: Reporter):
 def test_client_get_invalid(rc: Reporter):
     with pytest.raises(reporter.ReporterHttpError):
         rc.clients.get("does-not-exist")
+
+
+def test_client_updated_invalid(rc: Reporter):
+    client = create_random_client(rc)
+    with pytest.raises(reporter.ReporterHttpError):
+        rc.clients.update(client.id, {"name": None})

@@ -4,6 +4,7 @@ import pytest  # type: ignore
 
 import reporter
 from reporter import Reporter
+from reporter.objects import assessment
 
 from . import helpers
 from .test_client import create_random_client
@@ -54,6 +55,16 @@ def test_assessment_get(rc: Reporter):
     assert assessment == a
 
 
+def test_assessment_update(rc: Reporter):
+    client = create_random_client(rc)
+    assessment = create_random_assessment(rc, client)
+    new_title = helpers.rand_alphanum(32)
+    updated = rc.assessments.update(assessment.id, {"title": new_title})
+    gotten = rc.assessments.get(assessment.id)
+    assert assessment == updated
+    assert gotten == updated
+
+
 def test_assessment_create_invalid(rc: Reporter):
     client = create_random_client(rc)
     with pytest.raises(reporter.ReporterHttpError):
@@ -63,3 +74,10 @@ def test_assessment_create_invalid(rc: Reporter):
 def test_assessment_get_invalid(rc: Reporter):
     with pytest.raises(reporter.ReporterHttpError):
         rc.assessments.get("does-not-exist")
+
+
+def test_assessment_update_invalid(rc: Reporter):
+    client = create_random_client(rc)
+    assessment = create_random_assessment(rc, client)
+    with pytest.raises(reporter.ReporterHttpError):
+        rc.assessments.update(assessment.id, {"status": None})
