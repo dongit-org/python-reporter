@@ -53,6 +53,6 @@ def test_finding_template_create_invalid(rc: Reporter):
         rc.finding_templates.create({"asdf": "asdf"})
 
 
-def test_finding_get_invalid(rc: Reporter):
+def test_finding_template_get_invalid(rc: Reporter):
     with pytest.raises(reporter.ReporterHttpError):
         rc.finding_templates.get("does-not-exist")
