@@ -44,6 +44,7 @@ class Reporter(object):
 
         self.activities = objects.ActivityManager(self)
         self.assessments = objects.AssessmentManager(self)
+        self.assessment_phases = objects.AssessmentPhaseManager(self)
         self.assessment_types = objects.AssessmentTypeManager(self)
         self.clients = objects.ClientManager(self)
         self.documents = objects.DocumentManager(self)

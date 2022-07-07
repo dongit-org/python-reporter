@@ -34,6 +34,9 @@ class RESTObject(object):
             return NotImplemented
         return self.id == other.id
 
+    def __contains__(self, item: str):
+        return item in self._attrs
+
 
 class RESTList(Sequence):
     """Represents a list of objects built from server data.
