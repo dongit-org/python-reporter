@@ -50,6 +50,16 @@ def test_finding_create(rc: Reporter):
     assert len(rc.findings.list()) == n + 1
 
 
+def test_finding_delete(rc: Reporter):
+    client = create_random_client(rc)
+    assessment = create_random_assessment(rc, client)
+    finding = create_random_finding(rc, assessment)
+    rc.findings.delete(finding.id)
+    with pytest.raises(reporter.ReporterHttpError) as e:
+        rc.findings.get(finding.id)
+        assert e.value.response_code == 404
+
+
 def test_finding_list(rc: Reporter):
     client = create_random_client(rc)
     assessment = create_random_assessment(rc, client)

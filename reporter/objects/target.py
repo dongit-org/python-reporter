@@ -1,12 +1,12 @@
 from reporter.base import RESTManager, RESTObject
-from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin
+from reporter.mixins import CreateMixin, DeleteMixin, GetMixin, ListMixin, UpdateMixin
 
 
 class Target(RESTObject):
     pass
 
 
-class TargetManager(RESTManager, GetMixin, ListMixin, UpdateMixin):
+class TargetManager(RESTManager, DeleteMixin, GetMixin, ListMixin, UpdateMixin):
     _path = "targets"
     _obj_cls = Target
 

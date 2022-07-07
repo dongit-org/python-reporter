@@ -26,6 +26,14 @@ def test_client_create(rc: Reporter):
     assert len(rc.clients.list()) == n + 1
 
 
+def test_client_delete(rc: Reporter):
+    client = create_random_client(rc)
+    rc.clients.delete(client.id)
+    with pytest.raises(reporter.ReporterHttpError) as e:
+        rc.clients.get(client.id)
+        assert e.value.response_code == 404
+
+
 def test_client_list(rc: Reporter):
     client = create_random_client(rc)
     clients = rc.clients.list()

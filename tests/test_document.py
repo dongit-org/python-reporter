@@ -24,6 +24,14 @@ def test_document_create(rc: Reporter):
     rc.documents.get(document.id)
 
 
+def test_document_delete(rc: Reporter):
+    document = create_random_document(rc)
+    rc.documents.delete(document.id)
+    with pytest.raises(reporter.ReporterHttpError) as e:
+        rc.documents.get(document.id)
+        assert e.value.response_code == 404
+
+
 def test_document_get(rc: Reporter):
     contents = helpers.rand_alphanum(32).encode()
     document = rc.documents.create(

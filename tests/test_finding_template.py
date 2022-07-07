@@ -28,6 +28,14 @@ def test_finding_template_create(rc: Reporter):
     rc.finding_templates.get(finding_template.id)
 
 
+def test_finding_template_delete(rc: Reporter):
+    finding_template = create_random_finding_template(rc)
+    rc.finding_templates.delete(finding_template.id)
+    with pytest.raises(reporter.ReporterHttpError) as e:
+        rc.finding_templates.get(finding_template.id)
+        assert e.value.response_code == 404
+
+
 def test_finding_template_list(rc: Reporter):
     finding_template = create_random_finding_template(rc)
     finding_templates = rc.finding_templates.list()

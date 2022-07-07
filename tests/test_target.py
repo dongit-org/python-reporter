@@ -32,6 +32,16 @@ def test_target_create(rc: Reporter):
     assert len(rc.targets.list()) == n + 1
 
 
+def test_target_delete(rc: Reporter):
+    client = create_random_client(rc)
+    assessment = create_random_assessment(rc, client)
+    target = create_random_target(assessment)
+    rc.targets.delete(target.id)
+    with pytest.raises(reporter.ReporterHttpError) as e:
+        rc.targets.get(target.id)
+        assert e.value.response_code == 404
+
+
 def test_target_list(rc: Reporter):
     client = create_random_client(rc)
     assessment = create_random_assessment(rc, client)

@@ -6,6 +6,7 @@ from reporter.client import Reporter
 
 __all__ = [
     "CreateMixin",
+    "DeleteMixin",
     "GetMixin",
     "ListMixin",
     "SearchMixin",
@@ -42,6 +43,20 @@ class CreateMixin(object):
         if TYPE_CHECKING:
             assert isinstance(self, RESTManager)
         return self._obj_cls(self, result.json())
+
+
+class DeleteMixin(object):
+    _path: str
+    _obj_cls: Type[RESTObject]
+    reporter: Reporter
+
+    def delete(self, id: str):
+        path = f"{self._path}/{id}"
+
+        self.reporter.http_request(
+            verb="delete",
+            path=path,
+        )
 
 
 class GetMixin(object):
