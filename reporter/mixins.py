@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any, Dict, List, Optional, Type, TYPE_CHECKING
 
 from reporter.base import RESTList, RESTManager, RESTObject
@@ -42,7 +43,7 @@ class CreateMixin(object):
 
         if TYPE_CHECKING:
             assert isinstance(self, RESTManager)
-        return self._obj_cls(self, result.json())
+        return self._obj_cls(self.reporter, result.json())
 
 
 class DeleteMixin(object):
@@ -61,6 +62,7 @@ class DeleteMixin(object):
 
 class GetMixin(object):
     _path: str
+    _includes: Dict[str, Type[RESTObject | Sequence[RESTObject]]] = {}
     _obj_cls: Type[RESTObject]
     reporter: Reporter
 
@@ -91,7 +93,8 @@ class GetMixin(object):
 
         if TYPE_CHECKING:
             assert isinstance(self, RESTManager)
-        return self._obj_cls(self, result.json())
+
+        return self._obj_cls(self.reporter, result.json())
 
 
 class GetRawMixin(object):
@@ -123,6 +126,7 @@ class _ListMixin(object):
     """Parent class for ListMixin and SearchMixin"""
 
     _path: str
+    _includes: Dict[str, Type[RESTObject | Sequence[RESTObject]]] = {}
     _obj_cls: Type[RESTObject]
     reporter: Reporter
 
@@ -174,7 +178,7 @@ class _ListMixin(object):
         json = result.json()
         if TYPE_CHECKING:
             assert isinstance(self, RESTManager)
-        data = [self._obj_cls(self, attrs) for attrs in json["data"]]
+        data = [self._obj_cls(self.reporter, attrs) for attrs in json["data"]]
         links = json["links"]
         meta = json["meta"]
 
@@ -270,4 +274,4 @@ class UpdateMixin(object):
 
         if TYPE_CHECKING:
             assert isinstance(self, RESTManager)
-        return self._obj_cls(self, result.json())
+        return self._obj_cls(self.reporter, result.json())

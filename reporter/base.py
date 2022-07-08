@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Type
 
 from reporter.client import Reporter
 
@@ -11,13 +11,15 @@ class RESTObject(object):
         attrs: Object attributes
     """
 
-    manager: "RESTManager"
+    reporter: Reporter
 
     _attrs: Dict[str, Any]
+    _includes: Dict[str, Type["RESTObject"]] = {}
 
-    def __init__(self, manager: "RESTManager", attrs: Dict[str, Any]) -> None:
-        self.manager = manager
+    def __init__(self, reporter: Reporter, attrs: Dict[str, Any]) -> None:
+        self.reporter = reporter
         self._attrs = attrs
+        self._deserialize_includes()
 
     def __getattr__(self, attr: str) -> Any:
         try:
@@ -36,6 +38,25 @@ class RESTObject(object):
 
     def __contains__(self, item: str):
         return item in self._attrs
+
+    def _deserialize_includes(self):
+        for include in self._includes:
+            if include in self:
+                if isinstance(getattr(self, include), List):
+                    setattr(
+                        self,
+                        include,
+                        [
+                            self._includes[include](self.reporter, json_obj)
+                            for json_obj in getattr(self, include)
+                        ],
+                    )
+                else:
+                    setattr(
+                        self,
+                        include,
+                        self._includes[include](self.reporter, getattr(self, include)),
+                    )
 
 
 class RESTList(Sequence):
