@@ -31,11 +31,9 @@ def create_random_assessment(
 
 
 def test_assessment_create(rc: Reporter):
-    n = len(rc.assessments.list())
     client = create_random_client(rc)
     assessment = create_random_assessment(rc, client)
     assert assessment.id is not None
-    assert len(rc.assessments.list()) == n + 1
 
 
 def test_assessment_list(rc: Reporter):

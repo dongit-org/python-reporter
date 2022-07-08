@@ -20,10 +20,8 @@ def create_random_client(rc: Reporter) -> reporter.Client:
 
 
 def test_client_create(rc: Reporter):
-    n = len(rc.clients.list())
     client = create_random_client(rc)
     assert client.id is not None
-    assert len(rc.clients.list()) == n + 1
 
 
 def test_client_delete(rc: Reporter):

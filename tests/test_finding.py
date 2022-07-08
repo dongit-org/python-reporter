@@ -42,12 +42,10 @@ def create_random_finding(
 
 
 def test_finding_create(rc: Reporter):
-    n = len(rc.findings.list())
     client = create_random_client(rc)
     assessment = create_random_assessment(rc, client)
     finding = create_random_finding(rc, assessment)
     assert finding.id is not None
-    assert len(rc.findings.list()) == n + 1
 
 
 def test_finding_delete(rc: Reporter):

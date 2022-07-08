@@ -24,12 +24,10 @@ def create_random_target(assessment: reporter.Assessment) -> reporter.Target:
 
 
 def test_target_create(rc: Reporter):
-    n = len(rc.targets.list())
     client = create_random_client(rc)
     assessment = create_random_assessment(rc, client)
     target = create_random_target(assessment)
     assert target.id is not None
-    assert len(rc.targets.list()) == n + 1
 
 
 def test_target_delete(rc: Reporter):
