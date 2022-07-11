@@ -162,7 +162,7 @@ class _ListMixin(object):
         if includes:
             query_data["include"] = ",".join(includes)
 
-        if sorts is not None:
+        if sorts != []:
             query_data["sort"] = ",".join(sorts)
 
         if page is not None:
