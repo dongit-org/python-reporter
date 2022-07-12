@@ -15,10 +15,13 @@ class RESTObject(object):
 
     _attrs: Dict[str, Any]
     _includes: Dict[str, Type["RESTObject"]] = {}
+    _children: Dict[str, Type["RESTManager"]] = {}
 
     def __init__(self, reporter: Reporter, attrs: Dict[str, Any]) -> None:
         self.reporter = reporter
         self._attrs = attrs
+        for key, mgr_cls in self._children.items():
+            setattr(self, key, mgr_cls(self.reporter, parent=self))
         self._deserialize_includes()
 
     def __getattr__(self, attr: str) -> Any:
