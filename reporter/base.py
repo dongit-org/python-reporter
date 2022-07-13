@@ -45,20 +45,16 @@ class RESTObject(object):
     def _deserialize_includes(self):
         for include in self._includes:
             if include in self:
-                if isinstance(getattr(self, include), List):
-                    setattr(
-                        self,
-                        include,
-                        [
-                            self._includes[include](self.reporter, json_obj)
-                            for json_obj in getattr(self, include)
-                        ],
-                    )
+                if isinstance(self._attrs[include], List):
+                    self._attrs[include] = [
+                        self._includes[include](self.reporter, json_obj)
+                        for json_obj in self._attrs[include]
+                    ]
+                    if include in self._children:
+                        getattr(self, include)._list = self._attrs[include]
                 else:
-                    setattr(
-                        self,
-                        include,
-                        self._includes[include](self.reporter, getattr(self, include)),
+                    self._attrs[include] = self._includes[include](
+                        self.reporter, self._attrs[include]
                     )
 
 
@@ -94,7 +90,7 @@ class RESTList(Sequence):
         return len(self._data)
 
 
-class RESTManager(object):
+class RESTManager(Sequence):
     """Base class for managers of RESTObjects."""
 
     reporter: Reporter
@@ -103,6 +99,17 @@ class RESTManager(object):
     _parent_attrs: Dict[str, str]
     _path: str
     _computed_path: str
+
+    # We need to consider the case that an instance of this class is assigned
+    # to an attribute of an instance `r` of RESTObject with the same name as a
+    # key in `r._includes`. This occurs e.g. for
+    # `Assessment._children["targets"]`. Hence we make RESTManager derive
+    # collections.abc.Sequence and implement the required methods, so that this
+    # class exposes a convenient API for the included list. We assume that this
+    # can only happen if this class is assigned to an attribute of `r` that is
+    # a plural noun (e.g. "targets" instead of "target").
+    _obj_cls: Type[RESTObject]
+    _list: List[RESTObject] = []
 
     def __init__(
         self,
@@ -118,6 +125,12 @@ class RESTManager(object):
         self.reporter = reporter
         self._parent = parent
         self._path = self._compute_path()
+
+    def __getitem__(self, index):
+        return self._list[index]
+
+    def __len__(self):
+        return len(self._list)
 
     def _compute_path(self) -> str:
         if self._parent is None:

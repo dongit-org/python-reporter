@@ -1,7 +1,10 @@
+import responses
+
 from reporter import (
     Reporter,
     RESTManager,
     RESTObject,
+    GetMixin,
 )
 
 
@@ -9,7 +12,7 @@ class FakeChildObject(RESTObject):
     pass
 
 
-class FakeChildManager(RESTManager):
+class FakeChildManager(RESTManager, GetMixin):
     _path = "tests/{obj_id}/child_objs"
     _parent_attrs = {"obj_id": "id"}
     _obj_cls = FakeChildObject
@@ -18,10 +21,12 @@ class FakeChildManager(RESTManager):
 class FakeObject(RESTObject):
     _children = {
         "child_objs": FakeChildManager,
+        "sameattributes": FakeChildManager,
     }
     _includes = {
         "childObj": FakeChildObject,
         "childObjs": FakeChildObject,
+        "sameattributes": FakeChildObject,
     }
 
 
@@ -55,3 +60,36 @@ def test_object_includes(rc: Reporter):
     assert len(obj.childObjs) == 2
     for o in obj.childObjs:
         assert isinstance(o, FakeChildObject)
+
+
+def test_object_include_same_attribute_as_manager(rc: Reporter):
+    obj = FakeObject(
+        rc,
+        {
+            "id": "1234",
+            "sameattributes": [
+                {"id": "1"},
+                {"id": "2"},
+            ],
+        },
+    )
+
+    assert isinstance(obj.sameattributes, FakeChildManager)
+    for o in obj.sameattributes:
+        assert isinstance(o, FakeChildObject)
+    assert obj.sameattributes[0].id == "1"
+    assert obj.sameattributes[1].id == "2"
+
+    with responses.RequestsMock() as rsps:
+        rsps.add(
+            method=responses.GET,
+            url="https://localhost/api/v1/tests/1234/child_objs/5",
+            json={"id": "5", "a": 12},
+            content_type="application/json",
+            status=200,
+        )
+
+        child = obj.sameattributes.get("5")
+        assert isinstance(child, FakeChildObject)
+        assert child.id == "5"
+        assert child.a == 12
