@@ -15,8 +15,8 @@ def get_random_assessment_section_id(
     rc: Reporter, assessment: reporter.Assessment
 ) -> str:
     sections = rc.assessments.get(assessment.id, includes=["sections"]).sections
-    sections = [s for s in sections if s["can_have_findings"]]
-    return random.choice(sections)["id"]
+    sections = [s for s in sections if s.can_have_findings]
+    return random.choice(sections).id
 
 
 def create_random_finding(
