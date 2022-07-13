@@ -6,6 +6,6 @@ class AssessmentSection(RESTObject):
     pass
 
 
-class AssessmentPhaseManager(RESTManager, UpdateMixin):
+class AssessmentSectionManager(RESTManager, UpdateMixin):
     _path = "assessment-sections"
     _obj_cls = AssessmentSection
