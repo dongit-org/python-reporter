@@ -14,7 +14,7 @@ from .test_target import create_random_target
 def get_random_assessment_section_id(
     rc: Reporter, assessment: reporter.Assessment
 ) -> str:
-    sections = rc.assessments.get(assessment.id, includes=["sections"]).sections
+    sections = rc.assessments.get(assessment.id, include=["sections"]).sections
     sections = [s for s in sections if s.can_have_findings]
     return random.choice(sections).id
 

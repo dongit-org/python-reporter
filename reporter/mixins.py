@@ -69,7 +69,7 @@ class GetMixin(object):
     def get(
         self,
         id: str,
-        includes: List[str] = [],
+        include: List[str] = [],
     ) -> RESTObject:
         """Retrieve a single object.
 
@@ -81,8 +81,8 @@ class GetMixin(object):
 
         query_data = {}
 
-        if includes:
-            query_data["include"] = ",".join(includes)
+        if include:
+            query_data["include"] = ",".join(include)
         path = f"{self._path}/{id}"
 
         result = self.reporter.http_request(
@@ -134,8 +134,8 @@ class _ListMixin(object):
         self,
         extra_path: str = "",
         filter: Dict[str, str] = {},
-        sorts: List[str] = [],
-        includes: List[str] = [],
+        sort: List[str] = [],
+        include: List[str] = [],
         page: Optional[int] = None,
         page_size: Optional[int] = None,
         **kwargs: Any,
@@ -146,8 +146,8 @@ class _ListMixin(object):
             extra_path: Extra text to add to the request URL path
             filter: query string parameters for HTTP request of the form
                 filter[field]
-            sorts: How to sort retrieved items
-            includes: Types of related data to include
+            sort: How to sort retrieved items
+            include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
             kwargs: Extra options to send to the server
@@ -159,11 +159,11 @@ class _ListMixin(object):
         for (key, value) in filter.items():
             query_data[f"filter[{key}]"] = value
 
-        if includes:
-            query_data["include"] = ",".join(includes)
+        if include:
+            query_data["include"] = ",".join(include)
 
-        if sorts != []:
-            query_data["sort"] = ",".join(sorts)
+        if sort != []:
+            query_data["sort"] = ",".join(sort)
 
         if page is not None:
             query_data[f"page[number]"] = str(page)
@@ -189,8 +189,8 @@ class ListMixin(_ListMixin):
     def list(
         self,
         filter: Dict[str, str] = {},
-        sorts: List[str] = [],
-        includes: List[str] = [],
+        sort: List[str] = [],
+        include: List[str] = [],
         page: Optional[int] = None,
         page_size: Optional[int] = None,
     ) -> RESTList:
@@ -199,16 +199,16 @@ class ListMixin(_ListMixin):
         Args:
             filter: query string parameters for HTTP request of the form
                 filter[field]
-            sorts: How to sort retrieved items
-            includes: Types of related data to include
+            sort: How to sort retrieved items
+            include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
         """
         return self._get_list(
             extra_path="",
             filter=filter,
-            sorts=sorts,
-            includes=includes,
+            sort=sort,
+            include=include,
             page=page,
             page_size=page_size,
         )
@@ -219,8 +219,8 @@ class SearchMixin(_ListMixin):
         self,
         term: Optional[str] = None,
         filter: Dict[str, str] = {},
-        sorts: List[str] = [],
-        includes: List[str] = [],
+        sort: List[str] = [],
+        include: List[str] = [],
         page: Optional[int] = None,
         page_size: Optional[int] = None,
     ) -> RESTList:
@@ -230,8 +230,8 @@ class SearchMixin(_ListMixin):
             term: Term to search for
             filter: query string parameters for HTTP request of the form
                 filter[field]
-            sorts: How to sort retrieved items
-            includes: Types of related data to include
+            sort: How to sort retrieved items
+            include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
         """
@@ -239,8 +239,8 @@ class SearchMixin(_ListMixin):
         return self._get_list(
             extra_path="/search",
             filter=filter,
-            sorts=sorts,
-            includes=includes,
+            sort=sort,
+            include=include,
             page=page,
             page_size=page_size,
             term=term,
