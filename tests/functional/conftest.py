@@ -1,4 +1,5 @@
 import pathlib
+import time
 
 import docker  # type: ignore
 import pytest  # type: ignore
@@ -51,4 +52,8 @@ def rc(docker_services) -> Reporter:
         api_token=token,
         ssl_verify=False,
     )
+
+    # Wait for Horizon to finish Elasticsearch indexing
+    time.sleep(30)
+
     return client
