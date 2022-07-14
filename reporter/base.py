@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Dict, Iterable, List, Optional, Type
+from typing import Any, Dict, Generic, Iterable, List, Optional, Type, TypeVar
 
 from reporter.client import Reporter
 
@@ -58,7 +58,10 @@ class RESTObject(object):
                     )
 
 
-class RESTList(Sequence):
+O = TypeVar("O", bound=RESTObject)
+
+
+class RESTList(Sequence, Generic[O]):
     """Represents a list of objects built from server data.
 
     Includes associated links and metadata.
@@ -69,13 +72,13 @@ class RESTList(Sequence):
         meta: Dict of metadata (see Reporter API docs)
     """
 
-    _data: List[RESTObject]
+    _data: List[O]
     links: Dict[str, str]
     meta: Dict[str, str]
 
     def __init__(
         self,
-        data: List[RESTObject],
+        data: List[O],
         links: Dict[str, str],
         meta: Dict[str, str],
     ) -> None:
@@ -90,7 +93,7 @@ class RESTList(Sequence):
         return len(self._data)
 
 
-class RESTManager(Sequence):
+class RESTManager(Sequence, Generic[O]):
     """Base class for managers of RESTObjects."""
 
     reporter: Reporter
@@ -108,7 +111,7 @@ class RESTManager(Sequence):
     # class exposes a convenient API for the included list. We assume that this
     # can only happen if this class is assigned to an attribute of `r` that is
     # a plural noun (e.g. "targets" instead of "target").
-    _obj_cls: Type[RESTObject]
+    _obj_cls: Type[O]
     _list: List[RESTObject] = []
 
     def __init__(

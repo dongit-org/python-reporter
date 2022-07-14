@@ -1,108 +1,111 @@
-import random
-
 import pytest  # type: ignore
 
 import reporter
 from reporter import Reporter
 
-from . import helpers
-from .test_client import create_random_client
-from .test_assessment import create_random_assessment
-from .test_target import create_random_target
 
-
-def get_random_assessment_section_id(
-    rc: Reporter, assessment: reporter.Assessment
-) -> str:
-    sections = rc.assessments.get(assessment.id, include=["sections"]).sections
-    sections = [s for s in sections if s.can_have_findings]
-    return random.choice(sections).id
-
-
-def create_random_finding(
-    rc: Reporter, assessment: reporter.Assessment
-) -> reporter.Finding:
-    for _ in range(5):
-        create_random_target(assessment)
-    targets = random.sample(rc.targets.list(filter={"assessment_id": assessment.id}), 3)
-    title = helpers.rand_alphanum(32)
-    description = helpers.rand_alphanum(32)
-    assessment_section_id = get_random_assessment_section_id(rc, assessment)
-    finding = assessment.findings.create(
+@pytest.fixture(scope="session")
+def assessment(rc: Reporter) -> reporter.Client:
+    client = rc.clients.create(
         {
-            "title": title,
-            "description": description,
-            "targets": [t.id for t in targets],
-            "assessment_section_id": assessment_section_id,
-            "is_vulnerability": False,
+            "name": "test_finding",
+            "description": "foo",
         }
     )
-    assert isinstance(finding, reporter.Finding)
-    return finding
+    assessment_type = rc.assessment_types.list()[0]
+    assessment = client.assessments.create(
+        {
+            "title": "test_finding",
+            "assessment_type_id": assessment_type.id,
+        }
+    )
+    return assessment
 
 
-def test_finding_create(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    finding = create_random_finding(rc, assessment)
-    assert finding.id is not None
+def test_target_operations(rc: Reporter, assessment):
+    target = assessment.targets.create(
+        {
+            "target_type": 0,
+            "name": "test_target_operations",
+        }
+    )
+
+    assert target in rc.targets.list(filter={"id": target.id})
+
+    rc.targets.update(target.id, {"description": "foo"})
+    gotten = rc.targets.get(target.id)
+
+    assert target == gotten
+    for attr in ["target_type", "name"]:
+        assert getattr(target, attr) == getattr(gotten, attr)
+    assert gotten.description == "foo"
+
+    rc.targets.delete(target.id)
+    with pytest.raises(reporter.ReporterHttpError) as e:
+        rc.targets.get(target.id)
+        assert e.value.response_code == 404
 
 
-def test_finding_delete(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    finding = create_random_finding(rc, assessment)
+def test_finding_operations(rc: Reporter, assessment):
+    target = assessment.targets.create(
+        {
+            "target_type": 0,
+            "name": "test_finding_operations",
+        }
+    )
+    section = [
+        s
+        for s in rc.assessments.get(assessment.id, include=["sections"]).sections
+        if s.can_have_findings
+    ][0]
+
+    finding = assessment.findings.create(
+        {
+            "title": "test_finding_operations",
+            "targets": [target.id],
+            "assessment_section_id": section.id,
+            "is_vulnerability": False,
+            "description": "foo",
+        }
+    )
+
+    assert finding in rc.findings.list(filter={"id": finding.id})
+
+    rc.findings.update(finding.id, {"description": "bar"})
+    gotten = rc.findings.get(finding.id)
+
+    assert finding == gotten
+    for attr in ["title", "assessment_section_id", "is_vulnerability"]:
+        assert getattr(finding, attr) == getattr(gotten, attr)
+    assert gotten.description == "bar"
+
     rc.findings.delete(finding.id)
     with pytest.raises(reporter.ReporterHttpError) as e:
         rc.findings.get(finding.id)
         assert e.value.response_code == 404
 
 
-def test_finding_list(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    finding = create_random_finding(rc, assessment)
-    findings = rc.findings.list()
-    for f in findings:
-        if f.id == finding.id:
-            return
-    raise Exception("Finding not found in list")
+def test_finding_template_operations(rc: Reporter):
+    template = rc.finding_templates.create(
+        {
+            "title": "test_finding_template_operations",
+            "is_vulnerability": False,
+            "severity": 3,
+            "description": "foo",
+        }
+    )
 
+    assert template in rc.finding_templates.list(filter={"id": template.id})
 
-def test_finding_get(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    finding = create_random_finding(rc, assessment)
-    f = rc.findings.get(finding.id)
-    assert finding == f
+    rc.finding_templates.update(template.id, {"risk": "bar"})
+    gotten = rc.finding_templates.get(template.id)
 
+    assert template == gotten
+    for attr in ["title", "is_vulnerability", "description"]:
+        assert getattr(template, attr) == getattr(template, attr)
+    assert gotten.risk == "bar"
 
-def test_finding_update(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    finding = create_random_finding(rc, assessment)
-    new_title = helpers.rand_alphanum(32)
-    updated = rc.findings.update(finding.id, {"title": new_title})
-    gotten = rc.findings.get(finding.id)
-    assert finding == updated
-    assert gotten == updated
-
-
-def test_finding_create_invalid(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    with pytest.raises(reporter.ReporterHttpError):
-        assessment.findings.create({"asdf": "asdf"})
-
-
-def test_finding_get_invalid(rc: Reporter):
-    with pytest.raises(reporter.ReporterHttpError):
-        rc.findings.get("does-not-exist")
-
-
-def test_finding_update_invalid(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    finding = create_random_finding(rc, assessment)
-    with pytest.raises(reporter.ReporterHttpError):
-        rc.findings.update(finding.id, {"title": None})
+    rc.finding_templates.delete(template.id)
+    with pytest.raises(reporter.ReporterHttpError) as e:
+        rc.finding_templates.get(template.id)
+        assert e.value.response_code == 404

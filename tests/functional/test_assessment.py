@@ -1,81 +1,172 @@
-import random
+import os
 
 import pytest  # type: ignore
 
 import reporter
 from reporter import Reporter
-from reporter.objects import assessment
-
-from . import helpers
-from .test_client import create_random_client
 
 
-def get_random_assessment_type_id(rc: Reporter) -> str:
-    types = rc.assessment_types.list()
-    return random.choice(types).id
-
-
-def create_random_assessment(
-    rc: Reporter, client: reporter.Client
-) -> reporter.Assessment:
-    assessment_type_id = get_random_assessment_type_id(rc)
-    title = helpers.rand_alphanum(32)
-    assessment = client.assessments.create(
+@pytest.fixture(scope="session")
+def client(rc: Reporter) -> reporter.Client:
+    client = rc.clients.create(
         {
-            "assessment_type_id": assessment_type_id,
-            "title": title,
+            "name": "test_assessment",
+            "description": "foo",
         }
     )
-    assert isinstance(assessment, reporter.Assessment)
-    return assessment
+    return client
 
 
-def test_assessment_create(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    assert assessment.id is not None
+@pytest.fixture(scope="session")
+def assessment_type(rc: Reporter) -> reporter.AssessmentType:
+    type = rc.assessment_types.list()[0]
+    return type
 
 
-def test_assessment_list(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    assessments = rc.assessments.list()
-    for a in assessments:
-        if a.id == assessment.id:
-            return
-    raise Exception("Assessment not found in list")
+def test_assessment_operations(rc: Reporter, client, assessment_type):
+    assessment = client.assessments.create(
+        {
+            "title": "test_assessment_operations",
+            "assessment_type_id": assessment_type.id,
+        }
+    )
 
+    assert assessment in rc.assessments.list(filter={"id": assessment.id})
 
-def test_assessment_get(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    a = rc.assessments.get(assessment.id)
-    assert assessment == a
-
-
-def test_assessment_update(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    new_title = helpers.rand_alphanum(32)
-    updated = rc.assessments.update(assessment.id, {"title": new_title})
+    rc.assessments.update(assessment.id, {"internal_details": "foo"})
     gotten = rc.assessments.get(assessment.id)
-    assert assessment == updated
-    assert gotten == updated
+
+    assert assessment == gotten
+    for attr in ["title", "description"]:
+        assert getattr(assessment, attr) == getattr(gotten, attr)
+    assert gotten.internal_details == "foo"
 
 
-def test_assessment_create_invalid(rc: Reporter):
-    client = create_random_client(rc)
-    with pytest.raises(reporter.ReporterHttpError):
-        client.assessments.create({"asdf": "asdf"})
+def test_assessment_phases_and_sections(rc: Reporter, client, assessment_type):
+    assessment = client.assessments.create(
+        {
+            "title": "test_assessment_phases_and_sections",
+            "assessment_type_id": assessment_type.id,
+        }
+    )
+
+    phase_update = {
+        "research_start_date": "1970-01-01",
+        "research_deadline": "1970-01-02",
+    }
+
+    phase = rc.assessments.get(assessment.id, include=["phases"]).phases[0]
+    rc.assessment_phases.update(phase.id, phase_update)
+    phase = rc.assessments.get(assessment.id, include=["phases"]).phases[0]
+
+    for attr, val in phase_update.items():
+        assert getattr(phase, attr) == val
+
+    section_update = {
+        "name": "foo",
+        "description": "bar",
+    }
+
+    section = rc.assessments.get(assessment.id, include=["sections"]).sections[0]
+    rc.assessment_sections.update(section.id, section_update)
+    section = rc.assessments.get(assessment.id, include=["sections"]).sections[0]
+
+    for attr, val in section_update.items():
+        assert getattr(section, attr) == val
 
 
-def test_assessment_get_invalid(rc: Reporter):
-    with pytest.raises(reporter.ReporterHttpError):
-        rc.assessments.get("does-not-exist")
+def test_assessment_users(rc: Reporter, client, assessment_type):
+    assessment = client.assessments.create(
+        {
+            "title": "test_assessment_users",
+            "assessment_type_id": assessment_type.id,
+        }
+    )
+
+    user = rc.users.create(
+        {
+            "first_name": "First",
+            "last_name": "Last",
+            "email": "test_assessment_users@example.com",
+            "roles": ["admin"],
+        }
+    )
+    assessment_user = assessment.users.create({"user_id": user.id, "type": 1})
+    assessment.users.update(user.id, {"type": 2})
+    assessment_user = rc.assessments.get(
+        assessment.id, include=["assessmentUsers"]
+    ).assessmentUsers[0]
+
+    assert assessment_user.user_id == user.id
+    assert assessment_user.type == 2
 
 
-def test_assessment_update_invalid(rc: Reporter):
-    client = create_random_client(rc)
-    assessment = create_random_assessment(rc, client)
-    with pytest.raises(reporter.ReporterHttpError):
-        rc.assessments.update(assessment.id, {"status": None})
+def test_activities(rc: Reporter, client, assessment_type):
+    assessment = client.assessments.create(
+        {
+            "title": "test_activities",
+            "assessment_type_id": assessment_type.id,
+        }
+    )
+
+    target = assessment.targets.create(
+        {
+            "target_type": 1,
+            "name": "test_activities",
+        }
+    )
+    section = [
+        s
+        for s in rc.assessments.get(assessment.id, include=["sections"]).sections
+        if s.can_have_findings
+    ][0]
+    finding = assessment.findings.create(
+        {
+            "title": "test_activities",
+            "targets": [target.id],
+            "assessment_section_id": section.id,
+            "is_vulnerability": False,
+            "description": "foo",
+        }
+    )
+
+    activity = rc.activities.list(
+        filter={
+            "assessment_id": assessment.id,
+            "type": "40",
+        }
+    )[0]
+    assert activity.assessment_id == assessment.id
+    assert activity.finding_id == finding.id
+
+
+def test_output_files(rc: Reporter, client, assessment_type):
+    assessment = client.assessments.create(
+        {
+            "title": "test_output_files",
+            "assessment_type_id": assessment_type.id,
+        }
+    )
+
+    with open(
+        f"{os.path.dirname(os.path.abspath(__file__))}/output_file.json", "r"
+    ) as f:
+        output_file_contents = f.read()
+
+    output_file = assessment.output_files.create(
+        {
+            "name": "output_file_test",
+            "tool": "generic",
+        },
+        file=output_file_contents,
+    )
+
+    gotten = rc.assessments.get(assessment.id, include=["outputFiles"]).outputFiles[0]
+    assert output_file == gotten
+    assert gotten.name == "output_file_test"
+    assert gotten.tool == "generic"
+
+    rc.output_files.delete(output_file.id)
+    assert (
+        len(rc.assessments.get(assessment.id, include=["outputFiles"]).outputFiles) == 0
+    )

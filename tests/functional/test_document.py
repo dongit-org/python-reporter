@@ -3,59 +3,19 @@ import pytest  # type: ignore
 import reporter
 from reporter import Reporter
 
-from . import helpers
 
-
-def create_random_document(rc: Reporter) -> reporter.Document:
+def test_document_operations(rc: Reporter):
     document = rc.documents.create(
         {
-            "documentable_type": "Finding",
-            "section": "description",
+            "documentable_type": "Assessment",
+            "section": "researcher_briefing",
         },
-        file=helpers.rand_alphanum(32),
+        file="foo",
     )
-    assert isinstance(document, reporter.Document)
-    return document
 
+    assert rc.documents.get(document.id) == b"foo"
 
-def test_document_create(rc: Reporter):
-    document = create_random_document(rc)
-    assert document.id is not None
-    rc.documents.get(document.id)
-
-
-def test_document_delete(rc: Reporter):
-    document = create_random_document(rc)
     rc.documents.delete(document.id)
     with pytest.raises(reporter.ReporterHttpError) as e:
         rc.documents.get(document.id)
         assert e.value.response_code == 404
-
-
-def test_document_get(rc: Reporter):
-    contents = helpers.rand_alphanum(32).encode()
-    document = rc.documents.create(
-        {
-            "documentable_type": "Finding",
-            "section": "description",
-        },
-        file=contents,
-    )
-    d = rc.documents.get(document.id)
-    assert contents == d
-
-
-def test_document_create_invalid(rc: Reporter):
-    with pytest.raises(reporter.ReporterHttpError):
-        # No file upload
-        rc.documents.create(
-            {
-                "documentable_type": "Finding",
-                "section": "description",
-            },
-        )
-
-
-def test_document_get_invalid(rc: Reporter):
-    with pytest.raises(reporter.ReporterHttpError):
-        rc.documents.get("does-not-exist")

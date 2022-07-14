@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Dict, List, Optional, Type, TYPE_CHECKING
+from typing import Any, Dict, Generic, List, Optional, Type, TYPE_CHECKING, TypeVar
 
 from reporter.base import RESTList, RESTManager, RESTObject
 from reporter.client import Reporter
@@ -15,16 +15,19 @@ __all__ = [
 ]
 
 
-class CreateMixin(object):
+O = TypeVar("O", bound=RESTObject)
+
+
+class CreateMixin(Generic[O]):
     _path: str
-    _obj_cls: Type[RESTObject]
+    _obj_cls: Type[O]
     reporter: Reporter
 
     def create(
         self,
         attrs: Dict[str, Any],
         file: Optional[Any] = None,
-    ) -> RESTObject:
+    ) -> O:
         """Create an object of type self._obj_cls.
 
         Args:
@@ -46,9 +49,9 @@ class CreateMixin(object):
         return self._obj_cls(self.reporter, result.json())
 
 
-class DeleteMixin(object):
+class DeleteMixin(Generic[O]):
     _path: str
-    _obj_cls: Type[RESTObject]
+    _obj_cls: Type[O]
     reporter: Reporter
 
     def delete(self, id: str):
@@ -60,17 +63,17 @@ class DeleteMixin(object):
         )
 
 
-class GetMixin(object):
+class GetMixin(Generic[O]):
     _path: str
-    _includes: Dict[str, Type[RESTObject | Sequence[RESTObject]]] = {}
-    _obj_cls: Type[RESTObject]
+    _includes: Dict[str, Type[O | Sequence[O]]] = {}
+    _obj_cls: Type[O]
     reporter: Reporter
 
     def get(
         self,
         id: str,
         include: List[str] = [],
-    ) -> RESTObject:
+    ) -> O:
         """Retrieve a single object.
 
         Expects a JSON response from the server.
@@ -97,9 +100,9 @@ class GetMixin(object):
         return self._obj_cls(self.reporter, result.json())
 
 
-class GetRawMixin(object):
+class GetRawMixin(Generic[O]):
     _path: str
-    _obj_cls: Type[RESTObject]
+    _obj_cls: Type[O]
     reporter: Reporter
 
     def get(self, id: str) -> bytes:
@@ -122,12 +125,12 @@ class GetRawMixin(object):
         return result.content
 
 
-class _ListMixin(object):
+class _ListMixin(Generic[O]):
     """Parent class for ListMixin and SearchMixin"""
 
     _path: str
-    _includes: Dict[str, Type[RESTObject | Sequence[RESTObject]]] = {}
-    _obj_cls: Type[RESTObject]
+    _includes: Dict[str, Type[O | Sequence[O]]] = {}
+    _obj_cls: Type[O]
     reporter: Reporter
 
     def _get_list(
@@ -247,16 +250,16 @@ class SearchMixin(_ListMixin):
         )
 
 
-class UpdateMixin(object):
+class UpdateMixin(Generic[O]):
     _path: str
-    _obj_cls: Type[RESTObject]
+    _obj_cls: Type[O]
     reporter: Reporter
 
     def update(
         self,
         id: str,
         attrs: Dict[str, Any],
-    ) -> RESTObject:
+    ) -> O:
         """Update an object of type self._obj_cls.
 
         Args:
