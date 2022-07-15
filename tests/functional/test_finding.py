@@ -1,5 +1,3 @@
-import time
-
 import pytest  # type: ignore
 
 import reporter
@@ -88,19 +86,18 @@ def test_finding_operations(rc: Reporter, assessment):
 
 
 def test_finding_template_operations(rc: Reporter):
+    assert len(rc.finding_templates.search("XSS")) > 0
+
     template = rc.finding_templates.create(
         {
             "title": "test_finding_template_operations",
             "is_vulnerability": False,
             "severity": 3,
-            "description": "hpcegruheqknphikb0m37xurszjp99r6",
+            "description": "foo",
         }
     )
 
     assert template in rc.finding_templates.list(filter={"id": template.id})
-    # Give Elasticsearch time to index
-    time.sleep(5)
-    assert template in rc.finding_templates.search("hpcegruheqknphikb0m37xurszjp99r6")
 
     rc.finding_templates.update(template.id, {"risk": "bar"})
     gotten = rc.finding_templates.get(template.id)
