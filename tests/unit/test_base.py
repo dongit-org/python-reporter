@@ -93,3 +93,26 @@ def test_object_include_same_attribute_as_manager(rc: Reporter):
         assert isinstance(child, FakeChildObject)
         assert child.id == "5"
         assert child.a == 12
+
+
+def test_object_dict(rc: Reporter):
+    obj = FakeObject(
+        rc,
+        {
+            "id": "1234",
+            "childObj": {"id": "1"},
+            "childObjs": [
+                {"id": "1"},
+                {"id": "2"},
+            ],
+        },
+    )
+
+    assert dict(obj) == {
+        "id": "1234",
+        "childObj": {"id": "1"},
+        "childObjs": [
+            {"id": "1"},
+            {"id": "2"},
+        ],
+    }

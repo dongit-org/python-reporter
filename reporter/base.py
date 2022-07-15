@@ -1,10 +1,10 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Any, Dict, Generic, Iterable, List, Optional, Type, TypeVar
 
 from reporter.client import Reporter
 
 
-class RESTObject(object):
+class RESTObject(Mapping):
     """Represents an object built from server data.
 
     Args:
@@ -31,6 +31,23 @@ class RESTObject(object):
             message = f"{type(self).__name__!r} object has no attribute '{attr}'"
             raise AttributeError(message) from exc
 
+    def __getitem__(self, attr: str) -> Any:
+        val = self._attrs[attr]
+        if isinstance(val, RESTObject):
+            return dict(self._attrs[attr])
+        elif isinstance(val, list) and len(val) > 0 and isinstance(val[0], RESTObject):
+            # We assume that either all elements of val are RESTObjects or none
+            # of them are.
+            return [dict(v) for v in val]
+        else:
+            return val
+
+    def __iter__(self) -> Any:
+        return iter(self._attrs)
+
+    def __len__(self) -> int:
+        return len(self._attrs)
+
     def __dir__(self) -> Iterable[str]:
         return set(self._attrs.keys()).union(super(RESTObject, self).__dir__())
 
@@ -38,9 +55,6 @@ class RESTObject(object):
         if not isinstance(other, RESTObject):
             return NotImplemented
         return self.id == other.id
-
-    def __contains__(self, item: str):
-        return item in self._attrs
 
     def _deserialize_includes(self):
         for include in self._includes:
