@@ -53,6 +53,7 @@ class Reporter(object):
         self.finding_templates = objects.FindingTemplateManager(self)
         self.output_files = objects.OutputFileManager(self)
         self.targets = objects.TargetManager(self)
+        self.user_groups = objects.UserGroupManager(self)
         self.users = objects.UserManager(self)
 
     def http_request(
