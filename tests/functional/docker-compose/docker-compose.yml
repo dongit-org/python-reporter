@@ -31,7 +31,7 @@ services:
       - ALL
     environment:
       - CONTAINER_ROLE=app
-      - API_RATE_LIMIT=0
+      - APP_URL=https://${REPORTER_HOST:-localhost}
     env_file:
       - php.env
 

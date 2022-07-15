@@ -1,4 +1,5 @@
 import pathlib
+import os
 
 import docker  # type: ignore
 import pytest  # type: ignore
@@ -17,19 +18,27 @@ def docker_compose_file(base_path):
     return base_path / "docker-compose/docker-compose.yml"
 
 
+@pytest.fixture(scope="session")
+def reporter_host():
+    if "REPORTER_HOST" in os.environ:
+        return os.environ["REPORTER_HOST"]
+    else:
+        return "localhost:8080"
+
+
 def is_up(url):
     try:
         response = requests.get(f"{url}/login")
         if response.status_code == 200:
             return True
-    except ConnectionError:
+    except (ConnectionError, ConnectionRefusedError):
         return False
 
 
 @pytest.fixture(scope="session")
-def rc(docker_services) -> Reporter:
+def rc(docker_services, reporter_host) -> Reporter:
     """Starts Reporter and returns a Reporter client instance."""
-    url = "http://localhost:8080"
+    url = f"http://{reporter_host}"
     docker_services.wait_until_responsive(
         timeout=300.0,
         pause=1,
