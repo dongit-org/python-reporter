@@ -1,6 +1,11 @@
 from reporter.base import RESTManager, RESTObject
 from reporter.mixins import UpdateMixin
 
+__all__ = [
+    "AssessmentPhase",
+    "AssessmentPhaseManager",
+]
+
 
 class AssessmentPhase(RESTObject):
     pass

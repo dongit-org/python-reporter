@@ -2,6 +2,13 @@ from reporter.base import RESTManager, RESTObject
 from reporter.mixins import CreateMixin, DeleteMixin
 
 
+__all__ = [
+    "OutputFile",
+    "OutputFileManager",
+    "AssessmentOutputFileManager",
+]
+
+
 class OutputFile(RESTObject):
     pass
 

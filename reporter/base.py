@@ -3,6 +3,12 @@ from typing import Any, Dict, Generic, Iterable, List, Optional, Type, TypeVar
 
 from reporter.client import Reporter
 
+__all__ = [
+    "RESTObject",
+    "RESTList",
+    "RESTManager",
+]
+
 
 class RESTObject(Mapping):
     """Represents an object built from server data.
@@ -18,6 +24,13 @@ class RESTObject(Mapping):
     _children: Dict[str, Type["RESTManager"]] = {}
 
     def __init__(self, reporter: Reporter, attrs: Dict[str, Any]) -> None:
+        """
+        Args:
+            reporter: The :class:`~reporter.Reporter` instance used by this object to
+                perform requests.
+            attrs: The attributes to assign to this object.
+
+        """
         self.reporter = reporter
         self._attrs = attrs
         for key, mgr_cls in self._children.items():

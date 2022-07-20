@@ -1,6 +1,11 @@
 from reporter.base import RESTManager, RESTObject
 from reporter.mixins import GetMixin, ListMixin
 
+__all__ = [
+    "AssessmentType",
+    "AssessmentTypeManager",
+]
+
 
 class AssessmentType(RESTObject):
     pass

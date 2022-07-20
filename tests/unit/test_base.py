@@ -4,8 +4,8 @@ from reporter import (
     Reporter,
     RESTManager,
     RESTObject,
-    GetMixin,
 )
+from reporter.mixins import GetMixin
 
 
 class FakeChildObject(RESTObject):

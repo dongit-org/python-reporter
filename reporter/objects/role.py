@@ -1,6 +1,12 @@
 from reporter.base import RESTManager, RESTObject
 from reporter.mixins import ListMixin
 
+__all__ = [
+    "Role",
+    "GlobalRoleManager",
+    "AssessmentRoleManager",
+]
+
 
 class Role(RESTObject):
     pass

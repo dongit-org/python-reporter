@@ -1,5 +1,3 @@
-"""Wrapper for the Reporter API."""
-
 from typing import Any, Dict, Optional
 
 import requests
@@ -7,12 +5,20 @@ import requests
 import reporter.exceptions
 
 
+__all__ = [
+    "Reporter",
+]
+
+
 class Reporter(object):
     """Represents a Reporter server connection.
 
-    Args:
-        url: The URL of the Reporter server (defaults to https://reporter.dongit.nl)
-        api_token: The user API token
+    Attributes:
+        api_token: The Reporter API token to use for authentication.
+        session: the ``requests.Session`` object used to make HTTP requests.
+        ssl_verify: Whether to verify the server's SSL certificate.
+        url: The URL of the Reporter server.
+
     """
 
     api_token: str
@@ -25,11 +31,19 @@ class Reporter(object):
         self,
         api_token: str,
         ssl_verify: bool = True,
-        url: Optional[str] = None,
+        url: str = "https://reporter.dongit.nl",
     ) -> None:
+        """Initialize the Reporter instance.
+
+        Args:
+            api_token: The Reporter API token to use for authentication.
+            ssl_verify: Whether to verify the server's SSL certificate.
+            url: The URL of the Reporter server.
+
+        """
         self.api_token = api_token
         self.ssl_verify = ssl_verify
-        self.url = url or "https://reporter.dongit.nl"
+        self.url = url
 
         self.session = requests.Session()
         self.session.headers.update(
@@ -68,20 +82,21 @@ class Reporter(object):
         """Make an HTTP request to the Reporter server.
 
         Args:
-            verb: The HTTP method to call ('get', 'post', 'put', 'delete')
-            path: Path to query ('findings')
-            headers: Extra HTTP headers; will overwrite default headers
-            query_data: Data to send as query string parameters
+            verb: The HTTP method to call (e.g. ``get``, ``post``, ``put``, ``delete``).
+            path: Path to query (e.g. ``findings/1`` for ``/api/v1/findings/1``).
+            headers: Extra HTTP headers; will overwrite default headers.
+            query_data: Data to send as query string parameters.
             post_data: Data to send in the body. This will be converted to JSON unless
-                files is not None.
-            files: The files to send in the request. If this is not None, then the
-                request will be a multipart/form-data request.
+                ``files`` is not ``None``.
+            files: The files to send in the request. If this is not ``None``, then the
+                request will be a ``multipart/form-data`` request.
 
         Returns:
-            A requests Response object
+            A requests Response object corresponding to the response from the Reporter
+            server.
 
         Raises:
-            ReporterHttpError: When the return code is not 2xx
+            ReporterHttpError: If the return code is not 2xx.
         """
 
         url = f"{self.url}/api/v1/{path}"

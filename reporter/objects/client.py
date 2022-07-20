@@ -3,6 +3,11 @@ from reporter.mixins import CreateMixin, DeleteMixin, GetMixin, ListMixin, Updat
 from reporter.objects.assessment import ClientAssessmentManager
 from reporter.objects.user_group import ClientUserGroupManager
 
+__all__ = [
+    "Client",
+    "ClientManager",
+]
+
 
 class Client(RESTObject):
     _children = {

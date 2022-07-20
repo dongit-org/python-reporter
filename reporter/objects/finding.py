@@ -1,6 +1,12 @@
 from reporter.base import RESTManager, RESTObject
 from reporter.mixins import CreateMixin, DeleteMixin, GetMixin, ListMixin, UpdateMixin
 
+__all__ = [
+    "Finding",
+    "FindingManager",
+    "AssessmentFindingManager",
+]
+
 
 class Finding(RESTObject):
     pass

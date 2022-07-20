@@ -28,11 +28,19 @@ class CreateMixin(Generic[O]):
         attrs: Dict[str, Any],
         file: Optional[Any] = None,
     ) -> O:
-        """Create an object of type self._obj_cls.
+        """Create a new object.
 
         Args:
-            attrs: Attributes for the created object
-            file: The file to upload when creating the object
+            attrs: Attributes for the created object.
+            file: A file to upload when creating the object, if any.
+
+        Returns:
+            The response from the server, serialized into the object type.
+
+        Raises:
+            ReporterHttpError: If raised by the underlying call to
+                :func:`reporter.Reporter.http_request`.
+
         """
 
         files = {"file": file} if file is not None else None
@@ -55,6 +63,16 @@ class DeleteMixin(Generic[O]):
     reporter: Reporter
 
     def delete(self, id: str):
+        """Delete an object.
+
+        Args:
+            id: The ID of the object to delete.
+
+        Raises:
+            ReporterHttpError: If raised by the underlying call to
+                :func:`reporter.Reporter.http_request`.
+
+        """
         path = f"{self._path}/{id}"
 
         self.reporter.http_request(
@@ -76,10 +94,16 @@ class GetMixin(Generic[O]):
     ) -> O:
         """Retrieve a single object.
 
-        Expects a JSON response from the server.
-
         Args:
-            id: object ID
+            id: The ID of the object to retrieve.
+
+        Returns:
+            The response from the server, serialized into the object type.
+
+        Raises:
+            ReporterHttpError: If raised by the underlying call to
+                :func:`reporter.Reporter.http_request`.
+
         """
 
         query_data = {}
@@ -108,10 +132,16 @@ class GetRawMixin(Generic[O]):
     def get(self, id: str) -> bytes:
         """Retrieve a single object.
 
-        Returns the raw response data.
-
         Args:
             id: Object ID
+
+        Returns:
+            The raw response data.
+
+        Raises:
+            ReporterHttpError: If raised by the underlying call to
+                :func:`reporter.Reporter.http_request`.
+
         """
 
         path = f"{self._path}/{id}"
@@ -154,6 +184,14 @@ class _ListMixin(Generic[O]):
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
             kwargs: Extra options to send to the server
+
+        Returns:
+            A RESTList of objects.
+
+        Raises:
+            ReporterHttpError: If raised by the underlying call to
+                :func:`reporter.Reporter.http_request`.
+
         """
         path = self._path + extra_path
 
@@ -206,6 +244,14 @@ class ListMixin(_ListMixin):
             include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
+
+        Returns:
+            A RESTList of objects.
+
+        Raises:
+            ReporterHttpError: If raised by the underlying call to
+                :func:`reporter.Reporter.http_request`.
+
         """
         return self._get_list(
             extra_path="",
@@ -237,6 +283,14 @@ class SearchMixin(_ListMixin):
             include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
+
+        Returns:
+            A RESTList of objects.
+
+        Raises:
+            ReporterHttpError: If raised by the underlying call to
+                :func:`reporter.Reporter.http_request`.
+
         """
 
         return self._get_list(
@@ -265,6 +319,14 @@ class UpdateMixin(Generic[O]):
         Args:
             id: ID of the object to update
             attrs: Attributes to update
+
+        Returns:
+            The response from the server, serialized into the object type.
+
+        Raises:
+            ReporterHttpError: If raised by the underlying call to
+                :func:`reporter.Reporter.http_request`.
+
         """
 
         path = f"{self._path}/{id}"

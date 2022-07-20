@@ -5,6 +5,8 @@ from reporter import (
     RESTList,
     RESTManager,
     RESTObject,
+)
+from reporter.mixins import (
     CreateMixin,
     DeleteMixin,
     GetMixin,

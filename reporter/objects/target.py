@@ -1,6 +1,12 @@
 from reporter.base import RESTManager, RESTObject
 from reporter.mixins import CreateMixin, DeleteMixin, GetMixin, ListMixin, UpdateMixin
 
+__all__ = [
+    "Target",
+    "TargetManager",
+    "AssessmentTargetManager",
+]
+
 
 class Target(RESTObject):
     pass

@@ -1,6 +1,11 @@
 from reporter.base import RESTManager, RESTObject
 from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin
 
+__all__ = [
+    "User",
+    "UserManager",
+]
+
 
 class User(RESTObject):
     pass

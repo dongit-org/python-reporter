@@ -6,6 +6,13 @@ from reporter.objects.output_file import AssessmentOutputFileManager
 from reporter.objects.target import AssessmentTargetManager
 
 
+__all__ = [
+    "Assessment",
+    "AssessmentManager",
+    "ClientAssessmentManager",
+]
+
+
 class Assessment(RESTObject):
     _children = {
         "findings": AssessmentFindingManager,

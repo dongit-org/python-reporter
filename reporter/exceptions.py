@@ -1,7 +1,14 @@
 from typing import Optional, Union
 
+__all__ = [
+    "ReporterError",
+    "ReporterHttpError",
+]
+
 
 class ReporterError(Exception):
+    """Base class for Reporter errors."""
+
     def __init__(
         self,
         error_message: Union[bytes, str] = "",

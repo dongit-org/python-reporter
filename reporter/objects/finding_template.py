@@ -8,6 +8,11 @@ from reporter.mixins import (
     UpdateMixin,
 )
 
+__all__ = [
+    "FindingTemplate",
+    "FindingTemplateManager",
+]
+
 
 class FindingTemplate(RESTObject):
     pass
