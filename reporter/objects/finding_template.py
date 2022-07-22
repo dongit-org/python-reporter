@@ -1,11 +1,10 @@
+# pylint: disable = missing-module-docstring, missing-class-docstring
+
 from reporter.base import RESTManager, RESTObject
 from reporter.mixins import (
-    CreateMixin,
-    DeleteMixin,
-    GetMixin,
+    CRUDMixin,
     ListMixin,
     SearchMixin,
-    UpdateMixin,
 )
 
 __all__ = [
@@ -20,12 +19,9 @@ class FindingTemplate(RESTObject):
 
 class FindingTemplateManager(
     RESTManager,
-    CreateMixin,
-    DeleteMixin,
-    GetMixin,
+    CRUDMixin,
     ListMixin,
     SearchMixin,
-    UpdateMixin,
 ):
     _path = "finding-templates"
     _obj_cls = FindingTemplate

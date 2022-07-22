@@ -1,3 +1,5 @@
+"""This module contains exceptions raised by this library."""
+
 from typing import Optional, Union
 
 __all__ = [
@@ -28,9 +30,8 @@ class ReporterError(Exception):
     def __str__(self) -> str:
         if self.response_code is not None:
             return f"{self.response_code}: {self.error_message}"
-        else:
-            return f"{self.error_message}"
+        return f"{self.error_message}"
 
 
 class ReporterHttpError(ReporterError):
-    pass
+    """Raised on unsuccessful HTTP response."""

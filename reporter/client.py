@@ -1,3 +1,5 @@
+"""This module exposes the :class:`~reporter.client.Reporter` object."""
+
 from typing import Any, Dict, Optional
 
 import requests
@@ -10,7 +12,7 @@ __all__ = [
 ]
 
 
-class Reporter(object):
+class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-public-methods
     """Represents a Reporter server connection.
 
     Attributes:
@@ -54,7 +56,9 @@ class Reporter(object):
         )
 
         # Delay import until now to avoid circular import errors
-        import reporter.objects as objects
+        from reporter import (  # pylint: disable = import-outside-toplevel, cyclic-import
+            objects,
+        )
 
         self.activities = objects.ActivityManager(self)
         self.assessments = objects.AssessmentManager(self)
@@ -70,11 +74,11 @@ class Reporter(object):
         self.user_groups = objects.UserGroupManager(self)
         self.users = objects.UserManager(self)
 
-    def http_request(
+    def http_request(  # pylint: disable = too-many-arguments
         self,
         verb: str,
         path: str,
-        headers: Dict[str, str] = {},
+        headers: Optional[Dict[str, str]] = None,
         query_data: Optional[Dict[str, Any]] = None,
         post_data: Optional[Dict[str, Any]] = None,
         files: Optional[Dict[str, Any]] = None,
@@ -109,7 +113,7 @@ class Reporter(object):
             data = None
             json = post_data
 
-        result = self.session.request(
+        result = self.session.request(  # pylint: disable = too-many-arguments
             method=verb,
             url=url,
             headers=headers,

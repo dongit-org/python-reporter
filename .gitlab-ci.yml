@@ -24,6 +24,10 @@ mypy:
   script:
     - poetry run mypy .
 
+pylint:
+  script:
+    - poetry run pylint reporter
+
 pytest:
   services:
     - name: docker:dind

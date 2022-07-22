@@ -1,3 +1,7 @@
+"""RESTObject _includes - see RESTObject._deserialize_includes"""
+
+# pylint: disable = wildcard-import, unused-wildcard-import, protected-access
+
 from reporter.objects import *
 
 Activity._includes = {

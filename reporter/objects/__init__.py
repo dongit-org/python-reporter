@@ -1,3 +1,10 @@
+"""Reporter objects.
+
+Instances of RESTObject and RESTManager corresponding to API models and their managers
+respectively.
+
+"""
+
 from .activity import *
 from .assessment import *
 from .assessment_phase import *

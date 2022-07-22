@@ -1,3 +1,12 @@
+"""Mixins for model CRUD operations.
+
+Instances of RESTManager should derive these mixins according to the operations possible
+on their corresponding RESTObject in the Reporter API.
+
+"""
+
+# pylint: disable = too-few-public-methods
+
 from collections.abc import Sequence
 from typing import Any, Dict, Generic, List, Optional, Type, TYPE_CHECKING, TypeVar
 
@@ -7,6 +16,7 @@ from reporter.client import Reporter
 
 __all__ = [
     "CreateMixin",
+    "CRUDMixin",
     "DeleteMixin",
     "GetMixin",
     "ListMixin",
@@ -19,6 +29,8 @@ O = TypeVar("O", bound=RESTObject)
 
 
 class CreateMixin(Generic[O]):
+    """Manager can create object."""
+
     _path: str
     _obj_cls: Type[O]
     reporter: Reporter
@@ -58,22 +70,24 @@ class CreateMixin(Generic[O]):
 
 
 class DeleteMixin(Generic[O]):
+    """Manager can delete object."""
+
     _path: str
     _obj_cls: Type[O]
     reporter: Reporter
 
-    def delete(self, id: str):
+    def delete(self, id_: str):
         """Delete an object.
 
         Args:
-            id: The ID of the object to delete.
+            id_: The ID of the object to delete.
 
         Raises:
             ReporterHttpError: If raised by the underlying call to
                 :func:`reporter.Reporter.http_request`.
 
         """
-        path = f"{self._path}/{id}"
+        path = f"{self._path}/{id_}"
 
         self.reporter.http_request(
             verb="delete",
@@ -82,6 +96,8 @@ class DeleteMixin(Generic[O]):
 
 
 class GetMixin(Generic[O]):
+    """Manager can retrieve object."""
+
     _path: str
     _includes: Dict[str, Type[O | Sequence[O]]] = {}
     _obj_cls: Type[O]
@@ -89,13 +105,13 @@ class GetMixin(Generic[O]):
 
     def get(
         self,
-        id: str,
-        include: List[str] = [],
+        id_: str,
+        include: Optional[List[str]] = None,
     ) -> O:
         """Retrieve a single object.
 
         Args:
-            id: The ID of the object to retrieve.
+            id_: The ID of the object to retrieve.
 
         Returns:
             The response from the server, serialized into the object type.
@@ -110,7 +126,7 @@ class GetMixin(Generic[O]):
 
         if include:
             query_data["include"] = ",".join(include)
-        path = f"{self._path}/{id}"
+        path = f"{self._path}/{id_}"
 
         result = self.reporter.http_request(
             verb="get",
@@ -125,15 +141,17 @@ class GetMixin(Generic[O]):
 
 
 class GetRawMixin(Generic[O]):
+    """Manager can retrieve raw file contents."""
+
     _path: str
     _obj_cls: Type[O]
     reporter: Reporter
 
-    def get(self, id: str) -> bytes:
+    def get(self, id_: str) -> bytes:
         """Retrieve a single object.
 
         Args:
-            id: Object ID
+            id_: Object ID
 
         Returns:
             The raw response data.
@@ -144,7 +162,7 @@ class GetRawMixin(Generic[O]):
 
         """
 
-        path = f"{self._path}/{id}"
+        path = f"{self._path}/{id_}"
 
         result = self.reporter.http_request(
             verb="get",
@@ -156,19 +174,19 @@ class GetRawMixin(Generic[O]):
 
 
 class _ListMixin(Generic[O]):
-    """Parent class for ListMixin and SearchMixin"""
+    """Parent class for ListMixin and SearchMixin."""
 
     _path: str
     _includes: Dict[str, Type[O | Sequence[O]]] = {}
     _obj_cls: Type[O]
     reporter: Reporter
 
-    def _get_list(
+    def _get_list(  # pylint: disable = too-many-arguments, too-many-locals
         self,
         extra_path: str = "",
-        filter: Dict[str, str] = {},
-        sort: List[str] = [],
-        include: List[str] = [],
+        filter: Optional[Dict[str, str]] = None,  # pylint: disable = redefined-builtin
+        sort: Optional[List[str]] = None,
+        include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
         **kwargs: Any,
@@ -197,20 +215,22 @@ class _ListMixin(Generic[O]):
 
         query_data = kwargs
 
+        if filter is None:
+            filter = {}
         for (key, value) in filter.items():
             query_data[f"filter[{key}]"] = value
 
         if include:
             query_data["include"] = ",".join(include)
 
-        if sort != []:
+        if sort is not None and sort != []:
             query_data["sort"] = ",".join(sort)
 
         if page is not None:
-            query_data[f"page[number]"] = str(page)
+            query_data["page[number]"] = str(page)
 
         if page_size is not None:
-            query_data[f"page[size]"] = str(page_size)
+            query_data["page[size]"] = str(page_size)
 
         result = self.reporter.http_request(
             verb="get", path=path, query_data=query_data
@@ -227,11 +247,13 @@ class _ListMixin(Generic[O]):
 
 
 class ListMixin(_ListMixin):
-    def list(
+    """Manager can list objects."""
+
+    def list(  # pylint: disable = too-many-arguments
         self,
-        filter: Dict[str, str] = {},
-        sort: List[str] = [],
-        include: List[str] = [],
+        filter: Optional[Dict[str, str]] = None,  # pylint: disable = redefined-builtin
+        sort: Optional[List[str]] = None,
+        include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
     ) -> RESTList:
@@ -264,12 +286,14 @@ class ListMixin(_ListMixin):
 
 
 class SearchMixin(_ListMixin):
-    def search(
+    """Manager can search for objects."""
+
+    def search(  # pylint: disable = too-many-arguments
         self,
         term: Optional[str] = None,
-        filter: Dict[str, str] = {},
-        sort: List[str] = [],
-        include: List[str] = [],
+        filter: Optional[Dict[str, str]] = None,  # pylint: disable = redefined-builtin
+        sort: Optional[List[str]] = None,
+        include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
     ) -> RESTList:
@@ -305,19 +329,21 @@ class SearchMixin(_ListMixin):
 
 
 class UpdateMixin(Generic[O]):
+    """Manager can update objects."""
+
     _path: str
     _obj_cls: Type[O]
     reporter: Reporter
 
     def update(
         self,
-        id: str,
+        id_: str,
         attrs: Dict[str, Any],
     ) -> O:
         """Update an object of type self._obj_cls.
 
         Args:
-            id: ID of the object to update
+            id_: ID of the object to update
             attrs: Attributes to update
 
         Returns:
@@ -329,7 +355,7 @@ class UpdateMixin(Generic[O]):
 
         """
 
-        path = f"{self._path}/{id}"
+        path = f"{self._path}/{id_}"
 
         result = self.reporter.http_request(
             verb="patch",
@@ -340,3 +366,7 @@ class UpdateMixin(Generic[O]):
         if TYPE_CHECKING:
             assert isinstance(self, RESTManager)
         return self._obj_cls(self.reporter, result.json())
+
+
+class CRUDMixin(CreateMixin, GetMixin, UpdateMixin, DeleteMixin):
+    """Composite class of other mixins."""

@@ -1,5 +1,7 @@
+# pylint: disable = missing-module-docstring, missing-class-docstring
+
 from reporter.base import RESTManager, RESTObject
-from reporter.mixins import CreateMixin, DeleteMixin, GetMixin, ListMixin, UpdateMixin
+from reporter.mixins import CRUDMixin, ListMixin
 from reporter.objects.assessment import ClientAssessmentManager
 from reporter.objects.user_group import ClientUserGroupManager
 
@@ -18,11 +20,8 @@ class Client(RESTObject):
 
 class ClientManager(
     RESTManager,
-    CreateMixin,
-    DeleteMixin,
-    GetMixin,
+    CRUDMixin,
     ListMixin,
-    UpdateMixin,
 ):
     _path = "clients"
     _obj_cls = Client

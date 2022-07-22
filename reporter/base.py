@@ -1,3 +1,10 @@
+"""Base classes for API models.
+
+This module contains base classes that should be inherited by objects
+representing API models, managers of these objects, and lists of these objects.
+
+"""
+
 from collections.abc import Mapping, Sequence
 from typing import Any, Dict, Generic, Iterable, List, Optional, Type, TypeVar
 
@@ -48,12 +55,11 @@ class RESTObject(Mapping):
         val = self._attrs[attr]
         if isinstance(val, RESTObject):
             return dict(self._attrs[attr])
-        elif isinstance(val, list) and len(val) > 0 and isinstance(val[0], RESTObject):
+        if isinstance(val, list) and len(val) > 0 and isinstance(val[0], RESTObject):
             # We assume that either all elements of val are RESTObjects or none
             # of them are.
             return [dict(v) for v in val]
-        else:
-            return val
+        return val
 
     def __iter__(self) -> Any:
         return iter(self._attrs)
@@ -62,7 +68,7 @@ class RESTObject(Mapping):
         return len(self._attrs)
 
     def __dir__(self) -> Iterable[str]:
-        return set(self._attrs.keys()).union(super(RESTObject, self).__dir__())
+        return set(self._attrs.keys()).union(super().__dir__())
 
     def __eq__(self, other: object):
         if not isinstance(other, RESTObject):
@@ -70,19 +76,19 @@ class RESTObject(Mapping):
         return self.id == other.id
 
     def _deserialize_includes(self):
-        for include in self._includes:
+        for include, cls in self._includes.items():
             if include in self:
                 if isinstance(self._attrs[include], List):
                     self._attrs[include] = [
-                        self._includes[include](self.reporter, json_obj)
+                        cls(self.reporter, json_obj)
                         for json_obj in self._attrs[include]
                     ]
                     if include in self._children:
-                        getattr(self, include)._list = self._attrs[include]
+                        getattr(  # pylint: disable = protected-access
+                            self, include
+                        )._list = self._attrs[include]
                 else:
-                    self._attrs[include] = self._includes[include](
-                        self.reporter, self._attrs[include]
-                    )
+                    self._attrs[include] = cls(self.reporter, self._attrs[include])
 
 
 O = TypeVar("O", bound=RESTObject)
