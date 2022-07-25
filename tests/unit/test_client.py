@@ -1,7 +1,11 @@
+import timeit
+
 import pytest  # type: ignore
 import responses
 
 from reporter import Reporter, ReporterHttpError
+from reporter.base import RESTManager, RESTObject
+from reporter.mixins import ListMixin
 
 
 @responses.activate
@@ -143,3 +147,52 @@ def test_http_exception(rc: Reporter):
         assert e.value.response_code == 400
         assert e.value.error_message == json
         assert e.value.response_body == json
+
+
+@responses.activate
+def test_rate_limit(rc: Reporter):
+    class FakeObject(RESTObject):
+        pass
+
+    class FakeManager(RESTManager, ListMixin):
+        _path = "tests"
+        _obj_cls = FakeObject
+
+    url = "https://localhost/api/v1/tests"
+
+    for _ in range(4):
+        responses.add(
+            method=responses.GET,
+            url=url,
+            status=429,
+            headers={"retry-after": "1"},
+        )
+    responses.add(
+        method=responses.GET,
+        url=url,
+        status=200,
+        json={"data": {}, "links": {}, "meta": {}},
+    )
+
+    mgr = FakeManager(rc)
+
+    start = timeit.default_timer()
+    with pytest.raises(ReporterHttpError) as e:
+        mgr.list()
+    end = timeit.default_timer()
+    assert 1 < end - start < 2
+    assert e.value.response_code == 429
+
+    start = timeit.default_timer()
+    with pytest.raises(ReporterHttpError) as e:
+        mgr.list(obey_rate_limit=False)
+    end = timeit.default_timer()
+    assert end - start < 1
+    assert e.value.response_code == 429
+
+    start = timeit.default_timer()
+    mgr.list()
+    end = timeit.default_timer()
+    assert 1 < end - start < 2
+
+    responses.assert_call_count(url, 5)

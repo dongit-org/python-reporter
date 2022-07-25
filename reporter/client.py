@@ -1,6 +1,8 @@
 """This module exposes the :class:`~reporter.client.Reporter` object."""
 
+import time
 from typing import Any, Dict, Optional
+from typing_extensions import TYPE_CHECKING
 
 import requests
 
@@ -82,6 +84,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         query_data: Optional[Dict[str, Any]] = None,
         post_data: Optional[Dict[str, Any]] = None,
         files: Optional[Dict[str, Any]] = None,
+        obey_rate_limit=True,
     ) -> requests.Response:
         """Make an HTTP request to the Reporter server.
 
@@ -94,6 +97,9 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
                 ``files`` is not ``None``.
             files: The files to send in the request. If this is not ``None``, then the
                 request will be a ``multipart/form-data`` request.
+            obey_rate_limit: If ``True``, when receiving a 429 response, sleep
+                for the amount of seconds specified in the response ``Retry-After``
+                header before retrying the request.
 
         Returns:
             A requests Response object corresponding to the response from the Reporter
@@ -113,16 +119,24 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
             data = None
             json = post_data
 
-        result = self.session.request(  # pylint: disable = too-many-arguments
-            method=verb,
-            url=url,
-            headers=headers,
-            params=query_data,
-            data=data,
-            json=json,
-            files=files,
-            verify=self.ssl_verify,
-        )
+        for i in range(2):
+            result = self.session.request(  # pylint: disable = too-many-arguments
+                method=verb,
+                url=url,
+                headers=headers,
+                params=query_data,
+                data=data,
+                json=json,
+                files=files,
+                verify=self.ssl_verify,
+            )
+            if obey_rate_limit and result.status_code == 429 and i != 1:
+                time.sleep(int(result.headers["Retry-After"]))
+                continue
+            break
+
+        if TYPE_CHECKING:
+            assert isinstance(result, requests.Response)  # type: ignore
 
         if 200 <= result.status_code < 300:
             return result

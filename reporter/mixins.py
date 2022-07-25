@@ -39,12 +39,15 @@ class CreateMixin(Generic[O]):
         self,
         attrs: Dict[str, Any],
         file: Optional[Any] = None,
+        **kwargs: Any,
     ) -> O:
         """Create a new object.
 
         Args:
             attrs: Attributes for the created object.
             file: A file to upload when creating the object, if any.
+            kwargs: Extra options to pass to the underlying
+                :func:`reporter.Reporter.http_request` call.
 
         Returns:
             The response from the server, serialized into the object type.
@@ -62,6 +65,7 @@ class CreateMixin(Generic[O]):
             path=self._path,
             post_data=attrs,
             files=files,
+            **kwargs,
         )
 
         if TYPE_CHECKING:
@@ -76,11 +80,17 @@ class DeleteMixin(Generic[O]):
     _obj_cls: Type[O]
     reporter: Reporter
 
-    def delete(self, id_: str):
+    def delete(
+        self,
+        id_: str,
+        **kwargs: Any,
+    ):
         """Delete an object.
 
         Args:
             id_: The ID of the object to delete.
+            kwargs: Extra options to pass to the underlying
+                :func:`reporter.Reporter.http_request` call.
 
         Raises:
             ReporterHttpError: If raised by the underlying call to
@@ -92,6 +102,7 @@ class DeleteMixin(Generic[O]):
         self.reporter.http_request(
             verb="delete",
             path=path,
+            **kwargs,
         )
 
 
@@ -107,11 +118,15 @@ class GetMixin(Generic[O]):
         self,
         id_: str,
         include: Optional[List[str]] = None,
+        **kwargs: Any,
     ) -> O:
         """Retrieve a single object.
 
         Args:
             id_: The ID of the object to retrieve.
+            include: Related data to include in the response.
+            kwargs: Extra options to pass to the underlying
+                :func:`reporter.Reporter.http_request` call.
 
         Returns:
             The response from the server, serialized into the object type.
@@ -132,6 +147,7 @@ class GetMixin(Generic[O]):
             verb="get",
             path=path,
             query_data=query_data,
+            **kwargs,
         )
 
         if TYPE_CHECKING:
@@ -147,11 +163,17 @@ class GetRawMixin(Generic[O]):
     _obj_cls: Type[O]
     reporter: Reporter
 
-    def get(self, id_: str) -> bytes:
+    def get(
+        self,
+        id_: str,
+        **kwargs: Any,
+    ) -> bytes:
         """Retrieve a single object.
 
         Args:
             id_: Object ID
+            kwargs: Extra options to pass to the underlying
+                :func:`reporter.Reporter.http_request` call.
 
         Returns:
             The raw response data.
@@ -168,6 +190,7 @@ class GetRawMixin(Generic[O]):
             verb="get",
             path=path,
             headers={"Accept": "*/*"},
+            **kwargs,
         )
 
         return result.content
@@ -184,6 +207,7 @@ class _ListMixin(Generic[O]):
     def _get_list(  # pylint: disable = too-many-arguments, too-many-locals
         self,
         extra_path: str = "",
+        term: Optional[str] = None,
         filter: Optional[Dict[str, str]] = None,  # pylint: disable = redefined-builtin
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
@@ -195,13 +219,15 @@ class _ListMixin(Generic[O]):
 
         Args:
             extra_path: Extra text to add to the request URL path
+            term: A search term.
             filter: query string parameters for HTTP request of the form
                 filter[field]
             sort: How to sort retrieved items
             include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
-            kwargs: Extra options to send to the server
+            kwargs: Extra options to pass to the underlying
+                :func:`reporter.Reporter.http_request` call.
 
         Returns:
             A RESTList of objects.
@@ -213,7 +239,10 @@ class _ListMixin(Generic[O]):
         """
         path = self._path + extra_path
 
-        query_data = kwargs
+        query_data = {}
+
+        if term is not None:
+            query_data["term"] = term
 
         if filter is None:
             filter = {}
@@ -233,7 +262,10 @@ class _ListMixin(Generic[O]):
             query_data["page[size]"] = str(page_size)
 
         result = self.reporter.http_request(
-            verb="get", path=path, query_data=query_data
+            verb="get",
+            path=path,
+            query_data=query_data,
+            **kwargs,
         )
 
         json = result.json()
@@ -256,6 +288,7 @@ class ListMixin(_ListMixin):
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
+        **kwargs: Any,
     ) -> RESTList:
         """Retrieve a list of objects.
 
@@ -266,6 +299,8 @@ class ListMixin(_ListMixin):
             include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
+            kwargs: Extra options to pass to the underlying
+                :func:`reporter.Reporter.http_request` call.
 
         Returns:
             A RESTList of objects.
@@ -282,6 +317,7 @@ class ListMixin(_ListMixin):
             include=include,
             page=page,
             page_size=page_size,
+            **kwargs,
         )
 
 
@@ -296,6 +332,7 @@ class SearchMixin(_ListMixin):
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
+        **kwargs: Any,
     ) -> RESTList:
         """Search for a list of objects.
 
@@ -307,6 +344,8 @@ class SearchMixin(_ListMixin):
             include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
+            kwargs: Extra options to pass to the underlying
+                :func:`reporter.Reporter.http_request` call.
 
         Returns:
             A RESTList of objects.
@@ -325,6 +364,7 @@ class SearchMixin(_ListMixin):
             page=page,
             page_size=page_size,
             term=term,
+            **kwargs,
         )
 
 
@@ -339,12 +379,15 @@ class UpdateMixin(Generic[O]):
         self,
         id_: str,
         attrs: Dict[str, Any],
+        **kwargs: Any,
     ) -> O:
         """Update an object of type self._obj_cls.
 
         Args:
             id_: ID of the object to update
             attrs: Attributes to update
+            kwargs: Extra options to pass to the underlying
+                :func:`reporter.Reporter.http_request` call.
 
         Returns:
             The response from the server, serialized into the object type.
@@ -361,6 +404,7 @@ class UpdateMixin(Generic[O]):
             verb="patch",
             path=path,
             post_data=attrs,
+            **kwargs,
         )
 
         if TYPE_CHECKING:
