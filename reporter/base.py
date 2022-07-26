@@ -77,18 +77,19 @@ class RESTObject(Mapping):
 
     def _deserialize_includes(self):
         for include, cls in self._includes.items():
-            if include in self:
-                if isinstance(self._attrs[include], List):
-                    self._attrs[include] = [
-                        cls(self.reporter, json_obj)
-                        for json_obj in self._attrs[include]
-                    ]
-                    if include in self._children:
-                        getattr(  # pylint: disable = protected-access
-                            self, include
-                        )._list = self._attrs[include]
-                else:
-                    self._attrs[include] = cls(self.reporter, self._attrs[include])
+            if include not in self:
+                continue
+
+            if isinstance(self._attrs[include], List):
+                self._attrs[include] = [
+                    cls(self.reporter, json_obj) for json_obj in self._attrs[include]
+                ]
+                if include in self._children:
+                    getattr(  # pylint: disable = protected-access
+                        self, include
+                    )._list = self._attrs[include]
+            else:
+                self._attrs[include] = cls(self.reporter, self._attrs[include])
 
 
 O = TypeVar("O", bound=RESTObject)
