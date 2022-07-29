@@ -34,8 +34,8 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
     def __init__(
         self,
         api_token: str,
+        url: str,
         ssl_verify: bool = True,
-        url: str = "https://reporter.dongit.nl",
     ) -> None:
         """Initialize the Reporter instance.
 

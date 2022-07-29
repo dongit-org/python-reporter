@@ -8,12 +8,12 @@ Getting Started
 
 To use this library to interface with the Reporter API, you first need to
 instantiate a client. You will need to specify the URL to your Reporter
-instance (e.g. ``https://reporter.dongit.nl``) and your API token.
+instance (e.g. ``https://reporter.example.com``) and your API token.
 
 .. code:: python
 
    from reporter import Reporter
-   rc = Reporter(url="https://reporter.dongit.nl", api_token="secret")
+   rc = Reporter(url="https://reporter.example.com", api_token="secret")
 
 You can now perform operations on the Reporter API, depending on the
 permissions of your API token.
