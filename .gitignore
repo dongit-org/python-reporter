@@ -1,4 +1,6 @@
 __pycache__/
 
+/dist
+
 /.coverage
 /poetry.lock
