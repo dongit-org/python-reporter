@@ -7,8 +7,18 @@ on their corresponding RESTObject in the Reporter API.
 
 # pylint: disable = too-few-public-methods
 
-from collections.abc import Sequence
-from typing import Any, Dict, Generic, List, Optional, Type, TYPE_CHECKING, TypeVar
+from typing import (
+    Any,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Type,
+    TYPE_CHECKING,
+    TypeVar,
+    Sequence,
+    Union,
+)
 
 from reporter.base import RESTList, RESTManager, RESTObject
 from reporter.client import Reporter
@@ -110,7 +120,7 @@ class GetMixin(Generic[O]):
     """Manager can retrieve object."""
 
     _path: str
-    _includes: Dict[str, Type[O | Sequence[O]]] = {}
+    _includes: Dict[str, Type[Union[O, Sequence[O]]]] = {}
     _obj_cls: Type[O]
     reporter: Reporter
 
@@ -200,7 +210,7 @@ class _ListMixin(Generic[O]):
     """Parent class for ListMixin and SearchMixin."""
 
     _path: str
-    _includes: Dict[str, Type[O | Sequence[O]]] = {}
+    _includes: Dict[str, Type[Union[O, Sequence[O]]]] = {}
     _obj_cls: Type[O]
     reporter: Reporter
 
