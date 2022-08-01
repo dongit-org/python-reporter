@@ -1,0 +1,24 @@
+runs:
+  using: composite
+  steps:
+    - name: Cache Poetry install and Poetry virtualenv
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: poetry
+    - name: Install Poetry
+      run: pip install --upgrade poetry
+      shell: bash
+    - uses: actions/setup-python@v4
+      with:
+        # We do not use the built-in caching functionality because it does not
+        # work without committing the poetry.lock file.
+        python-version: "3.7"
+    - name: Cache Poetry virtualenv
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pypoetry/virtualenvs
+        key: poetry-venv-${{ github.ref_name }}
+    - name: Poetry install
+      run: poetry update
+      shell: bash
