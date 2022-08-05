@@ -1,0 +1,39 @@
+name: test
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true 
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  PY_COLORS: 1
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    needs: []
+    steps:
+      - uses: actions/checkout@v3
+      - name: Perform test setup
+        uses: ./.github/actions/test-setup
+      - run: poetry run mypy .
+      - run: poetry run pylint reporter
+      - run: poetry run black --check .
+  unit:
+    runs-on: ubuntu-latest
+    needs: []
+    steps:
+      - uses: actions/checkout@v3
+      - name: Perform test setup
+        uses: ./.github/actions/test-setup
+      - name: Run unit tests
+        run: poetry run coverage run --source=reporter -m pytest -sv tests/unit/
+      - name: Output code coverage report
+        run: poetry run coverage report
