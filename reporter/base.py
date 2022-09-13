@@ -11,13 +11,13 @@ from typing import Any, Dict, Generic, Iterable, List, Optional, Type, TypeVar
 from reporter.client import Reporter
 
 __all__ = [
-    "RESTObject",
-    "RESTList",
-    "RESTManager",
+    "RestObject",
+    "RestList",
+    "RestManager",
 ]
 
 
-class RESTObject(Mapping):
+class RestObject(Mapping):
     """Represents an object built from server data.
 
     Args:
@@ -27,8 +27,8 @@ class RESTObject(Mapping):
     reporter: Reporter
 
     _attrs: Dict[str, Any]
-    _includes: Dict[str, Type["RESTObject"]] = {}
-    _children: Dict[str, Type["RESTManager"]] = {}
+    _includes: Dict[str, Type["RestObject"]] = {}
+    _children: Dict[str, Type["RestManager"]] = {}
 
     def __init__(self, reporter: Reporter, attrs: Dict[str, Any]) -> None:
         """
@@ -53,10 +53,10 @@ class RESTObject(Mapping):
 
     def __getitem__(self, attr: str) -> Any:
         val = self._attrs[attr]
-        if isinstance(val, RESTObject):
+        if isinstance(val, RestObject):
             return dict(self._attrs[attr])
-        if isinstance(val, list) and len(val) > 0 and isinstance(val[0], RESTObject):
-            # We assume that either all elements of val are RESTObjects or none
+        if isinstance(val, list) and len(val) > 0 and isinstance(val[0], RestObject):
+            # We assume that either all elements of val are RestObjects or none
             # of them are.
             return [dict(v) for v in val]
         return val
@@ -71,7 +71,7 @@ class RESTObject(Mapping):
         return set(self._attrs.keys()).union(super().__dir__())
 
     def __eq__(self, other: object):
-        if not isinstance(other, RESTObject):
+        if not isinstance(other, RestObject):
             return NotImplemented
         return self.id == other.id
 
@@ -92,16 +92,16 @@ class RESTObject(Mapping):
                 self._attrs[include] = cls(self.reporter, self._attrs[include])
 
 
-O = TypeVar("O", bound=RESTObject)
+O = TypeVar("O", bound=RestObject)
 
 
-class RESTList(Sequence, Generic[O]):
+class RestList(Sequence, Generic[O]):
     """Represents a list of objects built from server data.
 
     Includes associated links and metadata.
 
     Args:
-        data: List of RESTObject instances
+        data: List of RestObject instances
         links: Dict of links (see Reporter API docs)
         meta: Dict of metadata (see Reporter API docs)
     """
@@ -127,37 +127,37 @@ class RESTList(Sequence, Generic[O]):
         return len(self._data)
 
 
-class RESTManager(Sequence, Generic[O]):
-    """Base class for managers of RESTObjects."""
+class RestManager(Sequence, Generic[O]):
+    """Base class for managers of RestObjects."""
 
     reporter: Reporter
 
-    _parent: Optional[RESTObject]
+    _parent: Optional[RestObject]
     _parent_attrs: Dict[str, str]
     _path: str
     _computed_path: str
 
     # We need to consider the case that an instance of this class is assigned
-    # to an attribute of an instance `r` of RESTObject with the same name as a
+    # to an attribute of an instance `r` of RestObject with the same name as a
     # key in `r._includes`. This occurs e.g. for
-    # `Assessment._children["targets"]`. Hence we make RESTManager derive
+    # `Assessment._children["targets"]`. Hence we make RestManager derive
     # collections.abc.Sequence and implement the required methods, so that this
     # class exposes a convenient API for the included list. We assume that this
     # can only happen if this class is assigned to an attribute of `r` that is
     # a plural noun (e.g. "targets" instead of "target").
     _obj_cls: Type[O]
-    _list: List[RESTObject] = []
+    _list: List[RestObject] = []
 
     def __init__(
         self,
         reporter: Reporter,
-        parent: Optional[RESTObject] = None,
+        parent: Optional[RestObject] = None,
     ) -> None:
-        """RESTManager constructor
+        """RestManager constructor
 
         Args:
             reporter: connection to use to make requests
-            parent: RESTObject to which the manager is attached, if applicable
+            parent: RestObject to which the manager is attached, if applicable
         """
         self.reporter = reporter
         self._parent = parent

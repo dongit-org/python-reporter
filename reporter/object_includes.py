@@ -1,4 +1,4 @@
-"""RESTObject _includes - see RESTObject._deserialize_includes"""
+"""RestObject _includes - see RestObject._deserialize_includes"""
 
 # pylint: disable = wildcard-import, unused-wildcard-import, protected-access
 

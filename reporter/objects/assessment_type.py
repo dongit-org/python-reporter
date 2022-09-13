@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from reporter.base import RESTManager, RESTObject
+from reporter.base import RestManager, RestObject
 from reporter.mixins import GetMixin, ListMixin
 
 __all__ = [
@@ -9,10 +9,10 @@ __all__ = [
 ]
 
 
-class AssessmentType(RESTObject):
+class AssessmentType(RestObject):
     pass
 
 
-class AssessmentTypeManager(RESTManager, GetMixin, ListMixin):
+class AssessmentTypeManager(RestManager, GetMixin, ListMixin):
     _path = "assessment-types"
     _obj_cls = AssessmentType

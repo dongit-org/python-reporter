@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from reporter.base import RESTManager, RESTObject
+from reporter.base import RestManager, RestObject
 from reporter.mixins import ListMixin
 
 __all__ = [
@@ -9,10 +9,10 @@ __all__ = [
 ]
 
 
-class Activity(RESTObject):
+class Activity(RestObject):
     pass
 
 
-class ActivityManager(RESTManager, ListMixin):
+class ActivityManager(RestManager, ListMixin):
     _path = "activities"
     _obj_cls = Activity

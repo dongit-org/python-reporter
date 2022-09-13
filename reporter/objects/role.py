@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from reporter.base import RESTManager, RESTObject
+from reporter.base import RestManager, RestObject
 from reporter.mixins import ListMixin
 
 __all__ = [
@@ -10,15 +10,15 @@ __all__ = [
 ]
 
 
-class Role(RESTObject):
+class Role(RestObject):
     pass
 
 
-class GlobalRoleManager(RESTManager, ListMixin):
+class GlobalRoleManager(RestManager, ListMixin):
     _path = "roles"
     _obj_cls = Role
 
 
-class AssessmentRoleManager(RESTManager, ListMixin):
+class AssessmentRoleManager(RestManager, ListMixin):
     _path = "assessment-roles"
     _obj_cls = Role

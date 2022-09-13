@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from reporter.base import RESTManager, RESTObject
+from reporter.base import RestManager, RestObject
 from reporter.mixins import CRUDMixin, ListMixin
 from reporter.objects.assessment import ClientAssessmentManager
 from reporter.objects.user_group import ClientUserGroupManager
@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 
-class Client(RESTObject):
+class Client(RestObject):
     _children = {
         "assessments": ClientAssessmentManager,
         "user_groups": ClientUserGroupManager,
@@ -19,7 +19,7 @@ class Client(RESTObject):
 
 
 class ClientManager(
-    RESTManager,
+    RestManager,
     CRUDMixin,
     ListMixin,
 ):

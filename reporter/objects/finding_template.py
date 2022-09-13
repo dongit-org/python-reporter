@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from reporter.base import RESTManager, RESTObject
+from reporter.base import RestManager, RestObject
 from reporter.mixins import (
     CRUDMixin,
     ListMixin,
@@ -13,12 +13,12 @@ __all__ = [
 ]
 
 
-class FindingTemplate(RESTObject):
+class FindingTemplate(RestObject):
     pass
 
 
 class FindingTemplateManager(
-    RESTManager,
+    RestManager,
     CRUDMixin,
     ListMixin,
     SearchMixin,

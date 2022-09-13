@@ -1,6 +1,6 @@
 """Reporter objects.
 
-Instances of RESTObject and RESTManager corresponding to API models and their managers
+Instances of RestObject and RestManager corresponding to API models and their managers
 respectively.
 
 """

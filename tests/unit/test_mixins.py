@@ -2,9 +2,9 @@ import responses
 
 from reporter import (
     Reporter,
-    RESTList,
-    RESTManager,
-    RESTObject,
+    RestList,
+    RestManager,
+    RestObject,
 )
 from reporter.mixins import (
     CreateMixin,
@@ -16,11 +16,11 @@ from reporter.mixins import (
 )
 
 
-class FakeObject(RESTObject):
+class FakeObject(RestObject):
     pass
 
 
-class FakeManager(RESTManager):
+class FakeManager(RestManager):
     _path = "tests"
     _obj_cls = FakeObject
 
@@ -137,7 +137,7 @@ def test_list_mixin(rc: Reporter):
         objs = manager.list()
 
         rsps.assert_call_count(url, 1)
-        assert isinstance(objs, RESTList)
+        assert isinstance(objs, RestList)
         assert len(objs) == 2
         for obj in objs:
             assert isinstance(obj, FakeObject)
@@ -180,7 +180,7 @@ def test_search_mixin(rc: Reporter):
         objs = manager.search(term="asdf")
 
         rsps.assert_call_count(f"{url}?term=asdf", 1)
-        assert isinstance(objs, RESTList)
+        assert isinstance(objs, RestList)
         assert len(objs) == 2
         for obj in objs:
             assert isinstance(obj, FakeObject)

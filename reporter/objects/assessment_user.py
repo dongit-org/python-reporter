@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from reporter.base import RESTManager, RESTObject
+from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, DeleteMixin, UpdateMixin
 
 __all__ = [
@@ -9,12 +9,12 @@ __all__ = [
 ]
 
 
-class AssessmentUser(RESTObject):
+class AssessmentUser(RestObject):
     pass
 
 
 class AssessmentAssessmentUserManager(
-    RESTManager,
+    RestManager,
     CreateMixin,
     UpdateMixin,
     DeleteMixin,

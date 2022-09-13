@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from reporter.base import RESTManager, RESTObject
+from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, DeleteMixin, GetRawMixin
 
 __all__ = [
@@ -9,10 +9,10 @@ __all__ = [
 ]
 
 
-class Document(RESTObject):
+class Document(RestObject):
     pass
 
 
-class DocumentManager(RESTManager, DeleteMixin, CreateMixin, GetRawMixin):
+class DocumentManager(RestManager, DeleteMixin, CreateMixin, GetRawMixin):
     _path = "documents"
     _obj_cls = Document

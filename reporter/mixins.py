@@ -1,7 +1,7 @@
 """Mixins for model CRUD operations.
 
-Instances of RESTManager should derive these mixins according to the operations possible
-on their corresponding RESTObject in the Reporter API.
+Instances of RestManager should derive these mixins according to the operations possible
+on their corresponding RestObject in the Reporter API.
 
 """
 
@@ -20,7 +20,7 @@ from typing import (
     Union,
 )
 
-from reporter.base import RESTList, RESTManager, RESTObject
+from reporter.base import RestList, RestManager, RestObject
 from reporter.client import Reporter
 
 
@@ -35,7 +35,7 @@ __all__ = [
 ]
 
 
-O = TypeVar("O", bound=RESTObject)
+O = TypeVar("O", bound=RestObject)
 
 
 class CreateMixin(Generic[O]):
@@ -79,7 +79,7 @@ class CreateMixin(Generic[O]):
         )
 
         if TYPE_CHECKING:
-            assert isinstance(self, RESTManager)
+            assert isinstance(self, RestManager)
         return self._obj_cls(self.reporter, result.json())
 
 
@@ -161,7 +161,7 @@ class GetMixin(Generic[O]):
         )
 
         if TYPE_CHECKING:
-            assert isinstance(self, RESTManager)
+            assert isinstance(self, RestManager)
 
         return self._obj_cls(self.reporter, result.json())
 
@@ -224,7 +224,7 @@ class _ListMixin(Generic[O]):
         page: Optional[int] = None,
         page_size: Optional[int] = None,
         **kwargs: Any,
-    ) -> RESTList:
+    ) -> RestList:
         """Retrieve a list of objects.
 
         Args:
@@ -240,7 +240,7 @@ class _ListMixin(Generic[O]):
                 :func:`reporter.Reporter.http_request` call.
 
         Returns:
-            A RESTList of objects.
+            A RestList of objects.
 
         Raises:
             ReporterHttpError: If raised by the underlying call to
@@ -280,12 +280,12 @@ class _ListMixin(Generic[O]):
 
         json = result.json()
         if TYPE_CHECKING:
-            assert isinstance(self, RESTManager)
+            assert isinstance(self, RestManager)
         data = [self._obj_cls(self.reporter, attrs) for attrs in json["data"]]
         links = json["links"]
         meta = json["meta"]
 
-        return RESTList(data=data, links=links, meta=meta)
+        return RestList(data=data, links=links, meta=meta)
 
 
 class ListMixin(_ListMixin):
@@ -299,7 +299,7 @@ class ListMixin(_ListMixin):
         page: Optional[int] = None,
         page_size: Optional[int] = None,
         **kwargs: Any,
-    ) -> RESTList:
+    ) -> RestList:
         """Retrieve a list of objects.
 
         Args:
@@ -313,7 +313,7 @@ class ListMixin(_ListMixin):
                 :func:`reporter.Reporter.http_request` call.
 
         Returns:
-            A RESTList of objects.
+            A RestList of objects.
 
         Raises:
             ReporterHttpError: If raised by the underlying call to
@@ -343,7 +343,7 @@ class SearchMixin(_ListMixin):
         page: Optional[int] = None,
         page_size: Optional[int] = None,
         **kwargs: Any,
-    ) -> RESTList:
+    ) -> RestList:
         """Search for a list of objects.
 
         Args:
@@ -358,7 +358,7 @@ class SearchMixin(_ListMixin):
                 :func:`reporter.Reporter.http_request` call.
 
         Returns:
-            A RESTList of objects.
+            A RestList of objects.
 
         Raises:
             ReporterHttpError: If raised by the underlying call to
@@ -418,7 +418,7 @@ class UpdateMixin(Generic[O]):
         )
 
         if TYPE_CHECKING:
-            assert isinstance(self, RESTManager)
+            assert isinstance(self, RestManager)
         return self._obj_cls(self.reporter, result.json())
 
 

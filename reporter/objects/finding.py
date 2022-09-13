@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from reporter.base import RESTManager, RESTObject
+from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, DeleteMixin, GetMixin, ListMixin, UpdateMixin
 
 __all__ = [
@@ -10,16 +10,16 @@ __all__ = [
 ]
 
 
-class Finding(RESTObject):
+class Finding(RestObject):
     pass
 
 
-class FindingManager(RESTManager, DeleteMixin, GetMixin, ListMixin, UpdateMixin):
+class FindingManager(RestManager, DeleteMixin, GetMixin, ListMixin, UpdateMixin):
     _path = "findings"
     _obj_cls = Finding
 
 
-class AssessmentFindingManager(RESTManager, CreateMixin):
+class AssessmentFindingManager(RestManager, CreateMixin):
     _path = "assessments/{assessment_id}/findings"
     _parent_attrs = {"assessment_id": "id"}
     _obj_cls = Finding

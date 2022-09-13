@@ -4,7 +4,7 @@ import pytest  # type: ignore
 import responses
 
 from reporter import Reporter, ReporterHttpError
-from reporter.base import RESTManager, RESTObject
+from reporter.base import RestManager, RestObject
 from reporter.mixins import ListMixin
 
 
@@ -151,10 +151,10 @@ def test_http_exception(rc: Reporter):
 
 @responses.activate
 def test_rate_limit(rc: Reporter):
-    class FakeObject(RESTObject):
+    class FakeObject(RestObject):
         pass
 
-    class FakeManager(RESTManager, ListMixin):
+    class FakeManager(RestManager, ListMixin):
         _path = "tests"
         _obj_cls = FakeObject
 

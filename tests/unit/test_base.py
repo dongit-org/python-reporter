@@ -2,23 +2,23 @@ import responses
 
 from reporter import (
     Reporter,
-    RESTManager,
-    RESTObject,
+    RestManager,
+    RestObject,
 )
 from reporter.mixins import GetMixin
 
 
-class FakeChildObject(RESTObject):
+class FakeChildObject(RestObject):
     pass
 
 
-class FakeChildManager(RESTManager, GetMixin):
+class FakeChildManager(RestManager, GetMixin):
     _path = "tests/{obj_id}/child_objs"
     _parent_attrs = {"obj_id": "id"}
     _obj_cls = FakeChildObject
 
 
-class FakeObject(RESTObject):
+class FakeObject(RestObject):
     _children = {
         "child_objs": FakeChildManager,
         "sameattributes": FakeChildManager,
@@ -30,7 +30,7 @@ class FakeObject(RESTObject):
     }
 
 
-class FakeManager(RESTManager):
+class FakeManager(RestManager):
     _path = "tests"
     _obj_cls = FakeObject
 
