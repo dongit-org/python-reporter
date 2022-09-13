@@ -11,7 +11,7 @@ packages = [
 python = "^3.7.2"
 requests = "^2.27.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
 black = "^22.1.0"
 mypy = "^0.931"
@@ -25,6 +25,7 @@ coverage = "^6.4.2"
 # - https://github.com/sphinx-doc/sphinx/pull/10595
 Sphinx = "^4.0.0"
 pylint = "^2.14.5"
+tox = "^3.26.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
