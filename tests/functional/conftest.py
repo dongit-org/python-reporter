@@ -1,5 +1,7 @@
 import pathlib
 import os
+import platform
+import time
 
 import docker  # type: ignore
 import pytest  # type: ignore
@@ -52,8 +54,17 @@ def rc(docker_services, reporter_host) -> Reporter:
         stdin=True,
         socket=True,
     ).output
-    sock._sock.sendall(b"Password1!\nPassword1!\n")
-    token = sock.readlines()[-1].split()[-1].decode("utf-8")
+    if platform.system() == "Linux":
+        sock._sock.sendall(b"Password1!\nPassword1!\n")
+        token = sock.readlines()[-1].split()[-1].decode("utf-8")
+    elif platform.system() == "Windows":
+        sock.sendall(b"Password1!\nPassword1!\n")
+        # ensure that reporter has time to process
+        # the password before trying to retrieve output
+        time.sleep(1)
+        token = sock.recv(500)[8:].decode("utf-8").split("\n")[-2].split()[-1]
+    else:
+        raise Exception(f"Unsupported platform {platform.system()}")
 
     client = Reporter(
         url=url,
