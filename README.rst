@@ -1,6 +1,9 @@
 python-reporter
 ===============
 
+.. image:: https://github.com/dongit-org/python-reporter/workflows/test/badge.svg
+   :target: https://github.com/dongit-org/python-reporter/actions
+
 A Python wrapper around the `Reporter <https://securityreporter.app>`_ API.
 
 Currently compatible with Reporter version `2022.08.04 <https://securityreporter.app/releases/20220804>`_.
