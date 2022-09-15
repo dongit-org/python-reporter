@@ -219,7 +219,7 @@ class _ListMixin(Generic[O]):
         self,
         extra_path: str = "",
         term: Optional[str] = None,
-        filter: Optional[Dict[str, str]] = None,  # pylint: disable = redefined-builtin
+        filter_: Optional[Dict[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
@@ -231,7 +231,7 @@ class _ListMixin(Generic[O]):
         Args:
             extra_path: Extra text to add to the request URL path
             term: A search term.
-            filter: query string parameters for HTTP request of the form
+            filter\\_: query string parameters for HTTP request of the form
                 filter[field]
             sort: How to sort retrieved items
             include: Types of related data to include
@@ -255,9 +255,9 @@ class _ListMixin(Generic[O]):
         if term is not None:
             query_data["term"] = term
 
-        if filter is None:
-            filter = {}
-        for (key, value) in filter.items():
+        if filter_ is None:
+            filter_ = {}
+        for (key, value) in filter_.items():
             query_data[f"filter[{key}]"] = value
 
         if include:
@@ -294,7 +294,7 @@ class ListMixin(_ListMixin):
 
     def list(  # pylint: disable = too-many-arguments
         self,
-        filter: Optional[Dict[str, str]] = None,  # pylint: disable = redefined-builtin
+        filter_: Optional[Dict[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
@@ -304,7 +304,7 @@ class ListMixin(_ListMixin):
         """Retrieve a list of objects.
 
         Args:
-            filter: query string parameters for HTTP request of the form
+            filter\\_: query string parameters for HTTP request of the form
                 filter[field]
             sort: How to sort retrieved items
             include: Types of related data to include
@@ -323,7 +323,7 @@ class ListMixin(_ListMixin):
         """
         return self._get_list(
             extra_path="",
-            filter=filter,
+            filter_=filter_,
             sort=sort,
             include=include,
             page=page,
@@ -338,7 +338,7 @@ class SearchMixin(_ListMixin):
     def search(  # pylint: disable = too-many-arguments
         self,
         term: Optional[str] = None,
-        filter: Optional[Dict[str, str]] = None,  # pylint: disable = redefined-builtin
+        filter_: Optional[Dict[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
@@ -349,7 +349,7 @@ class SearchMixin(_ListMixin):
 
         Args:
             term: Term to search for
-            filter: query string parameters for HTTP request of the form
+            filter\\_: query string parameters for HTTP request of the form
                 filter[field]
             sort: How to sort retrieved items
             include: Types of related data to include
@@ -369,7 +369,7 @@ class SearchMixin(_ListMixin):
 
         return self._get_list(
             extra_path="/search",
-            filter=filter,
+            filter_=filter_,
             sort=sort,
             include=include,
             page=page,
