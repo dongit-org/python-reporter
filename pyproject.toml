@@ -21,9 +21,7 @@ docker-compose = "^1.29.2"
 responses = "^0.21.0"
 types-requests = "^2.28.0"
 coverage = "^6.4.2"
-# TODO Update to Sphinx 5 when 5.0.3 is released:
-# - https://github.com/sphinx-doc/sphinx/pull/10595
-Sphinx = "^4.0.0"
+Sphinx = "^5.0.0"
 pylint = "^2.14.5"
 tox = "^3.26.0"
 
