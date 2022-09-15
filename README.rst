@@ -2,3 +2,26 @@ python-reporter
 ===============
 
 A Python wrapper around the `Reporter <https://securityreporter.app>`_ API.
+
+
+About Reporter
+---------------
+
+.. raw:: html
+
+    <p align="center">
+        <a href="https://securityreporter.app/">
+            <img src="extra/logo/reporter_logo.png" alt="Reporter logo"/>
+        </a>
+    </p>
+
+
+Reporter is an all-in-one pentest reporting workspace designed to help your team organize pentests, interact with clients, and create high quality pentest reports.
+
+Reporter is designed to allow managers to delegate tasks to individual pentesters easily. The pentesters in turn are easily able to see which tasks are assigned, and they can access all required assessment details to get started.
+
+Reporter supports granular access control distinctions, ensuring that every user only has access to that which they are required to have access to.
+
+With Reporter clients may directly interact with researchers or other team members. After research findings are published, clients may ask questions regarding specific findings, or they may request retests.
+
+Reporter has many functionalities, such as custom and built-in finding templates and automatic PDF generation, that will save you large amounts of time during your research.
