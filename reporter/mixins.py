@@ -98,7 +98,7 @@ class DeleteMixin(Generic[O]):
         """Delete an object.
 
         Args:
-            id_: The ID of the object to delete.
+            id\\_: The ID of the object to delete.
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -130,10 +130,11 @@ class GetMixin(Generic[O]):
         include: Optional[List[str]] = None,
         **kwargs: Any,
     ) -> O:
+        # Regarding the id\\_: https://github.com/sphinx-doc/sphinx/issues/7857
         """Retrieve a single object.
 
         Args:
-            id_: The ID of the object to retrieve.
+            id\\_: The ID of the object to retrieve.
             include: Related data to include in the response.
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
@@ -181,7 +182,7 @@ class GetRawMixin(Generic[O]):
         """Retrieve a single object.
 
         Args:
-            id_: Object ID
+            id\\_: Object ID
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -394,7 +395,7 @@ class UpdateMixin(Generic[O]):
         """Update an object of type self._obj_cls.
 
         Args:
-            id_: ID of the object to update
+            id\\_: ID of the object to update
             attrs: Attributes to update
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.

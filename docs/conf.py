@@ -56,3 +56,8 @@ html_theme = "alabaster"
 html_static_path = ["_static"]
 
 autodoc_typehints = "both"
+
+autodoc_default_options = {
+    "members": True,
+    "show-inheritance": True,
+}

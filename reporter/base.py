@@ -21,6 +21,8 @@ class RestObject(Mapping):
     """Represents an object built from server data.
 
     Args:
+        reporter: The :class:`~reporter.Reporter` instance used by this object to
+            perform requests.
         attrs: Object attributes
     """
 
@@ -31,13 +33,6 @@ class RestObject(Mapping):
     _children: Dict[str, Type["RestManager"]] = {}
 
     def __init__(self, reporter: Reporter, attrs: Dict[str, Any]) -> None:
-        """
-        Args:
-            reporter: The :class:`~reporter.Reporter` instance used by this object to
-                perform requests.
-            attrs: The attributes to assign to this object.
-
-        """
         self.reporter = reporter
         self._attrs = attrs
         for key, mgr_cls in self._children.items():
@@ -128,7 +123,12 @@ class RestList(Sequence, Generic[O]):
 
 
 class RestManager(Sequence, Generic[O]):
-    """Base class for managers of RestObjects."""
+    """Base class for managers of RestObjects.
+
+    Args:
+        reporter: connection to use to make requests
+        parent: RestObject to which the manager is attached, if applicable
+    """
 
     reporter: Reporter
 
@@ -153,12 +153,6 @@ class RestManager(Sequence, Generic[O]):
         reporter: Reporter,
         parent: Optional[RestObject] = None,
     ) -> None:
-        """RestManager constructor
-
-        Args:
-            reporter: connection to use to make requests
-            parent: RestObject to which the manager is attached, if applicable
-        """
         self.reporter = reporter
         self._parent = parent
         self._path = self._compute_path()

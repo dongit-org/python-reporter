@@ -17,9 +17,8 @@ __all__ = [
 class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-public-methods
     """Represents a Reporter server connection.
 
-    Attributes:
+    Args:
         api_token: The Reporter API token to use for authentication.
-        session: the ``requests.Session`` object used to make HTTP requests.
         ssl_verify: Whether to verify the server's SSL certificate.
         url: The URL of the Reporter server.
 
@@ -30,6 +29,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
     url: str
 
     session: requests.Session
+    """The ``requests.Session`` object used to make HTTP requests."""
 
     def __init__(
         self,
