@@ -338,9 +338,6 @@ class SearchMixin(_ListMixin):
     def search(  # pylint: disable = too-many-arguments
         self,
         term: Optional[str] = None,
-        filter_: Optional[Dict[str, str]] = None,
-        sort: Optional[List[str]] = None,
-        include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
         **kwargs: Any,
@@ -349,10 +346,6 @@ class SearchMixin(_ListMixin):
 
         Args:
             term: Term to search for
-            filter\\_: query string parameters for HTTP request of the form
-                filter[field]
-            sort: How to sort retrieved items
-            include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
             kwargs: Extra options to pass to the underlying
@@ -369,9 +362,6 @@ class SearchMixin(_ListMixin):
 
         return self._get_list(
             extra_path="/search",
-            filter_=filter_,
-            sort=sort,
-            include=include,
             page=page,
             page_size=page_size,
             term=term,
