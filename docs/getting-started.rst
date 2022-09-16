@@ -53,7 +53,38 @@ as arguments.
 
    from reporter import Reporter
    rc = Reporter(url="https://reporter.example.com", api_token="secret")
-   rc.findings.list(include=["targets", "user.documents"])
+   finding = rc.findings.get(finding_id, include=["targets", "user.documents"], sort="title")
+   print([t.name for t in finding.targets])
+   # ["Acceptance Environment", "Production Environment"]
 
+.. note::
+   The query parameter :code:`filter` is called :code:`filter_` in python-reporter to avoid clashes with the
+   :code:`filter` keyword, as prescribed in https://peps.python.org/pep-0008/#descriptive-naming-styles
 
+The following demonstrates how to update a finding:
 
+.. code:: python
+
+   from reporter import Reporter
+   rc = Reporter(url="https://reporter.example.com", api_token="secret")
+   finding = rc.findings.list(filter_={"title": "Incoming Meteor"})[0]
+   rc.findings.update(finding.id, {
+       "risk": "This is a massive risk to the entire planet.",
+       "targets": [target_id],
+   }
+
+Some endpoints, especially create ones, require the ID of a different type of object. For example
+:code:`POST api/v1/clients/{client_id}/assessments` creates an assessment, but requires the id of a client.
+These endpoints must be called from the parent object.
+
+.. code:: python
+
+   from reporter import Reporter
+   rc = Reporter(url="https://reporter.example.com", api_token="secret")
+   client = rc.clients.get(client_id)
+   client.assessments.create({
+       "assessment_type_id": "owasp_top10_2021",
+       "assessment_type_name": "OWASP Top 10 - version 2021",
+       "title": "SuperApp periodic",
+       "description": "White-box test",
+   })
