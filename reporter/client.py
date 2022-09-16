@@ -131,7 +131,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
                 verify=self.ssl_verify,
             )
             if obey_rate_limit and result.status_code == 429 and i != 1:
-                time.sleep(int(result.headers["Retry-After"]))
+                time.sleep(float(result.headers["Retry-After"]) + 0.5)
                 continue
             break
 
