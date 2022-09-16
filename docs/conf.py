@@ -42,7 +42,6 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -61,3 +60,17 @@ autodoc_default_options = {
     "members": True,
     "show-inheritance": True,
 }
+
+always_document_param_types = True
+
+html_theme_options = {
+    'logo': 'reporter_logo.png',
+    'fixed_sidebar': True,
+    'page_width': '1300px',
+    'github_button': True,
+    'github_user': 'dongit-org',
+    'github_repo': 'python-reporter',
+    'sidebar_collapse': False,
+}
+
+html_favicon = '_static/favicon.ico'

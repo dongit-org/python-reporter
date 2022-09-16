@@ -11,7 +11,7 @@ About Reporter
 
     <p align="center">
         <a href="https://securityreporter.app/">
-            <img src="extra/logo/reporter_logo.png" alt="Reporter logo"/>
+            <img src="docs/_static/reporter_logo.png" alt="Reporter logo"/>
         </a>
     </p>
 

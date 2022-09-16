@@ -145,6 +145,9 @@ class RestManager(Sequence, Generic[O]):
     # class exposes a convenient API for the included list. We assume that this
     # can only happen if this class is assigned to an attribute of `r` that is
     # a plural noun (e.g. "targets" instead of "target").
+    #
+    # For example client.assessments refers to both the assessments manager and
+    # a retrieved list of assessments, and can be used in both ways.
     _obj_cls: Type[O]
     _list: List[RestObject] = []
 
