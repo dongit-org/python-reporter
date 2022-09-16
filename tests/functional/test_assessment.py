@@ -31,7 +31,7 @@ def test_assessment_operations(rc: Reporter, client, assessment_type):
         }
     )
 
-    assert assessment in rc.assessments.list(filter={"id": assessment.id})
+    assert assessment in rc.assessments.list(filter_={"id": assessment.id})
 
     rc.assessments.update(assessment.id, {"internal_details": "foo"})
     gotten = rc.assessments.get(assessment.id)
@@ -131,7 +131,7 @@ def test_activities(rc: Reporter, client, assessment_type):
     )
 
     activity = rc.activities.list(
-        filter={
+        filter_={
             "assessment_id": assessment.id,
             "type": "40",
         }

@@ -12,7 +12,7 @@ def test_user_operations(rc: Reporter):
     }
     user = rc.users.create(user_data)
 
-    assert user in rc.users.list(filter={"id": user.id})
+    assert user in rc.users.list(filter_={"id": user.id})
 
     rc.users.update(user.id, {"phone": "foo"})
     gotten = rc.users.get(user.id)
@@ -31,7 +31,7 @@ def test_client_operations(rc: Reporter):
         }
     )
 
-    assert client in rc.clients.list(filter={"id": client.id})
+    assert client in rc.clients.list(filter_={"id": client.id})
 
     rc.clients.update(client.id, {"website": "https://example.com"})
     gotten = rc.clients.get(client.id)
@@ -79,7 +79,7 @@ def test_user_group_operations(rc: Reporter):
         }
     )
 
-    assert group in rc.user_groups.list(filter={"id": group.id})
+    assert group in rc.user_groups.list(filter_={"id": group.id})
 
     rc.user_groups.update(group.id, {"color": "#111111"})
     gotten = rc.user_groups.get(group.id)
