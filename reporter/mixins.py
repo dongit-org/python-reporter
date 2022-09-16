@@ -35,14 +35,14 @@ __all__ = [
 ]
 
 
-O = TypeVar("O", bound=RestObject)
+ChildOfRestObject = TypeVar("ChildOfRestObject", bound=RestObject)
 
 
-class CreateMixin(Generic[O]):
+class CreateMixin(Generic[ChildOfRestObject]):
     """Manager can create object."""
 
     _path: str
-    _obj_cls: Type[O]
+    _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
     def create(
@@ -50,7 +50,7 @@ class CreateMixin(Generic[O]):
         attrs: Dict[str, Any],
         file: Optional[Any] = None,
         **kwargs: Any,
-    ) -> O:
+    ) -> ChildOfRestObject:
         """Create a new object.
 
         Args:
@@ -83,11 +83,11 @@ class CreateMixin(Generic[O]):
         return self._obj_cls(self.reporter, result.json())
 
 
-class DeleteMixin(Generic[O]):
+class DeleteMixin(Generic[ChildOfRestObject]):
     """Manager can delete object."""
 
     _path: str
-    _obj_cls: Type[O]
+    _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
     def delete(
@@ -116,12 +116,14 @@ class DeleteMixin(Generic[O]):
         )
 
 
-class GetMixin(Generic[O]):
+class GetMixin(Generic[ChildOfRestObject]):
     """Manager can retrieve object."""
 
     _path: str
-    _includes: Dict[str, Type[Union[O, Sequence[O]]]] = {}
-    _obj_cls: Type[O]
+    _includes: Dict[
+        str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
+    ] = {}
+    _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
     def get(
@@ -129,7 +131,7 @@ class GetMixin(Generic[O]):
         id_: str,
         include: Optional[List[str]] = None,
         **kwargs: Any,
-    ) -> O:
+    ) -> ChildOfRestObject:
         # Regarding the id\\_: https://github.com/sphinx-doc/sphinx/issues/7857
         """Retrieve a single object.
 
@@ -167,11 +169,11 @@ class GetMixin(Generic[O]):
         return self._obj_cls(self.reporter, result.json())
 
 
-class GetRawMixin(Generic[O]):
+class GetRawMixin(Generic[ChildOfRestObject]):
     """Manager can retrieve raw file contents."""
 
     _path: str
-    _obj_cls: Type[O]
+    _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
     def get(
@@ -207,12 +209,14 @@ class GetRawMixin(Generic[O]):
         return result.content
 
 
-class _ListMixin(Generic[O]):
+class _ListMixin(Generic[ChildOfRestObject]):
     """Parent class for ListMixin and SearchMixin."""
 
     _path: str
-    _includes: Dict[str, Type[Union[O, Sequence[O]]]] = {}
-    _obj_cls: Type[O]
+    _includes: Dict[
+        str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
+    ] = {}
+    _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
     def _get_list(  # pylint: disable = too-many-arguments, too-many-locals
@@ -369,11 +373,11 @@ class SearchMixin(_ListMixin):
         )
 
 
-class UpdateMixin(Generic[O]):
+class UpdateMixin(Generic[ChildOfRestObject]):
     """Manager can update objects."""
 
     _path: str
-    _obj_cls: Type[O]
+    _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
     def update(
@@ -381,7 +385,7 @@ class UpdateMixin(Generic[O]):
         id_: str,
         attrs: Dict[str, Any],
         **kwargs: Any,
-    ) -> O:
+    ) -> ChildOfRestObject:
         """Update an object of type self._obj_cls.
 
         Args:
