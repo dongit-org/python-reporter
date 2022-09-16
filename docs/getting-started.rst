@@ -88,3 +88,20 @@ These endpoints must be called from the parent object.
        "title": "SuperApp periodic",
        "description": "White-box test",
    })
+
+Some endpoints require you to upload files:
+
+.. code:: python
+
+   from reporter import Reporter
+   rc = Reporter(url="https://reporter.example.com", api_token="secret")
+
+   f = open(path, "rb")
+   document = rc.documents.create(
+       {
+           "documentable_type": "User",
+           "documentable_id": user.id,
+           "section": "avatar",
+       },
+       file=f,
+   )
