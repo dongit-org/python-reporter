@@ -11,10 +11,10 @@ __all__ = [
 class ReporterError(Exception):
     """Base class for Reporter errors.
 
-     Args:
-        error_message: The error message.
-        response_code: The response code returned by the server.
-        response_body: The response body returned by the server.
+    Args:
+       error_message: The error message.
+       response_code: The response code returned by the server.
+       response_body: The response body returned by the server.
 
     """
 

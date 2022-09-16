@@ -47,7 +47,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "alabaster"
+html_theme = "sphinx_rtd_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -64,13 +64,8 @@ autodoc_default_options = {
 always_document_param_types = True
 
 html_theme_options = {
-    'logo': 'reporter_logo.png',
-    'fixed_sidebar': True,
-    'page_width': '1300px',
-    'github_button': True,
-    'github_user': 'dongit-org',
-    'github_repo': 'python-reporter',
-    'sidebar_collapse': False,
+    "collapse_navigation": False,
 }
 
-html_favicon = '_static/favicon.ico'
+
+html_favicon = "_static/favicon.ico"

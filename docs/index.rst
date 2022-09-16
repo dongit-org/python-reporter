@@ -1,7 +1,22 @@
+:github_url: https://github.com/dongit-org/python-reporter
+
 python-reporter
 ===============
 
 A Python wrapper around the `Reporter <https://securityreporter.app>`_ API.
+
+Installation
+------------
+
+Currently, :code:`python-reporter` is compatible with Python 3.7+.
+
+Use :code:`pip` to install the package:
+
+.. code:: bash
+
+    pip install --upgrade securityreporter
+
+
 
 .. toctree::
    :maxdepth: 2

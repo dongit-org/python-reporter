@@ -33,5 +33,27 @@ permissions of your API token.
    # Update an assessment phase.
    rc.assessment_phases.update(phases[0].id, {"researchers": [user.id]})
 
-See the API reference in the sidebar for more information. The capabilities of
-this library should correspond closely with those of the Reporter API itself.
+Requesting API Endpoints
+------------------------
+
+The capabilities of this library should correspond closely with those of the Reporter API itself. The capabilities of objects in
+this library correspond directly to API endpoints. For example the endpoint :code:`GET api/v1/findings/{id}` allows you to retrieve a finding.
+Requesting this endpoint using :code:`python-reporter` can be done as follows:
+
+.. code:: python
+
+   from reporter import Reporter
+   rc = Reporter(url="https://reporter.example.com", api_token="secret")
+   rc.findings.get(finding_id)
+
+Some endpoints have query parameters, such as :code:`sort` and :code:`include`. You can pass these to the method calls
+as arguments.
+
+.. code:: python
+
+   from reporter import Reporter
+   rc = Reporter(url="https://reporter.example.com", api_token="secret")
+   rc.findings.list(include=["targets", "user.documents"])
+
+
+
