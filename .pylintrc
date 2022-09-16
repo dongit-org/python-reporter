@@ -1,2 +1,4 @@
 [DESIGN]
 max-parents = 10
+[BASIC]
+min-public-methods = 1

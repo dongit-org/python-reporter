@@ -36,6 +36,7 @@ AssessmentSection._includes = {
     "assessment": Assessment,
     "documents": User,
     "findings": User,
+    "items": AssessmentSection,
 }
 
 

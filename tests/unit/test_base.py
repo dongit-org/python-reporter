@@ -23,11 +23,14 @@ class FakeObject(RestObject):
         "child_objs": FakeChildManager,
         "sameattributes": FakeChildManager,
     }
-    _includes = {
-        "childObj": FakeChildObject,
-        "childObjs": FakeChildObject,
-        "sameattributes": FakeChildObject,
-    }
+
+
+FakeObject._includes = {
+    "childObj": FakeChildObject,
+    "childObjs": FakeChildObject,
+    "items": FakeObject,
+    "sameattributes": FakeChildObject,
+}
 
 
 class FakeManager(RestManager):
@@ -49,17 +52,24 @@ def test_object_includes(rc: Reporter):
         {
             "id": "1234",
             "childObj": {"id": "1"},
-            "childObjs": [
-                {"id": "1"},
-                {"id": "2"},
+            "items": [
+                {
+                    "id": "1",
+                    "childObj": {"id": "1"},
+                },
+                {
+                    "id": "2",
+                    "childObj": {"id": "2"},
+                },
             ],
         },
     )
 
     assert isinstance(obj.childObj, FakeChildObject)
-    assert len(obj.childObjs) == 2
-    for o in obj.childObjs:
-        assert isinstance(o, FakeChildObject)
+    assert len(obj.items) == 2
+    for o in obj.items:
+        assert isinstance(o, FakeObject)
+        assert isinstance(o.childObj, FakeChildObject)
 
 
 def test_object_include_same_attribute_as_manager(rc: Reporter):

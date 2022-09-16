@@ -5,7 +5,7 @@ representing API models, managers of these objects, and lists of these objects.
 
 """
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from typing import Any, Dict, Generic, Iterable, List, Optional, Type, TypeVar
 
 from reporter.client import Reporter
@@ -17,7 +17,7 @@ __all__ = [
 ]
 
 
-class RestObject(Mapping):
+class RestObject:
     """Represents an object built from server data.
 
     Args:
@@ -69,6 +69,11 @@ class RestObject(Mapping):
         if not isinstance(other, RestObject):
             return NotImplemented
         return self.id == other.id
+
+    # This is to ensure that the dict() function can accept this class.
+    # See https://stackoverflow.com/a/40667249
+    def keys(self):  # pylint: disable = missing-function-docstring
+        return self._attrs.keys()
 
     def _deserialize_includes(self):
         for include, cls in self._includes.items():
