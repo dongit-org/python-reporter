@@ -2,7 +2,7 @@
 
 from reporter.base import RestManager, RestObject
 from reporter.mixins import (
-    CRUDMixin,
+    CrudMixin,
     ListMixin,
     SearchMixin,
 )
@@ -19,7 +19,7 @@ class FindingTemplate(RestObject):
 
 class FindingTemplateManager(
     RestManager,
-    CRUDMixin,
+    CrudMixin,
     ListMixin,
     SearchMixin,
 ):

@@ -1,7 +1,7 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
 from reporter.base import RestManager, RestObject
-from reporter.mixins import CRUDMixin, ListMixin
+from reporter.mixins import CrudMixin, ListMixin
 from reporter.objects.assessment import ClientAssessmentManager
 from reporter.objects.user_group import ClientUserGroupManager
 
@@ -20,7 +20,7 @@ class Client(RestObject):
 
 class ClientManager(
     RestManager,
-    CRUDMixin,
+    CrudMixin,
     ListMixin,
 ):
     _path = "clients"

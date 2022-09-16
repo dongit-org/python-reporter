@@ -96,12 +96,12 @@ O = TypeVar("O", bound=RestObject)
 
 
 class RestList(Sequence, Generic[O]):
-    """Represents a list of objects built from server data.
+    """Represents a list of :class:`~reporter.base.RestObject` instances built from server data.
 
     Includes associated links and metadata.
 
     Args:
-        data: List of RestObject instances
+        data: List of :class:`~reporter.base.RestObject` instances
         links: Dict of links (see Reporter API docs)
         meta: Dict of metadata (see Reporter API docs)
     """
@@ -128,11 +128,11 @@ class RestList(Sequence, Generic[O]):
 
 
 class RestManager(Sequence, Generic[O]):
-    """Base class for managers of RestObjects.
+    """Base class for :class:`~reporter.base.RestObject` managers.
 
     Args:
         reporter: connection to use to make requests
-        parent: RestObject to which the manager is attached, if applicable
+        parent: :class:`~reporter.base.RestObject` to which the manager is attached, if applicable
     """
 
     reporter: Reporter

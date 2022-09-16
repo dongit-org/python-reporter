@@ -1,7 +1,7 @@
 """Mixins for model CRUD operations.
 
-Instances of RestManager should derive these mixins according to the operations possible
-on their corresponding RestObject in the Reporter API.
+Instances of :class:`~reporter.base.RestManager` should derive these mixins according to the
+operations possible on their corresponding :class:`~reporter.base.RestObject` in the Reporter API.
 
 """
 
@@ -26,7 +26,7 @@ from reporter.client import Reporter
 
 __all__ = [
     "CreateMixin",
-    "CRUDMixin",
+    "CrudMixin",
     "DeleteMixin",
     "GetMixin",
     "ListMixin",
@@ -245,7 +245,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
                 :func:`reporter.Reporter.http_request` call.
 
         Returns:
-            A RestList of objects.
+            A :class:`~reporter.base.RestList` of :class:`~reporter.base.RestObject` instances.
 
         Raises:
             ReporterHttpError: If raised by the underlying call to
@@ -318,7 +318,7 @@ class ListMixin(_ListMixin):
                 :func:`reporter.Reporter.http_request` call.
 
         Returns:
-            A RestList of objects.
+            A :class:`~reporter.base.RestList` of :class:`~reporter.base.RestObject` instances.
 
         Raises:
             ReporterHttpError: If raised by the underlying call to
@@ -356,7 +356,7 @@ class SearchMixin(_ListMixin):
                 :func:`reporter.Reporter.http_request` call.
 
         Returns:
-            A RestList of objects.
+            A :class:`~reporter.base.RestList` of :class:`~reporter.base.RestObject` instances.
 
         Raises:
             ReporterHttpError: If raised by the underlying call to
@@ -398,7 +398,7 @@ class UpdateMixin(Generic[ChildOfRestObject]):
             The response from the server, serialized into the object type.
 
         Raises:
-            ReporterHttpError: If raised by the underlying call to
+            :class:`~reporter.exceptions.ReporterHttpError`: If raised by the underlying call to
                 :func:`reporter.Reporter.http_request`.
 
         """
@@ -417,5 +417,5 @@ class UpdateMixin(Generic[ChildOfRestObject]):
         return self._obj_cls(self.reporter, result.json())
 
 
-class CRUDMixin(CreateMixin, GetMixin, UpdateMixin, DeleteMixin):
+class CrudMixin(CreateMixin, GetMixin, UpdateMixin, DeleteMixin):
     """Composite class of other mixins."""
