@@ -21,15 +21,15 @@ jobs:
     needs: []
     steps:
       - uses: actions/checkout@v3
-      - name: Perform test setup
-        uses: ./.github/actions/test-setup
+      - name: Install dependencies
+        uses: ./.github/actions/install-deps
       - run: poetry run tox -e black,mypy,pylint
   unit:
     runs-on: ubuntu-latest
     needs: []
     steps:
       - uses: actions/checkout@v3
-      - name: Perform test setup
-        uses: ./.github/actions/test-setup
+      - name: Install dependencies
+        uses: ./.github/actions/install-deps
       - name: Run unit tests
         run: poetry run tox -e pytest-unit
