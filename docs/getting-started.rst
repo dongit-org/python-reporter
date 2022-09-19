@@ -74,7 +74,7 @@ The following demonstrates how to update a finding:
    }
 
 Some endpoints, especially create ones, require the ID of a different type of object. For example
-:code:`POST api/v1/clients/{client_id}/assessments` creates an assessment, but requires the id of a client.
+:code:`POST api/v1/clients/{client_id}/assessments` creates an assessment, but requires the ID of a client.
 These endpoints must be called from the parent object.
 
 .. code:: python
