@@ -5,6 +5,21 @@ A Python wrapper around the `Reporter <https://securityreporter.app>`_ API.
 
 Currently compatible with Reporter version `2022.08.04 <https://securityreporter.app/releases/20220804>`_.
 
+Installation
+------------
+
+Currently, :code:`python-reporter` is compatible with Python 3.7+.
+
+Use :code:`pip` to install the package:
+
+.. code:: bash
+
+    pip install --upgrade securityreporter
+
+Documentation
+-------------
+
+Documentation is available on `Read the Docs <https://python-reporter.readthedocs.io/>`_.
 
 About Reporter
 ---------------
