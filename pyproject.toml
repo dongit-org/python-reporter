@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "securityreporter"
 version = "0.0.0"
-description = ""
+description = "A Python wrapper for the Reporter API."
 authors = ["Alexander Krigsman <alexander.krigsman@dongit.nl>", "Stefan van der Lugt <stefan.vanderlugt@dongit.nl>"]
 packages = [
     { include = "reporter" },
