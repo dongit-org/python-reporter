@@ -33,6 +33,8 @@ permissions of your API token.
    # Update an assessment phase.
    rc.assessment_phases.update(phases[0].id, {"researchers": [user.id]})
 
+Complete documentation of all API endpoints is available within your Reporter instance.
+
 Requesting API Endpoints
 ------------------------
 
