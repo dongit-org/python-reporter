@@ -16,7 +16,14 @@ Use :code:`pip` to install the package:
 
     pip install --upgrade securityreporter
 
+Building the documentation
+--------------------------
 
+To build the documentation, run:
+
+.. code:: bash
+
+    poetry run tox -e docs
 
 .. toctree::
    :maxdepth: 2
