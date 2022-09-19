@@ -9,6 +9,21 @@ from reporter.mixins import ListMixin
 
 
 @responses.activate
+def test_url_trailing_slash():
+    # Test that trailing slash is stripped
+    rc = Reporter(url="https://localhost/", api_token="secret")
+    url = "https://localhost/api/v1/tests"
+
+    responses.add(
+        method=responses.GET,
+        url=url,
+        status=200,
+    )
+
+    rc.http_request(verb="get", path="tests")
+
+
+@responses.activate
 def test_http_request_headers(rc: Reporter):
     url = "https://localhost/api/v1/tests"
 

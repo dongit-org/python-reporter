@@ -19,7 +19,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
     Args:
         api_token: The Reporter API token to use for authentication.
         ssl_verify: Whether to verify the server's SSL certificate.
-        url: The URL of the Reporter server.
+        url: The URL of the Reporter server. Must start with URL scheme (i.e. :code:`https://`).
 
     """
 
@@ -46,7 +46,9 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         """
         self.api_token = api_token
         self.ssl_verify = ssl_verify
-        self.url = url
+        # Reporter does not accept double slash, but the user shouldn't be
+        # expected to know that.
+        self.url = url.rstrip("/")
 
         self.session = requests.Session()
         self.session.headers.update(
