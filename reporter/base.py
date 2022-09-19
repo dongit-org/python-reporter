@@ -92,10 +92,10 @@ class RestObject:
                 self._attrs[include] = cls(self.reporter, self._attrs[include])
 
 
-O = TypeVar("O", bound=RestObject)
+ChildOfRestObject = TypeVar("ChildOfRestObject", bound=RestObject)
 
 
-class RestList(Sequence, Generic[O]):
+class RestList(Sequence, Generic[ChildOfRestObject]):
     """Represents a list of :class:`~reporter.base.RestObject` instances built from server data.
 
     Includes associated links and metadata.
@@ -106,13 +106,13 @@ class RestList(Sequence, Generic[O]):
         meta: Dict of metadata (see Reporter API docs)
     """
 
-    _data: List[O]
+    _data: List[ChildOfRestObject]
     links: Dict[str, str]
     meta: Dict[str, str]
 
     def __init__(
         self,
-        data: List[O],
+        data: List[ChildOfRestObject],
         links: Dict[str, str],
         meta: Dict[str, str],
     ) -> None:
@@ -127,7 +127,7 @@ class RestList(Sequence, Generic[O]):
         return len(self._data)
 
 
-class RestManager(Sequence, Generic[O]):
+class RestManager(Sequence, Generic[ChildOfRestObject]):
     """Base class for :class:`~reporter.base.RestObject` managers.
 
     Args:
@@ -153,7 +153,7 @@ class RestManager(Sequence, Generic[O]):
     #
     # For example client.assessments refers to both the assessments manager and
     # a retrieved list of assessments, and can be used in both ways.
-    _obj_cls: Type[O]
+    _obj_cls: Type[ChildOfRestObject]
     _list: List[RestObject] = []
 
     def __init__(
