@@ -3,6 +3,15 @@ python-reporter
 
 .. image:: https://github.com/dongit-org/python-reporter/workflows/test/badge.svg
    :target: https://github.com/dongit-org/python-reporter/actions
+   :alt: Test Status
+
+.. image:: https://readthedocs.org/projects/python-reporter/badge/?version=latest
+   :target: https://python-reporter.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
+.. image:: https://img.shields.io/pypi/v/securityreporter
+   :target: https://pypi.org/project/securityreporter/
+   :alt: PyPI
 
 A Python wrapper around the `Reporter <https://securityreporter.app>`_ API.
 
