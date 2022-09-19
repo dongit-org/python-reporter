@@ -1,8 +1,7 @@
 """This module exposes the :class:`~reporter.client.Reporter` object."""
 
 import time
-from typing import Any, Dict, Optional
-from typing_extensions import TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
 import requests
 
