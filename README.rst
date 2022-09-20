@@ -1,6 +1,22 @@
 python-reporter
 ===============
 
+.. image:: https://github.com/dongit-org/python-reporter/workflows/test/badge.svg
+   :target: https://github.com/dongit-org/python-reporter/actions
+   :alt: Test Status
+
+.. image:: https://codecov.io/gh/dongit-org/python-reporter/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/dongit-org/python-reporter
+   :alt: Code Coverage
+
+.. image:: https://readthedocs.org/projects/python-reporter/badge/?version=latest
+   :target: https://python-reporter.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
+.. image:: https://img.shields.io/pypi/v/securityreporter
+   :target: https://pypi.org/project/securityreporter/
+   :alt: PyPI
+
 A Python wrapper around the `Reporter <https://securityreporter.app>`_ API.
 
 Currently compatible with Reporter version `2022.08.04 <https://securityreporter.app/releases/20220804>`_.
