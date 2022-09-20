@@ -5,6 +5,10 @@ python-reporter
    :target: https://github.com/dongit-org/python-reporter/actions
    :alt: Test Status
 
+.. image:: https://codecov.io/gh/dongit-org/python-reporter/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/dongit-org/python-reporter
+   :alt: Code Coverage
+
 .. image:: https://readthedocs.org/projects/python-reporter/badge/?version=latest
    :target: https://python-reporter.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
