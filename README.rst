@@ -40,14 +40,9 @@ Documentation is available on `Read the Docs <https://python-reporter.readthedoc
 About Reporter
 ---------------
 
-.. raw:: html
-
-    <p align="center">
-        <a href="https://securityreporter.app/">
-            <img src="docs/_static/reporter_logo.png" alt="Reporter logo"/>
-        </a>
-    </p>
-
+.. image:: https://raw.githubusercontent.com/dongit-org/python-reporter/main/docs/_static/reporter_logo.png
+   :target: https://securityreporter.app/
+   :alt: Reporter Logo
 
 Reporter is an all-in-one pentest reporting workspace designed to help your team organize pentests, interact with clients, and create high quality pentest reports.
 
