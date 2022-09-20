@@ -2,7 +2,16 @@
 name = "securityreporter"
 version = "0.0.0"
 description = "A Python wrapper for the Reporter API."
-authors = ["Alexander Krigsman <alexander.krigsman@dongit.nl>", "Stefan van der Lugt <stefan.vanderlugt@dongit.nl>"]
+authors = [
+    "Alexander Krigsman <alexander.krigsman@dongit.nl>",
+]
+maintainers = [
+    "Stefan van der Lugt <stefan.vanderlugt@dongit.nl>",
+]
+readme = "README.rst"
+homepage = "https://securityreporter.app/"
+repository = "https://github.com/dongit-org/python-reporter"
+documentation = "https://python-reporter.readthedocs.io/"
 packages = [
     { include = "reporter" },
 ]
