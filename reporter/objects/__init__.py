@@ -19,5 +19,7 @@ from .finding_template import *
 from .output_file import *
 from .role import *
 from .target import *
+from .task import *
+from .task_set import *
 from .user import *
 from .user_group import *

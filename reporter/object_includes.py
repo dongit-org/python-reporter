@@ -22,6 +22,8 @@ Assessment._includes = {
     "researchersOnReport": User,
     "sections": AssessmentSection,
     "targets": Target,
+    "tasks": Task,
+    "taskSets": TaskSet,
     "userGroups": UserGroup,
     "users": User,
 }
@@ -87,6 +89,19 @@ Target._includes = {
     "assessment": Assessment,
     "documents": Document,
     "findings": Finding,
+}
+
+Task._includes = {
+    "assessment": Assessment,
+    "client": Client,
+    "finding": Finding,
+    "taskSet": TaskSet,
+    "users": User,
+}
+
+TaskSet._includes = {
+    "assessments": Assessment,
+    "copiedTasks": Task,
 }
 
 User._includes = {

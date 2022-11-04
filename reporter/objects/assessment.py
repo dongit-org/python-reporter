@@ -6,6 +6,8 @@ from reporter.objects.assessment_user import AssessmentAssessmentUserManager
 from reporter.objects.finding import AssessmentFindingManager
 from reporter.objects.output_file import AssessmentOutputFileManager
 from reporter.objects.target import AssessmentTargetManager
+from reporter.objects.task import AssessmentTaskManager
+from reporter.objects.task_set import AssessmentTaskSetManager
 
 
 __all__ = [
@@ -20,6 +22,8 @@ class Assessment(RestObject):
         "findings": AssessmentFindingManager,
         "output_files": AssessmentOutputFileManager,
         "targets": AssessmentTargetManager,
+        "tasks": AssessmentTaskManager,
+        "task_sets": AssessmentTaskSetManager,
         "users": AssessmentAssessmentUserManager,
     }
 
