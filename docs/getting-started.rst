@@ -24,7 +24,7 @@ permissions of your API token.
    # Create an assessment under the first client.
    assessment = clients[0].assessments.create({
       "title": "My Awesome Assessment",
-      "assessment_type_id": "owasp_top10_2021",
+      "assessment_template_id": "owasp_top10_2021",
    })
 
    # Retrieve a list of assessment phases.
@@ -85,8 +85,8 @@ These endpoints must be called from the parent object.
    rc = Reporter(url="https://reporter.example.com", api_token="secret")
    client = rc.clients.get(client_id)
    client.assessments.create({
-       "assessment_type_id": "owasp_top10_2021",
-       "assessment_type_name": "OWASP Top 10 - version 2021",
+       "assessment_template_id": "owasp_top10_2021",
+       "assessment_template_name": "OWASP Top 10 - version 2021",
        "title": "SuperApp periodic",
        "description": "White-box test",
    })
