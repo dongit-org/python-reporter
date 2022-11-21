@@ -12,11 +12,11 @@ def assessment(rc: Reporter) -> reporter.Client:
             "description": "foo",
         }
     )
-    assessment_type = rc.assessment_types.list()[0]
+    assessment_template = rc.assessment_templates.list()[0]
     assessment = client.assessments.create(
         {
             "title": "test_finding",
-            "assessment_type_id": assessment_type.id,
+            "assessment_template_id": assessment_template.id,
         }
     )
     return assessment
