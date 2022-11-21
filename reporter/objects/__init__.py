@@ -9,7 +9,7 @@ from .activity import *
 from .assessment import *
 from .assessment_phase import *
 from .assessment_section import *
-from .assessment_type import *
+from .assessment_template import *
 from .assessment_user import *
 from .auto_assignment import *
 from .client import *
