@@ -16,7 +16,7 @@ services:
   phpfpm:
     container_name: phpfpm
     hostname: phpfpm
-    image: registry.gitlab.com/dongit/reporter/php:latest
+    image: registry.gitlab.com/dongit/reporter/${IMAGE_REPO:-php}:${IMAGE_TAG:-latest}
     restart: unless-stopped
     depends_on:
       - redis
@@ -38,7 +38,7 @@ services:
   horizon:
     container_name: horizon
     hostname: horizon
-    image: registry.gitlab.com/dongit/reporter/php:latest
+    image: registry.gitlab.com/dongit/reporter/${IMAGE_REPO:-php}:${IMAGE_TAG:-latest}
     restart: unless-stopped
     depends_on:
       - redis
@@ -57,7 +57,7 @@ services:
   scheduler:
     container_name: scheduler
     hostname: scheduler
-    image: registry.gitlab.com/dongit/reporter/php:latest
+    image: registry.gitlab.com/dongit/reporter/${IMAGE_REPO:-php}:${IMAGE_TAG:-latest}
     restart: unless-stopped
     depends_on:
       - redis
