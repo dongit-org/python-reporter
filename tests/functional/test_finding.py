@@ -30,7 +30,7 @@ def test_target_operations(rc: Reporter, assessment):
         }
     )
 
-    assert target in rc.targets.list(filter_={"id": target.id})
+    assert target in rc.targets.list(filter={"id": target.id})
 
     rc.targets.update(target.id, {"description": "foo"})
     gotten = rc.targets.get(target.id)
@@ -69,7 +69,7 @@ def test_finding_operations(rc: Reporter, assessment):
         }
     )
 
-    assert finding in rc.findings.list(filter_={"id": finding.id})
+    assert finding in rc.findings.list(filter={"id": finding.id})
 
     rc.findings.update(finding.id, {"description": "bar"})
     gotten = rc.findings.get(finding.id)
@@ -97,7 +97,7 @@ def test_finding_template_operations(rc: Reporter):
         }
     )
 
-    assert template in rc.finding_templates.list(filter_={"id": template.id})
+    assert template in rc.finding_templates.list(filter={"id": template.id})
 
     rc.finding_templates.update(template.id, {"risk": "bar"})
     gotten = rc.finding_templates.get(template.id)
