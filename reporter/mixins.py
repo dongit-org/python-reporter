@@ -223,7 +223,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
         self,
         extra_path: str = "",
         term: Optional[str] = None,
-        filter_: Optional[Dict[str, str]] = None,
+        filter: Optional[Dict[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
@@ -235,7 +235,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
         Args:
             extra_path: Extra text to add to the request URL path
             term: A search term.
-            filter\\_: query string parameters for HTTP request of the form
+            filter: query string parameters for HTTP request of the form
                 filter[field]
             sort: How to sort retrieved items
             include: Types of related data to include
@@ -259,9 +259,9 @@ class _ListMixin(Generic[ChildOfRestObject]):
         if term is not None:
             query_data["term"] = term
 
-        if filter_ is None:
-            filter_ = {}
-        for (key, value) in filter_.items():
+        if filter is None:
+            filter = {}
+        for (key, value) in filter.items():
             query_data[f"filter[{key}]"] = value
 
         if include:
@@ -298,7 +298,7 @@ class ListMixin(_ListMixin):
 
     def list(  # pylint: disable = too-many-arguments
         self,
-        filter_: Optional[Dict[str, str]] = None,
+        filter: Optional[Dict[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
@@ -308,7 +308,7 @@ class ListMixin(_ListMixin):
         """Retrieve a list of objects.
 
         Args:
-            filter\\_: query string parameters for HTTP request of the form
+            filter: query string parameters for HTTP request of the form
                 filter[field]
             sort: How to sort retrieved items
             include: Types of related data to include
@@ -327,7 +327,7 @@ class ListMixin(_ListMixin):
         """
         return self._get_list(
             extra_path="",
-            filter_=filter_,
+            filter=filter,
             sort=sort,
             include=include,
             page=page,
