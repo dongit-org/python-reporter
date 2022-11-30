@@ -132,7 +132,6 @@ class GetMixin(Generic[ChildOfRestObject]):
         include: Optional[List[str]] = None,
         **kwargs: Any,
     ) -> ChildOfRestObject:
-        # Regarding the id: https://github.com/sphinx-doc/sphinx/issues/7857
         """Retrieve a single object.
 
         Args:
