@@ -13,12 +13,12 @@ def assessment(rc: Reporter) -> reporter.Assessment:
         }
     )
 
-    assessment_type = rc.assessment_types.list()[0]
+    assessment_template = rc.assessment_templates.list()[0]
 
     assessment = client.assessments.create(
         {
             "title": "test_tasks",
-            "assessment_type_id": assessment_type.id,
+            "assessment_template_id": assessment_template.id,
         }
     )
     return assessment
@@ -50,7 +50,7 @@ def test_task_operations(rc: Reporter, assessment):
         }
     )
 
-    assert task in rc.tasks.list(filter_={"id": task.id})
+    assert task in rc.tasks.list(filter={"id": task.id})
 
     rc.tasks.update(task.id, {"weight": 24680})
     gotten = rc.tasks.get(task.id)
@@ -82,7 +82,7 @@ def test_task_set_operations(rc: Reporter, assessment, assessment_user):
         }
     )
 
-    assert task_set in rc.task_sets.list(filter_={"id": task_set.id})
+    assert task_set in rc.task_sets.list(filter={"id": task_set.id})
 
     rc.task_sets.update(task_set.id, {"name": "Task set! 123"})
     gotten = rc.task_sets.get(task_set.id)
