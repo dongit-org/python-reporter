@@ -9,6 +9,7 @@ operations possible on their corresponding :class:`~reporter.base.RestObject` in
 
 from typing import (
     Any,
+    Callable,
     Dict,
     Generic,
     List,
@@ -42,6 +43,7 @@ class CreateMixin(Generic[ChildOfRestObject]):
     """Manager can create object."""
 
     _path: str
+    _obj_cast: Callable
     _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
@@ -80,6 +82,9 @@ class CreateMixin(Generic[ChildOfRestObject]):
 
         if TYPE_CHECKING:
             assert isinstance(self, RestManager)
+
+        if hasattr(self, "_obj_cast"):
+            return self._obj_cast(self.reporter, result.json())
         return self._obj_cls(self.reporter, result.json())
 
 
@@ -88,6 +93,7 @@ class DeleteMixin(Generic[ChildOfRestObject]):
 
     _path: str
     _obj_cls: Type[ChildOfRestObject]
+    _obj_cast: Callable
     reporter: Reporter
 
     def delete(
@@ -124,6 +130,7 @@ class GetMixin(Generic[ChildOfRestObject]):
         str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
     ] = {}
     _obj_cls: Type[ChildOfRestObject]
+    _obj_cast: Callable
     reporter: Reporter
 
     def get(
@@ -165,6 +172,8 @@ class GetMixin(Generic[ChildOfRestObject]):
         if TYPE_CHECKING:
             assert isinstance(self, RestManager)
 
+        if hasattr(self, "_obj_cast"):
+            return self._obj_cast(self.reporter, result.json())
         return self._obj_cls(self.reporter, result.json())
 
 
@@ -173,6 +182,7 @@ class GetRawMixin(Generic[ChildOfRestObject]):
 
     _path: str
     _obj_cls: Type[ChildOfRestObject]
+    _obj_cast: Callable
     reporter: Reporter
 
     def get(
@@ -216,6 +226,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
         str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
     ] = {}
     _obj_cls: Type[ChildOfRestObject]
+    _obj_cast: Callable
     reporter: Reporter
 
     def _get_list(  # pylint: disable = too-many-arguments, too-many-locals, redefined-builtin
@@ -260,7 +271,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
 
         if filter is None:
             filter = {}
-        for (key, value) in filter.items():
+        for key, value in filter.items():
             query_data[f"filter[{key}]"] = value
 
         if include:
@@ -285,7 +296,10 @@ class _ListMixin(Generic[ChildOfRestObject]):
         json = result.json()
         if TYPE_CHECKING:
             assert isinstance(self, RestManager)
-        data = [self._obj_cls(self.reporter, attrs) for attrs in json["data"]]
+        if hasattr(self, "_obj_cast"):
+            data = [self._obj_cast(self.reporter, attrs) for attrs in json["data"]]
+        else:
+            data = [self._obj_cls(self.reporter, attrs) for attrs in json["data"]]
         links = json["links"]
         meta = json["meta"]
 
@@ -377,6 +391,7 @@ class UpdateMixin(Generic[ChildOfRestObject]):
 
     _path: str
     _obj_cls: Type[ChildOfRestObject]
+    _obj_cast: Callable
     reporter: Reporter
 
     def update(
@@ -413,6 +428,8 @@ class UpdateMixin(Generic[ChildOfRestObject]):
 
         if TYPE_CHECKING:
             assert isinstance(self, RestManager)
+        if hasattr(self, "_obj_cast"):
+            return self._obj_cast(self.reporter, result.json())
         return self._obj_cls(self.reporter, result.json())
 
 

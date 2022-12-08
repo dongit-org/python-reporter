@@ -1,7 +1,9 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from reporter.base import RestManager, RestObject
+from typing import List
+from reporter.base import RestManager, RestObject, Reporter
 from reporter.mixins import CreateMixin, CrudMixin, DeleteMixin, ListMixin
+from reporter.objects.task import Task
 
 
 __all__ = [
@@ -23,4 +25,7 @@ class TaskSetManager(RestManager, CrudMixin, ListMixin):
 class AssessmentTaskSetManager(RestManager, CreateMixin, DeleteMixin):
     _path = "assessments/{assessment_id}/task-sets"
     _parent_attrs = {"assessment_id": "id"}
-    _obj_cls = TaskSet
+    _obj_cls = List[Task]
+
+    def _obj_cast(self, reporter: Reporter, tasks: List):
+        return [Task(reporter, task) for task in tasks]

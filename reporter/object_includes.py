@@ -41,6 +41,9 @@ AssessmentSection._includes = {
     "items": AssessmentSection,
 }
 
+AssessmentTemplate._includes = {
+    "taskSets": TaskSet,
+}
 
 AssessmentUser._includes = {
     "assessment": Assessment,
@@ -94,6 +97,7 @@ Target._includes = {
 Task._includes = {
     "assessment": Assessment,
     "client": Client,
+    "completedBy": User,
     "finding": Finding,
     "taskSet": TaskSet,
     "users": User,
@@ -101,6 +105,7 @@ Task._includes = {
 
 TaskSet._includes = {
     "assessments": Assessment,
+    "assessmentTemplates": AssessmentTemplate,
     "copiedTasks": Task,
 }
 
@@ -109,6 +114,7 @@ User._includes = {
     "clients": Client,
     "documents": Document,
     "roles": Role,
+    "tasks": Task,
     "userGroups": UserGroup,
 }
 

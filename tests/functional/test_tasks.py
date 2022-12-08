@@ -91,12 +91,16 @@ def test_task_set_operations(rc: Reporter, assessment, assessment_user):
     for attr in ["deadline_type", "tasks"]:
         assert getattr(task_set, attr) == getattr(gotten, attr)
 
-    assessment_task_set = assessment.task_sets.create(
+    tasks = assessment.task_sets.create(
         {
             "task_set_id": task_set.id,
             "assigned_users": [assessment_user.user_id],
         }
     )
+
+    assert isinstance(tasks, list)
+    assert isinstance(tasks[0], reporter.Task)
+    assert tasks[0].data["title"] == "Task 1"
 
     assessment.task_sets.delete(task_set.id)
 
