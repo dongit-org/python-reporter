@@ -18,20 +18,20 @@ def client(rc: Reporter) -> reporter.Client:
 
 
 @pytest.fixture(scope="session")
-def assessment_type(rc: Reporter) -> reporter.AssessmentType:
-    type = rc.assessment_types.list()[0]
-    return type
+def assessment_template(rc: Reporter) -> reporter.AssessmentTemplate:
+    template = rc.assessment_templates.list()[0]
+    return template
 
 
-def test_assessment_operations(rc: Reporter, client, assessment_type):
+def test_assessment_operations(rc: Reporter, client, assessment_template):
     assessment = client.assessments.create(
         {
             "title": "test_assessment_operations",
-            "assessment_type_id": assessment_type.id,
+            "assessment_template_id": assessment_template.id,
         }
     )
 
-    assert assessment in rc.assessments.list(filter_={"id": assessment.id})
+    assert assessment in rc.assessments.list(filter={"id": assessment.id})
 
     rc.assessments.update(assessment.id, {"internal_details": "foo"})
     gotten = rc.assessments.get(assessment.id)
@@ -42,11 +42,11 @@ def test_assessment_operations(rc: Reporter, client, assessment_type):
     assert gotten.internal_details == "foo"
 
 
-def test_assessment_phases_and_sections(rc: Reporter, client, assessment_type):
+def test_assessment_phases_and_sections(rc: Reporter, client, assessment_template):
     assessment = client.assessments.create(
         {
             "title": "test_assessment_phases_and_sections",
-            "assessment_type_id": assessment_type.id,
+            "assessment_template_id": assessment_template.id,
         }
     )
 
@@ -75,11 +75,11 @@ def test_assessment_phases_and_sections(rc: Reporter, client, assessment_type):
         assert getattr(section, attr) == val
 
 
-def test_assessment_users(rc: Reporter, client, assessment_type):
+def test_assessment_users(rc: Reporter, client, assessment_template):
     assessment = client.assessments.create(
         {
             "title": "test_assessment_users",
-            "assessment_type_id": assessment_type.id,
+            "assessment_template_id": assessment_template.id,
         }
     )
 
@@ -101,11 +101,11 @@ def test_assessment_users(rc: Reporter, client, assessment_type):
     assert assessment_user.type == 2
 
 
-def test_activities(rc: Reporter, client, assessment_type):
+def test_activities(rc: Reporter, client, assessment_template):
     assessment = client.assessments.create(
         {
             "title": "test_activities",
-            "assessment_type_id": assessment_type.id,
+            "assessment_template_id": assessment_template.id,
         }
     )
 
@@ -131,7 +131,7 @@ def test_activities(rc: Reporter, client, assessment_type):
     )
 
     activity = rc.activities.list(
-        filter_={
+        filter={
             "assessment_id": assessment.id,
             "type": "40",
         }
@@ -140,11 +140,11 @@ def test_activities(rc: Reporter, client, assessment_type):
     assert activity.finding_id == finding.id
 
 
-def test_output_files(rc: Reporter, client, assessment_type):
+def test_output_files(rc: Reporter, client, assessment_template):
     assessment = client.assessments.create(
         {
             "title": "test_output_files",
-            "assessment_type_id": assessment_type.id,
+            "assessment_template_id": assessment_template.id,
         }
     )
 

@@ -5,7 +5,7 @@ operations possible on their corresponding :class:`~reporter.base.RestObject` in
 
 """
 
-# pylint: disable = too-few-public-methods
+# pylint: disable = too-few-public-methods, redefined-builtin, invalid-name
 
 from typing import (
     Any,
@@ -92,13 +92,13 @@ class DeleteMixin(Generic[ChildOfRestObject]):
 
     def delete(
         self,
-        id_: str,
+        id: str,
         **kwargs: Any,
     ):
         """Delete an object.
 
         Args:
-            id\\_: The ID of the object to delete.
+            id: The ID of the object to delete.
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -107,7 +107,7 @@ class DeleteMixin(Generic[ChildOfRestObject]):
                 :func:`reporter.Reporter.http_request`.
 
         """
-        path = f"{self._path}/{id_}"
+        path = f"{self._path}/{id}"
 
         self.reporter.http_request(
             verb="delete",
@@ -128,15 +128,14 @@ class GetMixin(Generic[ChildOfRestObject]):
 
     def get(
         self,
-        id_: str,
+        id: str,
         include: Optional[List[str]] = None,
         **kwargs: Any,
     ) -> ChildOfRestObject:
-        # Regarding the id\\_: https://github.com/sphinx-doc/sphinx/issues/7857
         """Retrieve a single object.
 
         Args:
-            id\\_: The ID of the object to retrieve.
+            id: The ID of the object to retrieve.
             include: Related data to include in the response.
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
@@ -154,7 +153,7 @@ class GetMixin(Generic[ChildOfRestObject]):
 
         if include:
             query_data["include"] = ",".join(include)
-        path = f"{self._path}/{id_}"
+        path = f"{self._path}/{id}"
 
         result = self.reporter.http_request(
             verb="get",
@@ -178,13 +177,13 @@ class GetRawMixin(Generic[ChildOfRestObject]):
 
     def get(
         self,
-        id_: str,
+        id: str,
         **kwargs: Any,
     ) -> bytes:
         """Retrieve a single object.
 
         Args:
-            id\\_: Object ID
+            id: Object ID
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -197,7 +196,7 @@ class GetRawMixin(Generic[ChildOfRestObject]):
 
         """
 
-        path = f"{self._path}/{id_}"
+        path = f"{self._path}/{id}"
 
         result = self.reporter.http_request(
             verb="get",
@@ -219,11 +218,11 @@ class _ListMixin(Generic[ChildOfRestObject]):
     _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
-    def _get_list(  # pylint: disable = too-many-arguments, too-many-locals
+    def _get_list(  # pylint: disable = too-many-arguments, too-many-locals, redefined-builtin
         self,
         extra_path: str = "",
         term: Optional[str] = None,
-        filter_: Optional[Dict[str, str]] = None,
+        filter: Optional[Dict[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
@@ -235,7 +234,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
         Args:
             extra_path: Extra text to add to the request URL path
             term: A search term.
-            filter\\_: query string parameters for HTTP request of the form
+            filter: query string parameters for HTTP request of the form
                 filter[field]
             sort: How to sort retrieved items
             include: Types of related data to include
@@ -259,9 +258,9 @@ class _ListMixin(Generic[ChildOfRestObject]):
         if term is not None:
             query_data["term"] = term
 
-        if filter_ is None:
-            filter_ = {}
-        for (key, value) in filter_.items():
+        if filter is None:
+            filter = {}
+        for (key, value) in filter.items():
             query_data[f"filter[{key}]"] = value
 
         if include:
@@ -296,9 +295,9 @@ class _ListMixin(Generic[ChildOfRestObject]):
 class ListMixin(_ListMixin):
     """Manager can list objects."""
 
-    def list(  # pylint: disable = too-many-arguments
+    def list(  # pylint: disable = too-many-arguments, redefined-builtin
         self,
-        filter_: Optional[Dict[str, str]] = None,
+        filter: Optional[Dict[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
@@ -308,7 +307,7 @@ class ListMixin(_ListMixin):
         """Retrieve a list of objects.
 
         Args:
-            filter\\_: query string parameters for HTTP request of the form
+            filter: query string parameters for HTTP request of the form
                 filter[field]
             sort: How to sort retrieved items
             include: Types of related data to include
@@ -327,7 +326,7 @@ class ListMixin(_ListMixin):
         """
         return self._get_list(
             extra_path="",
-            filter_=filter_,
+            filter=filter,
             sort=sort,
             include=include,
             page=page,
@@ -382,14 +381,14 @@ class UpdateMixin(Generic[ChildOfRestObject]):
 
     def update(
         self,
-        id_: str,
+        id: str,
         attrs: Dict[str, Any],
         **kwargs: Any,
     ) -> ChildOfRestObject:
         """Update an object of type self._obj_cls.
 
         Args:
-            id\\_: ID of the object to update
+            id: ID of the object to update
             attrs: Attributes to update
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
@@ -403,7 +402,7 @@ class UpdateMixin(Generic[ChildOfRestObject]):
 
         """
 
-        path = f"{self._path}/{id_}"
+        path = f"{self._path}/{id}"
 
         result = self.reporter.http_request(
             verb="patch",

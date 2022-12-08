@@ -16,7 +16,7 @@ permissions of your API token.
 .. code:: python
 
    # Retrieve a user
-   user = rc.users.list(filter_={"email": "researcher@example.com"})[0]
+   user = rc.users.list(filter={"email": "researcher@example.com"})[0]
 
    # Retrieve a list of clients.
    clients = rc.clients.list()
@@ -24,7 +24,7 @@ permissions of your API token.
    # Create an assessment under the first client.
    assessment = clients[0].assessments.create({
       "title": "My Awesome Assessment",
-      "assessment_type_id": "owasp_top10_2021",
+      "assessment_template_id": "owasp_top10_2021",
    })
 
    # Retrieve a list of assessment phases.
@@ -59,17 +59,13 @@ as arguments.
    print([t.name for t in finding.targets])
    # ["Acceptance Environment", "Production Environment"]
 
-.. note::
-   The query parameter :code:`filter` is called :code:`filter_` in python-reporter to avoid clashes with the
-   :code:`filter` keyword, as prescribed in https://peps.python.org/pep-0008/#descriptive-naming-styles
-
 The following demonstrates how to update a finding:
 
 .. code:: python
 
    from reporter import Reporter
    rc = Reporter(url="https://reporter.example.com", api_token="secret")
-   finding = rc.findings.list(filter_={"title": "Incoming Meteor"})[0]
+   finding = rc.findings.list(filter={"title": "Incoming Meteor"})[0]
    rc.findings.update(finding.id, {
        "risk": "This is a massive risk to the entire planet.",
        "targets": [target_id],
@@ -85,8 +81,8 @@ These endpoints must be called from the parent object.
    rc = Reporter(url="https://reporter.example.com", api_token="secret")
    client = rc.clients.get(client_id)
    client.assessments.create({
-       "assessment_type_id": "owasp_top10_2021",
-       "assessment_type_name": "OWASP Top 10 - version 2021",
+       "assessment_template_id": "owasp_top10_2021",
+       "assessment_template_name": "OWASP Top 10 - version 2021",
        "title": "SuperApp periodic",
        "description": "White-box test",
    })

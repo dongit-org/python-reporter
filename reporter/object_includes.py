@@ -11,7 +11,7 @@ Activity._includes = {
 }
 
 Assessment._includes = {
-    "assessmentType": AssessmentType,
+    "assessmentTemplate": AssessmentTemplate,
     "assessmentUsers": AssessmentUser,
     "client": Client,
     "documents": Document,

@@ -61,7 +61,7 @@ def rc(docker_services, reporter_host) -> Reporter:
         sock.sendall(b"Password1!\nPassword1!\n")
         # ensure that reporter has time to process
         # the password before trying to retrieve output
-        time.sleep(1)
+        time.sleep(3)
         token = sock.recv(500)[8:].decode("utf-8").split("\n")[-2].split()[-1]
     else:
         raise Exception(f"Unsupported platform {platform.system()}")
