@@ -5,7 +5,7 @@ from reporter import Reporter
 
 
 @pytest.fixture(scope="session")
-def assessment(rc: Reporter) -> reporter.Client:
+def assessment(rc: Reporter) -> reporter.Assessment:
     client = rc.clients.create(
         {
             "name": "test_finding",
@@ -19,7 +19,31 @@ def assessment(rc: Reporter) -> reporter.Client:
             "assessment_template_id": assessment_template.id,
         }
     )
-    return assessment
+    return rc.assessments.get(assessment.id, include=["sections"])
+
+
+@pytest.fixture(scope="session")
+def target(rc: Reporter, assessment: reporter.Assessment) -> reporter.Target:
+    return assessment.targets.create(
+        {
+            "target_type": 0,
+            "name": "example.com",
+        }
+    )
+
+
+@pytest.fixture(scope="session")
+def section(
+    rc: Reporter, assessment: reporter.Assessment
+) -> reporter.AssessmentSection:
+    section = assessment.sections[0]
+    rc.assessment_sections.update(
+        section.id,
+        {
+            "can_have_findings": True,
+        },
+    )
+    return section
 
 
 def test_target_operations(rc: Reporter, assessment):
@@ -85,7 +109,7 @@ def test_finding_operations(rc: Reporter, assessment):
         assert e.value.response_code == 404
 
 
-def test_finding_template_operations(rc: Reporter):
+def test_finding_template_operations(rc: Reporter, assessment, section, target):
     assert len(rc.finding_templates.search("XSS")) > 0
 
     template = rc.finding_templates.create(
@@ -104,8 +128,20 @@ def test_finding_template_operations(rc: Reporter):
 
     assert template == gotten
     for attr in ["title", "is_vulnerability", "description"]:
-        assert getattr(template, attr) == getattr(template, attr)
+        assert getattr(template, attr) == getattr(gotten, attr)
     assert gotten.risk == "bar"
+
+    finding = assessment.findings.create_from_template(
+        template.id,
+        {
+            "assessment_section_id": section.id,
+            "targets": [target.id],
+        },
+    )
+    gotten = rc.findings.get(finding.id)
+    assert finding == gotten
+    for attr in ["title", "risk", "description"]:
+        assert getattr(finding, attr) == getattr(gotten, attr)
 
     rc.finding_templates.delete(template.id)
     with pytest.raises(reporter.ReporterHttpError) as e:
