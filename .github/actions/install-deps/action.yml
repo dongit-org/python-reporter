@@ -7,7 +7,7 @@ runs:
         path: ~/.cache/pip
         key: poetry
     - name: Install Poetry
-      run: pip install poetry
+      run: pip install 'poetry~=1.3.0'
       shell: bash
     - uses: actions/setup-python@v4
       with:
