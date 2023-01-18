@@ -7,8 +7,7 @@ runs:
         path: ~/.cache/pip
         key: poetry
     - name: Install Poetry
-      # pinning it because 1.2.0 gives errors in github actions
-      run: pip install poetry==1.1.14
+      run: pip install poetry
       shell: bash
     - uses: actions/setup-python@v4
       with:
