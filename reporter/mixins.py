@@ -141,6 +141,7 @@ class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject])
         self,
         id: str,
         include: Optional[List[str]] = None,
+        query_data: Optional[Dict] = None,
         **kwargs: Any,
     ) -> ChildOfRestObject:
         """Retrieve a single object.
@@ -148,6 +149,7 @@ class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject])
         Args:
             id: The ID of the object to retrieve.
             include: Related data to include in the response.
+            query_data: Dict of additional query parameters
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -160,7 +162,7 @@ class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject])
 
         """
 
-        query_data = {}
+        query_data = query_data or {}
 
         if include:
             query_data["include"] = ",".join(include)
@@ -237,6 +239,7 @@ class _ListMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
+        query_data: Optional[Dict] = None,
         **kwargs: Any,
     ) -> RestList:
         """Retrieve a list of objects.
@@ -263,7 +266,7 @@ class _ListMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject
         """
         path = self._path + extra_path
 
-        query_data = {}
+        query_data = query_data or {}
 
         if term is not None:
             query_data["term"] = term
@@ -315,6 +318,7 @@ class ListMixin(_ListMixin):
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
+        query_data: Optional[Dict] = None,
         **kwargs: Any,
     ) -> RestList:
         """Retrieve a list of objects.
@@ -326,6 +330,7 @@ class ListMixin(_ListMixin):
             include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
+            query_data: Dict of additional query parameters
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -344,6 +349,7 @@ class ListMixin(_ListMixin):
             include=include,
             page=page,
             page_size=page_size,
+            query_data=query_data,
             **kwargs,
         )
 
@@ -356,6 +362,7 @@ class SearchMixin(_ListMixin):
         term: Optional[str] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
+        query_data: Optional[Dict] = None,
         **kwargs: Any,
     ) -> RestList:
         """Search for a list of objects.
@@ -364,6 +371,7 @@ class SearchMixin(_ListMixin):
             term: Term to search for
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
+            query_data: Dict of additional query parameters
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -381,6 +389,7 @@ class SearchMixin(_ListMixin):
             page=page,
             page_size=page_size,
             term=term,
+            query_data=query_data,
             **kwargs,
         )
 
