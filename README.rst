@@ -24,7 +24,7 @@ Currently compatible with Reporter version `2023.03.21 <https://securityreporter
 Installation
 ------------
 
-Currently, :code:`python-reporter` is compatible with Python 3.7+.
+Currently, :code:`python-reporter` is compatible with Python 3.8+.
 
 Use :code:`pip` to install the package:
 

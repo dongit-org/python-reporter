@@ -17,23 +17,22 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7.2"
+python = "^3.8.0"
 requests = "^2.27.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
-black = "^22.1.0"
-mypy = "^0.931"
-pytest-docker = "^0.12.0"
-docker = "^6.0.0"
-docker-compose = "^1.29.2"
-responses = "^0.21.0"
+black = "^23.12.1"
+mypy = "^1.8.0"
+pytest-docker = "^2.0.1"
+docker = "^7.0.0"
+responses = "^0.24.1"
 types-requests = "^2.28.0"
-coverage = "^6.4.2"
+coverage = "^7.4.0"
 Sphinx = "^5.0.0"
 sphinx-autodoc-typehints = "^1.19.2"
-pylint = "^2.14.5"
-tox = "^3.26.0"
+pylint = "^3.0.3"
+tox = "^4.11.4"
 sphinx-rtd-theme = "^1.0.0"
 
 [build-system]

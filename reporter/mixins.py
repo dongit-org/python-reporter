@@ -39,12 +39,21 @@ __all__ = [
 ChildOfRestObject = TypeVar("ChildOfRestObject", bound=RestObject)
 
 
-class CreateMixin(Generic[ChildOfRestObject]):
+class _BaseMixin(Generic[ChildOfRestObject]):
+    _obj_cls: Type[ChildOfRestObject]
+
+
+class _IncludesMixin(Generic[ChildOfRestObject]):
+    _includes: Dict[
+        str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
+    ] = {}
+
+
+class CreateMixin(_BaseMixin[ChildOfRestObject]):
     """Manager can create object."""
 
     _path: str
     _obj_cast: Callable
-    _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
     def create(
@@ -88,11 +97,10 @@ class CreateMixin(Generic[ChildOfRestObject]):
         return self._obj_cls(self.reporter, result.json())
 
 
-class DeleteMixin(Generic[ChildOfRestObject]):
+class DeleteMixin(_BaseMixin[ChildOfRestObject]):
     """Manager can delete object."""
 
     _path: str
-    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 
@@ -122,14 +130,10 @@ class DeleteMixin(Generic[ChildOfRestObject]):
         )
 
 
-class GetMixin(Generic[ChildOfRestObject]):
+class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject]):
     """Manager can retrieve object."""
 
     _path: str
-    _includes: Dict[
-        str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
-    ] = {}
-    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 
@@ -177,11 +181,10 @@ class GetMixin(Generic[ChildOfRestObject]):
         return self._obj_cls(self.reporter, result.json())
 
 
-class GetRawMixin(Generic[ChildOfRestObject]):
+class GetRawMixin(_BaseMixin[ChildOfRestObject]):
     """Manager can retrieve raw file contents."""
 
     _path: str
-    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 
@@ -218,14 +221,10 @@ class GetRawMixin(Generic[ChildOfRestObject]):
         return result.content
 
 
-class _ListMixin(Generic[ChildOfRestObject]):
+class _ListMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject]):
     """Parent class for ListMixin and SearchMixin."""
 
     _path: str
-    _includes: Dict[
-        str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
-    ] = {}
-    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 
@@ -386,11 +385,10 @@ class SearchMixin(_ListMixin):
         )
 
 
-class UpdateMixin(Generic[ChildOfRestObject]):
+class UpdateMixin(_BaseMixin[ChildOfRestObject]):
     """Manager can update objects."""
 
     _path: str
-    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 

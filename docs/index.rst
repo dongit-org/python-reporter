@@ -8,7 +8,7 @@ A Python wrapper around the `Reporter <https://securityreporter.app>`_ API.
 Installation
 ------------
 
-Currently, :code:`python-reporter` is compatible with Python 3.7+.
+Currently, :code:`python-reporter` is compatible with Python 3.8+.
 
 Use :code:`pip` to install the package:
 

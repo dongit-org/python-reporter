@@ -1,4 +1,4 @@
 [DESIGN]
-max-parents = 10
+max-parents = 15
 [BASIC]
 min-public-methods = 1
