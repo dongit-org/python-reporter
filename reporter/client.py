@@ -1,7 +1,7 @@
 """This module exposes the :class:`~reporter.client.Reporter` object."""
 
 import time
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Mapping, Optional, TYPE_CHECKING
 
 import requests
 
@@ -83,10 +83,10 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         self,
         verb: str,
         path: str,
-        headers: Optional[Dict[str, str]] = None,
-        query_data: Optional[Dict[str, Any]] = None,
-        post_data: Optional[Dict[str, Any]] = None,
-        files: Optional[Dict[str, Any]] = None,
+        headers: Optional[Mapping[str, str]] = None,
+        query_data: Optional[Mapping[str, Any]] = None,
+        post_data: Optional[Mapping[str, Any]] = None,
+        files: Optional[Mapping[str, Any]] = None,
         obey_rate_limit=True,
     ) -> requests.Response:
         """Make an HTTP request to the Reporter server.

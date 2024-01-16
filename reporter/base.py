@@ -6,7 +6,7 @@ representing API models, managers of these objects, and lists of these objects.
 """
 
 from collections.abc import Sequence
-from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, Type, TypeVar
+from typing import Any, Callable, Dict, Generic, Iterable, List, Mapping, Optional, Type, TypeVar
 
 from reporter.client import Reporter
 
@@ -29,12 +29,12 @@ class RestObject:
     reporter: Reporter
 
     _attrs: Dict[str, Any]
-    _includes: Dict[str, Type["RestObject"]] = {}
-    _children: Dict[str, Type["RestManager"]] = {}
+    _includes: Mapping[str, Type["RestObject"]] = {}
+    _children: Mapping[str, Type["RestManager"]] = {}
 
-    def __init__(self, reporter: Reporter, attrs: Dict[str, Any]) -> None:
+    def __init__(self, reporter: Reporter, attrs: Mapping[str, Any]) -> None:
         self.reporter = reporter
-        self._attrs = attrs
+        self._attrs = dict(attrs)
         for key, mgr_cls in self._children.items():
             setattr(self, key, mgr_cls(self.reporter, parent=self))
         self._deserialize_includes()
@@ -107,14 +107,14 @@ class RestList(Sequence, Generic[ChildOfRestObject]):
     """
 
     _data: List[ChildOfRestObject]
-    links: Dict[str, str]
-    meta: Dict[str, str]
+    links: Mapping[str, str]
+    meta: Mapping[str, str]
 
     def __init__(
         self,
         data: List[ChildOfRestObject],
-        links: Dict[str, str],
-        meta: Dict[str, str],
+        links: Mapping[str, str],
+        meta: Mapping[str, str],
     ) -> None:
         self._data = data
         self.links = links
@@ -138,7 +138,7 @@ class RestManager(Sequence, Generic[ChildOfRestObject]):
     reporter: Reporter
 
     _parent: Optional[RestObject]
-    _parent_attrs: Dict[str, str]
+    _parent_attrs: Mapping[str, str]
     _path: str
     _computed_path: str
 

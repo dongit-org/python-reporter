@@ -10,7 +10,6 @@ operations possible on their corresponding :class:`~reporter.base.RestObject` in
 from typing import (
     Any,
     Callable,
-    Dict,
     Generic,
     List,
     Mapping,
@@ -45,7 +44,7 @@ class _BaseMixin(Generic[ChildOfRestObject]):
 
 
 class _IncludesMixin(Generic[ChildOfRestObject]):
-    _includes: Dict[
+    _includes: Mapping[
         str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
     ] = {}
 
@@ -59,7 +58,7 @@ class CreateMixin(_BaseMixin[ChildOfRestObject]):
 
     def create(
         self,
-        attrs: Dict[str, Any],
+        attrs: Mapping[str, Any],
         file: Optional[Any] = None,
         **kwargs: Any,
     ) -> ChildOfRestObject:
@@ -235,7 +234,7 @@ class _ListMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject
         self,
         extra_path: str = "",
         term: Optional[str] = None,
-        filter: Optional[Dict[str, str]] = None,
+        filter: Optional[Mapping[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
@@ -314,7 +313,7 @@ class ListMixin(_ListMixin):
 
     def list(  # pylint: disable = too-many-arguments, redefined-builtin
         self,
-        filter: Optional[Dict[str, str]] = None,
+        filter: Optional[Mapping[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
@@ -405,7 +404,7 @@ class UpdateMixin(_BaseMixin[ChildOfRestObject]):
     def update(
         self,
         id: str,
-        attrs: Dict[str, Any],
+        attrs: Mapping[str, Any],
         **kwargs: Any,
     ) -> ChildOfRestObject:
         """Update an object of type self._obj_cls.
