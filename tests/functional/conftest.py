@@ -6,6 +6,7 @@ import time
 import docker  # type: ignore
 import pytest  # type: ignore
 import requests
+from urllib3.exceptions import ProtocolError
 
 from reporter import Reporter
 
@@ -33,7 +34,7 @@ def is_up(url):
         response = requests.get(f"{url}/login")
         if response.status_code == 200:
             return True
-    except (ConnectionError, ConnectionRefusedError):
+    except (ConnectionError, ConnectionRefusedError, ProtocolError):
         return False
 
 

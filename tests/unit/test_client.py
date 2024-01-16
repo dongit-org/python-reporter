@@ -1,4 +1,5 @@
 import timeit
+from typing import cast, Dict, Pattern
 
 import pytest  # type: ignore
 import responses
@@ -75,7 +76,10 @@ def test_http_request_extra_headers(rc: Reporter):
         url=url,
         status=200,
         match=[
-            responses.matchers.header_matcher(headers),
+            # use cast because responses library uses incorrect type for header_matcher
+            responses.matchers.header_matcher(
+                cast(Dict[str, str | Pattern[str]], headers)
+            ),
         ],
     )
 
