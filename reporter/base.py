@@ -6,7 +6,18 @@ representing API models, managers of these objects, and lists of these objects.
 """
 
 from collections.abc import Sequence
-from typing import Any, Callable, Dict, Generic, Iterable, List, Mapping, Optional, Type, TypeVar
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Type,
+    TypeVar,
+)
 
 from reporter.client import Reporter
 
