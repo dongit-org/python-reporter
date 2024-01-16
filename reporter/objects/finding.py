@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Mapping, TYPE_CHECKING
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, DeleteMixin, GetMixin, ListMixin, UpdateMixin
 
@@ -26,7 +26,7 @@ class AssessmentFindingManager(RestManager, CreateMixin):
     _obj_cls = Finding
 
     def create_from_template(
-        self, template_id: str, attrs: Dict[str, Any], **kwargs: Any
+        self, template_id: str, attrs: Mapping[str, Any], **kwargs: Any
     ) -> Finding:
         """Create a new finding from a finding template
 

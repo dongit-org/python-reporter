@@ -10,9 +10,9 @@ operations possible on their corresponding :class:`~reporter.base.RestObject` in
 from typing import (
     Any,
     Callable,
-    Dict,
     Generic,
     List,
+    Mapping,
     Optional,
     Type,
     TYPE_CHECKING,
@@ -44,7 +44,7 @@ class _BaseMixin(Generic[ChildOfRestObject]):
 
 
 class _IncludesMixin(Generic[ChildOfRestObject]):
-    _includes: Dict[
+    _includes: Mapping[
         str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
     ] = {}
 
@@ -58,7 +58,7 @@ class CreateMixin(_BaseMixin[ChildOfRestObject]):
 
     def create(
         self,
-        attrs: Dict[str, Any],
+        attrs: Mapping[str, Any],
         file: Optional[Any] = None,
         **kwargs: Any,
     ) -> ChildOfRestObject:
@@ -141,6 +141,7 @@ class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject])
         self,
         id: str,
         include: Optional[List[str]] = None,
+        query_data: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> ChildOfRestObject:
         """Retrieve a single object.
@@ -148,6 +149,7 @@ class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject])
         Args:
             id: The ID of the object to retrieve.
             include: Related data to include in the response.
+            query_data: Dict of additional query parameters
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -160,7 +162,7 @@ class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject])
 
         """
 
-        query_data = {}
+        query_data = dict(query_data) if query_data else {}
 
         if include:
             query_data["include"] = ",".join(include)
@@ -232,11 +234,12 @@ class _ListMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject
         self,
         extra_path: str = "",
         term: Optional[str] = None,
-        filter: Optional[Dict[str, str]] = None,
+        filter: Optional[Mapping[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
+        query_data: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> RestList:
         """Retrieve a list of objects.
@@ -263,7 +266,7 @@ class _ListMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject
         """
         path = self._path + extra_path
 
-        query_data = {}
+        query_data = dict(query_data) if query_data else {}
 
         if term is not None:
             query_data["term"] = term
@@ -310,11 +313,12 @@ class ListMixin(_ListMixin):
 
     def list(  # pylint: disable = too-many-arguments, redefined-builtin
         self,
-        filter: Optional[Dict[str, str]] = None,
+        filter: Optional[Mapping[str, str]] = None,
         sort: Optional[List[str]] = None,
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
+        query_data: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> RestList:
         """Retrieve a list of objects.
@@ -326,6 +330,7 @@ class ListMixin(_ListMixin):
             include: Types of related data to include
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
+            query_data: Dict of additional query parameters
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -344,6 +349,7 @@ class ListMixin(_ListMixin):
             include=include,
             page=page,
             page_size=page_size,
+            query_data=query_data,
             **kwargs,
         )
 
@@ -356,6 +362,7 @@ class SearchMixin(_ListMixin):
         term: Optional[str] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
+        query_data: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> RestList:
         """Search for a list of objects.
@@ -364,6 +371,7 @@ class SearchMixin(_ListMixin):
             term: Term to search for
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
+            query_data: Dict of additional query parameters
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 
@@ -381,6 +389,7 @@ class SearchMixin(_ListMixin):
             page=page,
             page_size=page_size,
             term=term,
+            query_data=query_data,
             **kwargs,
         )
 
@@ -395,7 +404,7 @@ class UpdateMixin(_BaseMixin[ChildOfRestObject]):
     def update(
         self,
         id: str,
-        attrs: Dict[str, Any],
+        attrs: Mapping[str, Any],
         **kwargs: Any,
     ) -> ChildOfRestObject:
         """Update an object of type self._obj_cls.
