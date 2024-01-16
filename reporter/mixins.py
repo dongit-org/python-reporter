@@ -13,6 +13,7 @@ from typing import (
     Dict,
     Generic,
     List,
+    Mapping,
     Optional,
     Type,
     TYPE_CHECKING,
@@ -141,7 +142,7 @@ class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject])
         self,
         id: str,
         include: Optional[List[str]] = None,
-        query_data: Optional[Dict] = None,
+        query_data: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> ChildOfRestObject:
         """Retrieve a single object.
@@ -162,7 +163,7 @@ class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject])
 
         """
 
-        query_data = query_data or {}
+        query_data = dict(query_data) if query_data else {}
 
         if include:
             query_data["include"] = ",".join(include)
@@ -239,7 +240,7 @@ class _ListMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
-        query_data: Optional[Dict] = None,
+        query_data: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> RestList:
         """Retrieve a list of objects.
@@ -266,7 +267,7 @@ class _ListMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject
         """
         path = self._path + extra_path
 
-        query_data = query_data or {}
+        query_data = dict(query_data) if query_data else {}
 
         if term is not None:
             query_data["term"] = term
@@ -318,7 +319,7 @@ class ListMixin(_ListMixin):
         include: Optional[List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
-        query_data: Optional[Dict] = None,
+        query_data: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> RestList:
         """Retrieve a list of objects.
@@ -362,7 +363,7 @@ class SearchMixin(_ListMixin):
         term: Optional[str] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
-        query_data: Optional[Dict] = None,
+        query_data: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> RestList:
         """Search for a list of objects.
