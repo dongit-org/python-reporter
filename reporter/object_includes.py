@@ -16,6 +16,7 @@ Assessment._includes = {
     "assessmentTemplate": AssessmentTemplate,
     "assessmentUsers": AssessmentUser,
     "client": Client,
+    "comments": AssessmentComment,
     "documents": Document,
     "findings": Finding,
     "nestedSections": AssessmentSection,
@@ -28,6 +29,14 @@ Assessment._includes = {
     "taskSets": TaskSet,
     "userGroups": UserGroup,
     "users": User,
+}
+
+AssessmentComment._includes = {
+    "assessment": Assessment,
+    "createdBy": User,
+    "updatedBy": User,
+    "documents": Document,
+    "replies": AssessmentComment,
 }
 
 AssessmentPhase._includes = {

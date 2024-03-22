@@ -3,6 +3,7 @@ from typing import Any
 
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin, DeleteMixin
+from reporter.objects.assessment_comment import AssessmentAssessmentCommentManager
 from reporter.objects.assessment_user import AssessmentAssessmentUserManager
 from reporter.objects.finding import AssessmentFindingManager
 from reporter.objects.output_file import AssessmentOutputFileManager
@@ -20,6 +21,7 @@ __all__ = [
 
 class Assessment(RestObject):
     _children = {
+        "comments": AssessmentAssessmentCommentManager,
         "findings": AssessmentFindingManager,
         "output_files": AssessmentOutputFileManager,
         "targets": AssessmentTargetManager,

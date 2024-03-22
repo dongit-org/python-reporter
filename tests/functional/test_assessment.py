@@ -42,6 +42,42 @@ def test_assessment_operations(rc: Reporter, client, assessment_template):
     assert gotten.internal_details == "foo"
 
 
+def test_assessment_comments_and_replies(rc: Reporter, client, assessment_template):
+    assessment = client.assessments.create(
+        {
+            "title": "test_assessment_comments_and_replies",
+            "assessment_template_id": assessment_template.id,
+        }
+    )
+
+    assert assessment in rc.assessments.list(filter={"id": assessment.id})
+
+    assessment.comments.create(
+        {
+            "body": "Private comment",
+            "is_private": True,
+        }
+    )
+    comments = rc.assessments.get(assessment.id, include=["comments"]).comments
+    comment = next(
+        (c for c in comments if c.body == "Private comment" and c.is_private), None
+    )
+    assert comment is not None
+
+    rc.assessment_comments.update(
+        comment.id, {"body": "Public comment", "is_private": False}
+    )
+    comments = rc.assessments.get(assessment.id, include=["comments"]).comments
+    comment = next(
+        (c for c in comments if c.body == "Public comment" and not c.is_private), None
+    )
+    assert comment is not None
+
+    rc.assessment_comments.delete(comment.id)
+    comments = rc.assessments.get(assessment.id, include=["comments"]).comments
+    assert not any(c for c in comments if c.id == comment.id)
+
+
 def test_assessment_phases_and_sections(rc: Reporter, client, assessment_template):
     assessment = client.assessments.create(
         {
