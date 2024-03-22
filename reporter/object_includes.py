@@ -7,10 +7,12 @@ from reporter.objects import *
 Activity._includes = {
     "assessment": Assessment,
     "finding": Finding,
+    "impersonator": User,
     "user": User,
 }
 
 Assessment._includes = {
+    "activities": Activity,
     "assessmentTemplate": AssessmentTemplate,
     "assessmentUsers": AssessmentUser,
     "client": Client,
@@ -37,7 +39,7 @@ AssessmentPhase._includes = {
 AssessmentSection._includes = {
     "assessment": Assessment,
     "documents": User,
-    "findings": User,
+    "findings": Finding,
     "items": AssessmentSection,
 }
 
@@ -73,6 +75,7 @@ FindingTemplate._includes = {
 }
 
 Finding._includes = {
+    "activities": Activity,
     "assessment": Assessment,
     "assessmentSection": AssessmentSection,
     "documents": Document,

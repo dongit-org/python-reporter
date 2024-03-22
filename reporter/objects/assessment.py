@@ -1,7 +1,7 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
 from reporter.base import RestManager, RestObject
-from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin
+from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin, DeleteMixin
 from reporter.objects.assessment_user import AssessmentAssessmentUserManager
 from reporter.objects.finding import AssessmentFindingManager
 from reporter.objects.output_file import AssessmentOutputFileManager
@@ -28,7 +28,7 @@ class Assessment(RestObject):
     }
 
 
-class AssessmentManager(RestManager, GetMixin, ListMixin, UpdateMixin):
+class AssessmentManager(RestManager, GetMixin, ListMixin, UpdateMixin, DeleteMixin):
     _path = "assessments"
     _obj_cls = Assessment
 
