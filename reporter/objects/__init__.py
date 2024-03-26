@@ -16,6 +16,11 @@ from .auto_assignment import *
 from .client import *
 from .document import *
 from .finding import *
+from .finding_comment import *
+from .finding_created_event import *
+from .finding_event import *
+from .finding_retest import *
+from .finding_retest_inquiry import *
 from .finding_template import *
 from .output_file import *
 from .role import *

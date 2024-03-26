@@ -7,6 +7,7 @@ __all__ = [
     "AssessmentComment",
     "AssessmentCommentManager",
     "AssessmentAssessmentCommentManager",
+    "AssessmentCommentReplyManager",
 ]
 
 
@@ -22,4 +23,10 @@ class AssessmentCommentManager(RestManager, UpdateMixin, DeleteMixin):
 class AssessmentAssessmentCommentManager(RestManager, CreateMixin):
     _path = "assessments/{assessment_id}/assessment-comments"
     _parent_attrs = {"assessment_id": "id"}
+    _obj_cls = AssessmentComment
+
+
+class AssessmentCommentReplyManager(RestManager, CreateMixin):
+    _path = "assessment-events/{assessment_event_id}/assessment-comments"
+    _parent_attrs = {"assessment_event_id": "id"}
     _obj_cls = AssessmentComment

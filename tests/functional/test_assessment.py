@@ -57,21 +57,40 @@ def test_assessment_comments_and_replies(rc: Reporter, client, assessment_templa
             "body": "Private comment",
             "is_private": True,
         }
+    ).replies.create(
+        {
+            "body": "Private reply",
+            "is_private": True,
+        }
     )
-    comments = rc.assessments.get(assessment.id, include=["comments"]).comments
+
+    comments = rc.assessments.get(assessment.id, include=["comments.replies"]).comments
     comment = next(
         (c for c in comments if c.body == "Private comment" and c.is_private), None
     )
     assert comment is not None
+    reply = next(
+        (r for r in comment.replies if r.body == "Private reply" and r.is_private), None
+    )
+    assert reply is not None
 
     rc.assessment_comments.update(
         comment.id, {"body": "Public comment", "is_private": False}
     )
-    comments = rc.assessments.get(assessment.id, include=["comments"]).comments
+    rc.assessment_comments.update(
+        reply.id, {"body": "Public reply", "is_private": False}
+    )
+
+    comments = rc.assessments.get(assessment.id, include=["comments.replies"]).comments
     comment = next(
         (c for c in comments if c.body == "Public comment" and not c.is_private), None
     )
     assert comment is not None
+    reply = next(
+        (r for r in comment.replies if r.body == "Public reply" and not r.is_private),
+        None,
+    )
+    assert reply is not None
 
     rc.assessment_comments.delete(comment.id)
     comments = rc.assessments.get(assessment.id, include=["comments"]).comments

@@ -79,6 +79,44 @@ Document._includes = {
     "uploadedBy": User,
 }
 
+FindingComment._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
+    "documents": Document,
+    "replies": FindingComment,
+}
+
+FindingCreatedEvent._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "replies": FindingComment,
+}
+
+FindingRetest._includes = {
+    "assessments": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
+    "reviewedBy": User,
+    "documents": Document,
+    "retestInquiry": FindingRetestInquiry,
+    "replies": FindingComment,
+}
+
+FindingRetestInquiry._includes = {
+    "assessments": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
+    "convertedFromCommentBy": User,
+    "documents": Document,
+    "retest": FindingRetest,
+    "replies": FindingComment,
+}
+
 FindingTemplate._includes = {
     "documents": Document,
 }
@@ -87,9 +125,13 @@ Finding._includes = {
     "activities": Activity,
     "assessment": Assessment,
     "assessmentSection": AssessmentSection,
+    "comments": FindingComment,
+    "createdEvent": FindingCreatedEvent,
     "documents": Document,
     "resolvedTargets": Target,
     "resolvers": User,
+    "retestInquiries": FindingRetestInquiry,
+    "retests": FindingRetest,
     "targets": Target,
     "userGroups": UserGroup,
     "user": User,
