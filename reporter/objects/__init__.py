@@ -24,3 +24,4 @@ from .task import *
 from .task_set import *
 from .user import *
 from .user_group import *
+from .webhook import *
