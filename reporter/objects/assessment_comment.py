@@ -1,3 +1,5 @@
+# pylint: disable = missing-module-docstring, missing-class-docstring, redefined-builtin
+
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, UpdateMixin, DeleteMixin
 

@@ -1,4 +1,4 @@
-# pylint: disable = missing-module-docstring, missing-class-docstring
+# pylint: disable = missing-module-docstring, missing-class-docstring, redefined-builtin
 from typing import Any
 
 from reporter.base import RestManager, RestObject
@@ -80,14 +80,7 @@ class AssessmentManager(RestManager, GetMixin, ListMixin, UpdateMixin, DeleteMix
         """
         path = f"{self._path}/{id}/pdf-reports/management"
 
-        result = self.reporter.http_request(
-            verb="get",
-            path=path,
-            headers={"Accept": "*/*"},
-            **kwargs,
-        )
-
-        return result.content
+        return self.reporter.get_raw_file(path, **kwargs)
 
 
 class ClientAssessmentManager(RestManager, CreateMixin):

@@ -203,14 +203,7 @@ class GetRawMixin(Generic[ChildOfRestObject]):
 
         path = f"{self._path}/{id}"
 
-        result = self.reporter.http_request(
-            verb="get",
-            path=path,
-            headers={"Accept": "*/*"},
-            **kwargs,
-        )
-
-        return result.content
+        return self.reporter.get_raw_file(path=path, **kwargs)
 
 
 class _ListMixin(Generic[ChildOfRestObject]):

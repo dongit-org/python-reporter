@@ -150,3 +150,31 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
             response_code=result.status_code,
             response_body=result.content,
         )
+
+    def get_raw_file(
+        self,
+        path: str,
+        headers=None,
+        **kwargs,
+    ) -> bytes:
+        """Wrapper around :func:`http_request` for downloading a raw file as bytestring.
+
+        Args:
+            path: URL path of the raw file.
+            headers: Request headers. Default: ``{"Accept": "*/*"}``.
+            **kwargs: Extra options to pass to the underlying :func:`http_request` call.
+
+        Returns:
+            The raw file as a bytestring.
+        """
+        if headers is None:
+            headers = {"Accept": "*/*"}
+
+        result = self.http_request(
+            verb="get",
+            path=path,
+            headers=headers,
+            **kwargs,
+        )
+
+        return result.content
