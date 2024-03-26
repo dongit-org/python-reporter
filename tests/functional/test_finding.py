@@ -19,6 +19,7 @@ def assessment(rc: Reporter) -> reporter.Assessment:
             "assessment_template_id": assessment_template.id,
         }
     )
+    rc.assessments.update(assessment.id, {"scoring_system": "owasp"})
     return rc.assessments.get(assessment.id, include=["sections"])
 
 
@@ -147,3 +148,90 @@ def test_finding_template_operations(rc: Reporter, assessment, section, target):
     with pytest.raises(reporter.ReporterHttpError) as e:
         rc.finding_templates.get(template.id)
         assert e.value.response_code == 404
+
+
+def test_finding_event_operations(rc: Reporter, assessment, section, target):
+    finding = assessment.findings.create(
+        {
+            "title": "test_finding",
+            "targets": [target.id],
+            "assessment_section_id": section.id,
+            "is_vulnerability": True,
+            "severity_metrics": {
+                "impact": 1,
+                "likelihood": 1,
+                "scoring_system": "owasp",
+            },
+            "description": "foo",
+        }
+    )
+
+    rc.findings.update(
+        finding.id,
+        {
+            "status": 0,
+            "review_status": 2,
+        },
+    )
+
+    # Create comments and replies
+    comment = finding.comments.create({"body": "Finding comment"})
+    reply = comment.replies.create({"body": "Reply to comment"})
+    finding = rc.findings.get(finding.id, include=["comments.replies"])
+    comment = next(c for c in finding.comments if c.id == comment.id)
+    assert comment is not None and comment.body == "Finding comment"
+    reply = next(r for r in comment.replies if r.id == reply.id)
+    assert reply is not None and reply.body == "Reply to comment"
+
+    # Update comments and replies
+    rc.finding_comments.update(comment.id, {"body": "Updated comment"})
+    rc.finding_comments.update(reply.id, {"body": "Updated reply"})
+    finding = rc.findings.get(finding.id, include=["comments.replies"])
+    comment = next(c for c in finding.comments if c.id == comment.id)
+    assert comment is not None and comment.body == "Updated comment"
+    reply = next(r for r in comment.replies if r.id == reply.id)
+    assert reply is not None and reply.body == "Updated reply"
+
+    # Delete comments and replies
+    rc.finding_comments.delete(reply.id)
+    finding = rc.findings.get(finding.id, include=["comments.replies"])
+    comment = next(c for c in finding.comments if c.id == comment.id)
+    assert comment is not None
+    assert len(comment.replies) == 0
+    rc.finding_comments.delete(comment.id)
+    finding = rc.findings.get(finding.id, include=["comments.replies"])
+    assert not any(c for c in finding.comments if c.id == comment.id)
+
+    # Create finding retest inquiries
+    inquiry = finding.retestInquiries.create({"body": "New inquiry!"})
+    finding = rc.findings.get(finding.id, include=["retestInquiries"])
+    assert finding.status == 2
+    assert finding.retestInquiries[0].body == "New inquiry!"
+
+    # Update finding retest inquiries
+    rc.finding_retest_inquiries.update(inquiry.id, {"body": "Updated inquiry"})
+    finding = rc.findings.get(finding.id, include=["retestInquiries"])
+    inquiry = finding.retestInquiries[0]
+    assert inquiry.body == "Updated inquiry"
+
+    # Delete finding retest inquiries
+    rc.finding_retest_inquiries.delete(inquiry.id)
+    finding = rc.findings.get(finding.id, include=["retestInquiries"])
+    assert len(finding.retestInquiries) == 0
+
+    # Create retests
+    finding.retestInquiries.create({"body": "New inquiry!"})
+    finding.retests.create({"status": 1, "body": "TODO"})
+    retest = rc.findings.get(finding.id, include=["retests"]).retests[0]
+    assert retest.body == "TODO"
+
+    # Update retests
+    rc.finding_retests.update(retest.id, {"body": "Solved", "review_status": 2})
+    retest = rc.findings.get(finding.id, include=["retests"]).retests[0]
+    assert retest.body == "Solved"
+
+    # Delete retests
+    rc.finding_retests.delete(retest.id)
+    assert len(rc.findings.get(finding.id, include=["retests"]).retests) == 0
+
+    rc.findings.delete(finding.id)

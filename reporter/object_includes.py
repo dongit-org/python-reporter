@@ -7,13 +7,16 @@ from reporter.objects import *
 Activity._includes = {
     "assessment": Assessment,
     "finding": Finding,
+    "impersonator": User,
     "user": User,
 }
 
 Assessment._includes = {
+    "activities": Activity,
     "assessmentTemplate": AssessmentTemplate,
     "assessmentUsers": AssessmentUser,
     "client": Client,
+    "comments": AssessmentComment,
     "documents": Document,
     "findings": Finding,
     "nestedSections": AssessmentSection,
@@ -28,6 +31,14 @@ Assessment._includes = {
     "users": User,
 }
 
+AssessmentComment._includes = {
+    "assessment": Assessment,
+    "createdBy": User,
+    "updatedBy": User,
+    "documents": Document,
+    "replies": AssessmentComment,
+}
+
 AssessmentPhase._includes = {
     "assessment": Assessment,
     "researchers": User,
@@ -37,7 +48,7 @@ AssessmentPhase._includes = {
 AssessmentSection._includes = {
     "assessment": Assessment,
     "documents": User,
-    "findings": User,
+    "findings": Finding,
     "items": AssessmentSection,
 }
 
@@ -68,16 +79,59 @@ Document._includes = {
     "uploadedBy": User,
 }
 
+FindingComment._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
+    "documents": Document,
+    "replies": FindingComment,
+}
+
+FindingCreatedEvent._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "replies": FindingComment,
+}
+
+FindingRetest._includes = {
+    "assessments": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
+    "reviewedBy": User,
+    "documents": Document,
+    "retestInquiry": FindingRetestInquiry,
+    "replies": FindingComment,
+}
+
+FindingRetestInquiry._includes = {
+    "assessments": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
+    "convertedFromCommentBy": User,
+    "documents": Document,
+    "retest": FindingRetest,
+    "replies": FindingComment,
+}
+
 FindingTemplate._includes = {
     "documents": Document,
 }
 
 Finding._includes = {
+    "activities": Activity,
     "assessment": Assessment,
     "assessmentSection": AssessmentSection,
+    "comments": FindingComment,
+    "createdEvent": FindingCreatedEvent,
     "documents": Document,
     "resolvedTargets": Target,
     "resolvers": User,
+    "retestInquiries": FindingRetestInquiry,
+    "retests": FindingRetest,
     "targets": Target,
     "userGroups": UserGroup,
     "user": User,

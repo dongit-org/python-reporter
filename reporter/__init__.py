@@ -6,4 +6,5 @@ from reporter.base import *
 from reporter.client import *
 from reporter.exceptions import *
 from reporter.objects import *
+from reporter.object_children import *
 from reporter.object_includes import *

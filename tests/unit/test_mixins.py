@@ -10,6 +10,7 @@ from reporter.mixins import (
     CreateMixin,
     DeleteMixin,
     GetMixin,
+    GetRawMixin,
     ListMixin,
     SearchMixin,
     UpdateMixin,
@@ -102,6 +103,32 @@ def test_get_mixin(rc: Reporter):
         assert isinstance(obj, FakeObject)
         assert obj.id == "1234"
         assert obj.a == 12
+
+
+def test_get_raw_mixin(rc: Reporter):
+    class M(FakeManager, GetRawMixin):  # type: ignore
+        pass
+
+    manager = M(rc)
+    url = "https://localhost/api/v1/tests/1234"
+
+    with responses.RequestsMock() as rsps:
+        rsps.add(
+            method=responses.GET,
+            url=url,
+            body=b"12345",
+            content_type="application/octet-stream",
+            status=200,
+            match=[
+                responses.matchers.header_matcher({"Accept": "*/*"}),
+                responses.matchers.query_param_matcher({}),
+            ],
+        )
+        obj = manager.get("1234")
+
+        rsps.assert_call_count(url, 1)
+        assert isinstance(obj, bytes)
+        assert obj == b"12345"
 
 
 def test_list_mixin(rc: Reporter):

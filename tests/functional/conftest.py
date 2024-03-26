@@ -41,6 +41,7 @@ def is_up(url):
 @pytest.fixture(scope="session")
 def rc(docker_services, reporter_host) -> Reporter:
     """Starts Reporter and returns a Reporter client instance."""
+    time.sleep(1)
     url = f"http://{reporter_host}"
     docker_services.wait_until_responsive(
         timeout=300.0,
