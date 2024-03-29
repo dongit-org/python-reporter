@@ -17,8 +17,6 @@ from typing import (
     Type,
     TYPE_CHECKING,
     TypeVar,
-    Sequence,
-    Union,
 )
 
 from reporter.base import RestList, RestManager, RestObject
@@ -39,21 +37,12 @@ __all__ = [
 ChildOfRestObject = TypeVar("ChildOfRestObject", bound=RestObject)
 
 
-class _BaseMixin(Generic[ChildOfRestObject]):
-    _obj_cls: Type[ChildOfRestObject]
-
-
-class _IncludesMixin(Generic[ChildOfRestObject]):
-    _includes: Mapping[
-        str, Type[Union[ChildOfRestObject, Sequence[ChildOfRestObject]]]
-    ] = {}
-
-
-class CreateMixin(_BaseMixin[ChildOfRestObject]):
+class CreateMixin(Generic[ChildOfRestObject]):
     """Manager can create object."""
 
     _path: str
     _obj_cast: Callable
+    _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
     def create(
@@ -97,10 +86,11 @@ class CreateMixin(_BaseMixin[ChildOfRestObject]):
         return self._obj_cls(self.reporter, result.json())
 
 
-class DeleteMixin(_BaseMixin[ChildOfRestObject]):
+class DeleteMixin(Generic[ChildOfRestObject]):
     """Manager can delete object."""
 
     _path: str
+    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 
@@ -130,10 +120,11 @@ class DeleteMixin(_BaseMixin[ChildOfRestObject]):
         )
 
 
-class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject]):
+class GetMixin(Generic[ChildOfRestObject]):
     """Manager can retrieve object."""
 
     _path: str
+    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 
@@ -183,10 +174,11 @@ class GetMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject])
         return self._obj_cls(self.reporter, result.json())
 
 
-class GetRawMixin(_BaseMixin[ChildOfRestObject]):
+class GetRawMixin(Generic[ChildOfRestObject]):
     """Manager can retrieve raw file contents."""
 
     _path: str
+    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 
@@ -213,20 +205,14 @@ class GetRawMixin(_BaseMixin[ChildOfRestObject]):
 
         path = f"{self._path}/{id}"
 
-        result = self.reporter.http_request(
-            verb="get",
-            path=path,
-            headers={"Accept": "*/*"},
-            **kwargs,
-        )
-
-        return result.content
+        return self.reporter.get_raw_file(path=path, **kwargs)
 
 
-class _ListMixin(_BaseMixin[ChildOfRestObject], _IncludesMixin[ChildOfRestObject]):
+class _ListMixin(Generic[ChildOfRestObject]):
     """Parent class for ListMixin and SearchMixin."""
 
     _path: str
+    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 
@@ -394,10 +380,11 @@ class SearchMixin(_ListMixin):
         )
 
 
-class UpdateMixin(_BaseMixin[ChildOfRestObject]):
+class UpdateMixin(Generic[ChildOfRestObject]):
     """Manager can update objects."""
 
     _path: str
+    _obj_cls: Type[ChildOfRestObject]
     _obj_cast: Callable
     reporter: Reporter
 
@@ -440,5 +427,9 @@ class UpdateMixin(_BaseMixin[ChildOfRestObject]):
         return self._obj_cls(self.reporter, result.json())
 
 
-class CrudMixin(CreateMixin, GetMixin, UpdateMixin, DeleteMixin):
+class CrudMixin(
+    CreateMixin, GetMixin, UpdateMixin, DeleteMixin, Generic[ChildOfRestObject]
+):
     """Composite class of other mixins."""
+
+    _obj_cls: Type[ChildOfRestObject]

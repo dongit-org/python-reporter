@@ -65,12 +65,16 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
 
         self.activities = objects.ActivityManager(self)
         self.assessments = objects.AssessmentManager(self)
+        self.assessment_comments = objects.AssessmentCommentManager(self)
         self.assessment_phases = objects.AssessmentPhaseManager(self)
         self.assessment_sections = objects.AssessmentSectionManager(self)
         self.assessment_templates = objects.AssessmentTemplateManager(self)
         self.clients = objects.ClientManager(self)
         self.documents = objects.DocumentManager(self)
         self.findings = objects.FindingManager(self)
+        self.finding_comments = objects.FindingCommentManager(self)
+        self.finding_retest_inquiries = objects.FindingRetestInquiryManager(self)
+        self.finding_retests = objects.FindingRetestManager(self)
         self.finding_templates = objects.FindingTemplateManager(self)
         self.output_files = objects.OutputFileManager(self)
         self.targets = objects.TargetManager(self)
@@ -78,6 +82,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         self.task_sets = objects.TaskSetManager(self)
         self.user_groups = objects.UserGroupManager(self)
         self.users = objects.UserManager(self)
+        self.webhooks = objects.WebhookManager(self)
 
     def http_request(  # pylint: disable = too-many-arguments
         self,
@@ -149,3 +154,31 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
             response_code=result.status_code,
             response_body=result.content,
         )
+
+    def get_raw_file(
+        self,
+        path: str,
+        headers=None,
+        **kwargs,
+    ) -> bytes:
+        """Wrapper around :func:`http_request` for downloading a raw file as bytestring.
+
+        Args:
+            path: URL path of the raw file.
+            headers: Request headers. Default: ``{"Accept": "*/*"}``.
+            **kwargs: Extra options to pass to the underlying :func:`http_request` call.
+
+        Returns:
+            The raw file as a bytestring.
+        """
+        if headers is None:
+            headers = {"Accept": "*/*"}
+
+        result = self.http_request(
+            verb="get",
+            path=path,
+            headers=headers,
+            **kwargs,
+        )
+
+        return result.content

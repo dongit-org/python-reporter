@@ -2,8 +2,6 @@
 
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CrudMixin, ListMixin
-from reporter.objects.assessment import ClientAssessmentManager
-from reporter.objects.user_group import ClientUserGroupManager
 
 __all__ = [
     "Client",
@@ -12,10 +10,7 @@ __all__ = [
 
 
 class Client(RestObject):
-    _children = {
-        "assessments": ClientAssessmentManager,
-        "user_groups": ClientUserGroupManager,
-    }
+    pass
 
 
 class ClientManager(
