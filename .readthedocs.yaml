@@ -1,20 +1,14 @@
 version: 2
 
 build:
-  os: ubuntu-20.04
+  os: ubuntu-22.04
   tools:
-    python: "3.9"
-  # https://github.com/readthedocs/readthedocs.org/issues/4912#issuecomment-1143587902
+    python: "3.10"
   jobs:
-    pre_install:
+    post_create_environment:
       - pip install poetry
-      - poetry config virtualenvs.create false
-      - poetry install
+    post_install:
+      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install
 
 sphinx:
    configuration: docs/conf.py
-
-python:
-  install:
-    - method: pip
-      path: .
