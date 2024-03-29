@@ -18,6 +18,14 @@ AssessmentComment._children = {
     "replies": AssessmentCommentReplyManager,
 }
 
+AssessmentSection._children = {
+    "comments": AssessmentSectionAssessmentSectionCommentManager,
+}
+
+AssessmentSectionComment._children = {
+    "replies": AssessmentSectionEventReplyManager,
+}
+
 Client._children = {
     "assessments": ClientAssessmentManager,
     "user_groups": ClientUserGroupManager,

@@ -124,10 +124,61 @@ def test_assessment_phases_and_sections(rc: Reporter, client, assessment_templat
 
     section = rc.assessments.get(assessment.id, include=["sections"]).sections[0]
     rc.assessment_sections.update(section.id, section_update)
-    section = rc.assessments.get(assessment.id, include=["sections"]).sections[0]
+    section = rc.assessment_sections.get(section.id)
 
     for attr, val in section_update.items():
         assert getattr(section, attr) == val
+
+
+def test_assessment_section_comments(rc: Reporter, client, assessment_template):
+    assessment = client.assessments.create(
+        {
+            "title": "test_assessment_phases_and_sections",
+            "assessment_template_id": assessment_template.id,
+        }
+    )
+
+    section = rc.assessments.get(assessment.id, include=["sections"]).sections[0]
+
+    # Create a comment
+    comment = section.comments.create(
+        {"body": "Assessment section comment", "is_private": True}
+    )
+    section = rc.assessment_sections.get(section.id, include=["comments"])
+    assert any(
+        c
+        for c in section.comments
+        if c.id == comment.id and c.body == "Assessment section comment"
+    )
+
+    # Update a comment
+    rc.assessment_section_comments.update(comment.id, {"body": "Updated comment"})
+    section = rc.assessment_sections.get(section.id, include=["comments"])
+    assert any(
+        c
+        for c in section.comments
+        if c.id == comment.id and c.body == "Updated comment"
+    )
+
+    # Reply to a comment
+    comment = next(c for c in section.comments if c.id == comment.id)
+    reply = comment.replies.create({"body": "Reply", "is_private": True})
+    section = rc.assessment_sections.get(section.id, include=["comments.replies"])
+    comment = next(c for c in section.comments if c.id == comment.id)
+    assert any(
+        r
+        for r in comment.replies
+        if r.id == reply.id and r.body == "Reply" and r.parent_id == comment.id
+    )
+
+    # Delete a comment
+    rc.assessment_section_comments.delete(comment.id)
+    section = rc.assessment_sections.get(section.id, include=["comments"])
+    assert not any(
+        c
+        for c in section.comments
+        if c.id == comment.id and c.body == "Assessment section comment"
+    )
 
 
 def test_assessment_users(rc: Reporter, client, assessment_template):

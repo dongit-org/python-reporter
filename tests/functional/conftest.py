@@ -44,7 +44,7 @@ def rc(docker_services, reporter_host) -> Reporter:
     time.sleep(1)
     url = f"http://{reporter_host}"
     docker_services.wait_until_responsive(
-        timeout=300.0,
+        timeout=600.0,
         pause=1,
         check=lambda: is_up(url),
     )
