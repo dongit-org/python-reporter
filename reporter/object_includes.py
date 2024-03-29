@@ -50,6 +50,16 @@ AssessmentSection._includes = {
     "documents": User,
     "findings": Finding,
     "items": AssessmentSection,
+    "comments": AssessmentSectionComment,
+}
+
+AssessmentSectionComment._includes = {
+    "assessment": Assessment,
+    "assessmentSection": AssessmentSection,
+    "createdBy": User,
+    "updatedBy": User,
+    "documents": Document,
+    "replies": AssessmentSectionComment,
 }
 
 AssessmentTemplate._includes = {

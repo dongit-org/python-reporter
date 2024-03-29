@@ -68,6 +68,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         self.assessment_comments = objects.AssessmentCommentManager(self)
         self.assessment_phases = objects.AssessmentPhaseManager(self)
         self.assessment_sections = objects.AssessmentSectionManager(self)
+        self.assessment_section_comments = objects.AssessmentSectionCommentManager(self)
         self.assessment_templates = objects.AssessmentTemplateManager(self)
         self.clients = objects.ClientManager(self)
         self.documents = objects.DocumentManager(self)
