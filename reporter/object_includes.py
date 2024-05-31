@@ -19,6 +19,7 @@ Assessment._includes = {
     "comments": AssessmentComment,
     "documents": Document,
     "findings": Finding,
+    "language": Language,
     "nestedSections": AssessmentSection,
     "outputFiles": OutputFile,
     "phases": AssessmentPhase,
@@ -27,6 +28,7 @@ Assessment._includes = {
     "targets": Target,
     "tasks": Task,
     "taskSets": TaskSet,
+    "theme": Theme,
     "userGroups": UserGroup,
     "users": User,
 }
@@ -36,6 +38,7 @@ AssessmentComment._includes = {
     "createdBy": User,
     "updatedBy": User,
     "documents": Document,
+    "reactions": Reaction,
     "replies": AssessmentComment,
 }
 
@@ -63,6 +66,7 @@ AssessmentSectionComment._includes = {
 }
 
 AssessmentTemplate._includes = {
+    "languages": Language,
     "taskSets": TaskSet,
 }
 
@@ -95,6 +99,7 @@ FindingComment._includes = {
     "createdBy": User,
     "updatedBy": User,
     "documents": Document,
+    "reactions": Reaction,
     "replies": FindingComment,
 }
 
@@ -102,6 +107,7 @@ FindingCreatedEvent._includes = {
     "assessment": Assessment,
     "finding": Finding,
     "createdBy": User,
+    "reactions": Reaction,
     "replies": FindingComment,
 }
 
@@ -112,6 +118,7 @@ FindingRetest._includes = {
     "updatedBy": User,
     "reviewedBy": User,
     "documents": Document,
+    "reactions": Reaction,
     "retestInquiry": FindingRetestInquiry,
     "replies": FindingComment,
 }
@@ -123,6 +130,7 @@ FindingRetestInquiry._includes = {
     "updatedBy": User,
     "convertedFromCommentBy": User,
     "documents": Document,
+    "reactions": Reaction,
     "retest": FindingRetest,
     "replies": FindingComment,
 }
@@ -147,9 +155,18 @@ Finding._includes = {
     "user": User,
 }
 
+Language._includes = {
+    "assessments": Assessment,
+}
+
 OutputFile._includes = {
     "assessment": Assessment,
     "documents": Document,
+}
+
+Reaction._includes = {
+    "assessment": Assessment,
+    "user": User,
 }
 
 Target._includes = {
@@ -171,6 +188,13 @@ TaskSet._includes = {
     "assessments": Assessment,
     "assessmentTemplates": AssessmentTemplate,
     "copiedTasks": Task,
+}
+
+Theme._includes = {
+    "assessments": Assessment,
+    "assessmentTemplates": AssessmentTemplate,
+    "documents": Document,
+    "languages": Language,
 }
 
 User._includes = {

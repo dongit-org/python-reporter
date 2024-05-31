@@ -22,6 +22,9 @@ def test_user_operations(rc: Reporter):
         assert getattr(user, attr) == getattr(gotten, attr)
     assert gotten.phone == "foo"
 
+    me = rc.users.me()
+    assert me.email == "a@a.com"
+
 
 def test_client_operations(rc: Reporter):
     client = rc.clients.create(
