@@ -3,7 +3,13 @@ from typing import Any
 
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin, DeleteMixin
-
+from .assessment_comment import AssessmentAssessmentCommentManager
+from .assessment_user import AssessmentAssessmentUserManager
+from .finding import AssessmentFindingManager
+from .output_file import AssessmentOutputFileManager
+from .target import AssessmentTargetManager
+from .task import AssessmentTaskManager
+from .task_set import AssessmentTaskSetManager
 
 __all__ = [
     "Assessment",
@@ -13,7 +19,13 @@ __all__ = [
 
 
 class Assessment(RestObject):
-    pass
+    comments: AssessmentAssessmentCommentManager
+    findings: AssessmentFindingManager
+    output_files: AssessmentOutputFileManager
+    targets: AssessmentTargetManager
+    tasks: AssessmentTaskManager
+    task_sets: AssessmentTaskSetManager
+    users: AssessmentAssessmentUserManager
 
 
 class AssessmentManager(RestManager, GetMixin, ListMixin, UpdateMixin, DeleteMixin):

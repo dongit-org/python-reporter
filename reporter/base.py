@@ -4,7 +4,7 @@ This module contains base classes that should be inherited by objects
 representing API models, managers of these objects, and lists of these objects.
 
 """
-
+import inspect
 from collections.abc import Sequence
 from typing import (
     Any,
@@ -41,12 +41,11 @@ class RestObject:
 
     _attrs: Dict[str, Any]
     _includes: Mapping[str, Type["RestObject"]] = {}
-    _children: Mapping[str, Type["RestManager"]] = {}
 
     def __init__(self, reporter: Reporter, attrs: Mapping[str, Any]) -> None:
         self.reporter = reporter
         self._attrs = dict(attrs)
-        for key, mgr_cls in self._children.items():
+        for key, mgr_cls in self._get_children().items():
             setattr(self, key, mgr_cls(self.reporter, parent=self))
         self._deserialize_includes()
 
@@ -95,12 +94,31 @@ class RestObject:
                 self._attrs[include] = [
                     cls(self.reporter, json_obj) for json_obj in self._attrs[include]
                 ]
-                if include in self._children:
+                if include in self._get_children():
                     getattr(  # pylint: disable = protected-access
                         self, include
                     )._list = self._attrs[include]
             else:
                 self._attrs[include] = cls(self.reporter, self._attrs[include])
+
+    def _get_annotations_recursive(self) -> Mapping[str, Any]:
+        cls = type(self)
+        annotations = {}
+        for base_class in reversed(inspect.getmro(cls)):
+            new_annotations = inspect.get_annotations(base_class, eval_str=True)
+            filtered_annotations = {
+                k: v for k, v in new_annotations.items() if not k.startswith("_")
+            }
+            annotations.update(filtered_annotations)
+        return annotations
+
+    def _get_children(self) -> Mapping[str, Type["RestManager"]]:
+        annotations = self._get_annotations_recursive()
+        return {
+            name: cls
+            for name, cls in annotations.items()
+            if inspect.isclass(cls) and issubclass(cls, RestManager)
+        }
 
 
 ChildOfRestObject = TypeVar("ChildOfRestObject", bound=RestObject)
@@ -156,7 +174,7 @@ class RestManager(Sequence, Generic[ChildOfRestObject]):
     # We need to consider the case that an instance of this class is assigned
     # to an attribute of an instance `r` of RestObject with the same name as a
     # key in `r._includes`. This occurs e.g. for
-    # `Assessment._children["targets"]`. Hence we make RestManager derive
+    # `Assessment.targets`. Hence we make RestManager derive
     # collections.abc.Sequence and implement the required methods, so that this
     # class exposes a convenient API for the included list. We assume that this
     # can only happen if this class is assigned to an attribute of `r` that is

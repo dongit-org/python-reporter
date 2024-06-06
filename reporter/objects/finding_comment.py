@@ -7,11 +7,12 @@ __all__ = [
     "FindingComment",
     "FindingCommentManager",
     "FindingFindingCommentManager",
+    "FindingEventReplyManager",
 ]
 
 
 class FindingComment(RestObject):
-    pass
+    replies: "FindingEventReplyManager"
 
 
 class FindingCommentManager(RestManager, UpdateMixin, DeleteMixin):
@@ -22,4 +23,10 @@ class FindingCommentManager(RestManager, UpdateMixin, DeleteMixin):
 class FindingFindingCommentManager(RestManager, CreateMixin):
     _path = "findings/{finding_id}/finding-comments"
     _parent_attrs = {"finding_id": "id"}
+    _obj_cls = FindingComment
+
+
+class FindingEventReplyManager(RestManager, CreateMixin):
+    _path = "finding-events/{finding_event_id}/finding-comments"
+    _parent_attrs = {"finding_event_id": "id"}
     _obj_cls = FindingComment

@@ -13,7 +13,7 @@ runs:
       with:
         # We do not use the built-in caching functionality because it does not
         # work without committing the poetry.lock file.
-        python-version: "3.8"
+        python-version: "3.10"
     - name: Cache Poetry virtualenv
       uses: actions/cache@v3
       with:
