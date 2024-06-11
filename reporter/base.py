@@ -45,7 +45,7 @@ class RestObject:
     def __init__(self, reporter: Reporter, attrs: Mapping[str, Any]) -> None:
         self.reporter = reporter
         self._attrs = dict(attrs)
-        for key, mgr_cls in self._get_children().items():
+        for key, mgr_cls in type(self)._get_children().items():
             setattr(self, key, mgr_cls(self.reporter, parent=self))
         self._deserialize_includes()
 
@@ -94,15 +94,15 @@ class RestObject:
                 self._attrs[include] = [
                     cls(self.reporter, json_obj) for json_obj in self._attrs[include]
                 ]
-                if include in self._get_children():
+                if include in type(self)._get_children():
                     getattr(  # pylint: disable = protected-access
                         self, include
                     )._list = self._attrs[include]
             else:
                 self._attrs[include] = cls(self.reporter, self._attrs[include])
 
-    def _get_annotations_recursive(self) -> Mapping[str, Any]:
-        cls = type(self)
+    @classmethod
+    def _get_annotations_recursive(cls) -> Mapping[str, Any]:
         annotations = {}
         for base_class in reversed(inspect.getmro(cls)):
             new_annotations = inspect.get_annotations(base_class, eval_str=True)
@@ -112,8 +112,9 @@ class RestObject:
             annotations.update(filtered_annotations)
         return annotations
 
-    def _get_children(self) -> Mapping[str, Type["RestManager"]]:
-        annotations = self._get_annotations_recursive()
+    @classmethod
+    def _get_children(cls) -> Mapping[str, Type["RestManager"]]:
+        annotations = cls._get_annotations_recursive()
         return {
             name: cls
             for name, cls in annotations.items()
