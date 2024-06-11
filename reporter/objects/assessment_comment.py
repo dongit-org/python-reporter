@@ -12,7 +12,7 @@ __all__ = [
 
 
 class AssessmentComment(RestObject):
-    pass
+    replies: "AssessmentCommentReplyManager"
 
 
 class AssessmentCommentManager(RestManager, UpdateMixin, DeleteMixin):

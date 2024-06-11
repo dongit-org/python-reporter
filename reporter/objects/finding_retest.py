@@ -2,6 +2,7 @@
 
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, DeleteMixin, UpdateMixin
+from .finding_comment import FindingEventReplyManager
 
 __all__ = [
     "FindingRetest",
@@ -11,7 +12,7 @@ __all__ = [
 
 
 class FindingRetest(RestObject):
-    pass
+    replies: FindingEventReplyManager
 
 
 class FindingRetestManager(RestManager, UpdateMixin, DeleteMixin):

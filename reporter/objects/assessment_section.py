@@ -2,6 +2,7 @@
 
 from reporter.base import RestManager, RestObject
 from reporter.mixins import GetMixin, UpdateMixin
+from .assessment_section_comment import AssessmentSectionAssessmentSectionCommentManager
 
 __all__ = [
     "AssessmentSection",
@@ -10,7 +11,7 @@ __all__ = [
 
 
 class AssessmentSection(RestObject):
-    pass
+    comments: AssessmentSectionAssessmentSectionCommentManager
 
 
 class AssessmentSectionManager(RestManager, GetMixin, UpdateMixin):

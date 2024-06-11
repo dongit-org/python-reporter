@@ -5,3 +5,4 @@ Objects List
    :imported-members:
    :inherited-members:
    :undoc-members:
+   :exclude-members: keys

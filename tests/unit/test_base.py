@@ -19,10 +19,8 @@ class FakeChildManager(RestManager, GetMixin):
 
 
 class FakeObject(RestObject):
-    _children = {
-        "child_objs": FakeChildManager,
-        "sameattributes": FakeChildManager,
-    }
+    child_objs: FakeChildManager
+    sameattributes: FakeChildManager
 
 
 FakeObject._includes = {

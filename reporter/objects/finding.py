@@ -3,6 +3,9 @@
 from typing import Any, Mapping, TYPE_CHECKING
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, DeleteMixin, GetMixin, ListMixin, UpdateMixin
+from .finding_comment import FindingFindingCommentManager
+from .finding_retest import FindingFindingRetestManager
+from .finding_retest_inquiry import FindingFindingRetestInquiryManager
 
 __all__ = [
     "Finding",
@@ -12,7 +15,9 @@ __all__ = [
 
 
 class Finding(RestObject):
-    pass
+    comments: FindingFindingCommentManager
+    retests: FindingFindingRetestManager
+    retestInquiries: FindingFindingRetestInquiryManager
 
 
 class FindingManager(RestManager, DeleteMixin, GetMixin, ListMixin, UpdateMixin):
