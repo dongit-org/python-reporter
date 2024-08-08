@@ -31,6 +31,11 @@ __all__ = [
     "RestManager",
 ]
 
+from .helpers import Polymorphic
+
+IncludeType = Type["RestObject"] | Polymorphic["RestObject"]
+ChildOfRestObject = TypeVar("ChildOfRestObject", bound="RestObject")
+
 
 class RestObject:
     """Represents an object built from server data.
@@ -44,7 +49,7 @@ class RestObject:
     reporter: Reporter
 
     _attrs: Dict[str, Any]
-    _includes: Mapping[str, Type["RestObject"]] = {}
+    _includes: Mapping[str, IncludeType] = {}
 
     def __init__(self, reporter: Reporter, attrs: Mapping[str, Any]) -> None:
         self.reporter = reporter
@@ -90,20 +95,21 @@ class RestObject:
         return self._attrs.keys()
 
     def _deserialize_includes(self) -> None:
-        for include, cls in self._includes.items():
+        for include, include_type in self._includes.items():
             if include not in self:
                 continue
 
             if isinstance(self._attrs[include], List):
                 self._attrs[include] = [
-                    cls(self.reporter, json_obj) for json_obj in self._attrs[include]
+                    include_type(self.reporter, json_obj)
+                    for json_obj in self._attrs[include]
                 ]
                 if include in type(self)._get_children():
                     getattr(  # pylint: disable = protected-access
                         self, include
                     )._list = self._attrs[include]
             else:
-                self._attrs[include] = cls(self.reporter, self._attrs[include])
+                self._attrs[include] = include_type(self.reporter, self._attrs[include])
 
     @classmethod
     def _get_annotations_recursive(cls) -> Mapping[str, Any]:
@@ -124,9 +130,6 @@ class RestObject:
             for name, cls in annotations.items()
             if inspect.isclass(cls) and issubclass(cls, RestManager)
         }
-
-
-ChildOfRestObject = TypeVar("ChildOfRestObject", bound=RestObject)
 
 
 class RestList(Sequence, Generic[ChildOfRestObject]):
