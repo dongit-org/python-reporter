@@ -5,10 +5,15 @@ from reporter import (
     RestManager,
     RestObject,
 )
+from reporter.helpers import Polymorphic
 from reporter.mixins import GetMixin
 
 
 class FakeChildObject(RestObject):
+    pass
+
+
+class FakeChildObject2(RestObject):
     pass
 
 
@@ -28,6 +33,9 @@ FakeObject._includes = {
     "childObjs": FakeChildObject,
     "items": FakeObject,
     "sameattributes": FakeChildObject,
+    "polymorphic_children": Polymorphic(
+        [FakeChildObject, FakeChildObject2], "child_type"
+    ),
 }
 
 
@@ -60,6 +68,10 @@ def test_object_includes(rc: Reporter) -> None:
                     "childObj": {"id": "2"},
                 },
             ],
+            "polymorphic_children": [
+                {"id": "1", "child_type": "FakeChildObject"},
+                {"id": "2", "child_type": "FakeChildObject2"},
+            ],
         },
     )
 
@@ -68,6 +80,9 @@ def test_object_includes(rc: Reporter) -> None:
     for o in obj.items:
         assert isinstance(o, FakeObject)
         assert isinstance(o.childObj, FakeChildObject)
+    assert len(obj.polymorphic_children) == 2
+    assert isinstance(obj.polymorphic_children[0], FakeChildObject)
+    assert isinstance(obj.polymorphic_children[1], FakeChildObject2)
 
 
 def test_object_include_same_attribute_as_manager(rc: Reporter) -> None:
