@@ -36,7 +36,7 @@ class FakeManager(RestManager):
     _obj_cls = FakeObject
 
 
-def test_object_children(rc: Reporter):
+def test_object_children(rc: Reporter) -> None:
     obj = FakeObject(rc, {"id": "1234"})
 
     assert isinstance(obj.child_objs, FakeChildManager)
@@ -44,7 +44,7 @@ def test_object_children(rc: Reporter):
     assert obj.child_objs._path == "tests/1234/child_objs"
 
 
-def test_object_includes(rc: Reporter):
+def test_object_includes(rc: Reporter) -> None:
     obj = FakeObject(
         rc,
         {
@@ -70,7 +70,7 @@ def test_object_includes(rc: Reporter):
         assert isinstance(o.childObj, FakeChildObject)
 
 
-def test_object_include_same_attribute_as_manager(rc: Reporter):
+def test_object_include_same_attribute_as_manager(rc: Reporter) -> None:
     obj = FakeObject(
         rc,
         {
@@ -103,7 +103,7 @@ def test_object_include_same_attribute_as_manager(rc: Reporter):
         assert child.a == 12
 
 
-def test_object_dict(rc: Reporter):
+def test_object_dict(rc: Reporter) -> None:
     obj = FakeObject(
         rc,
         {

@@ -6,6 +6,7 @@ representing API models, managers of these objects, and lists of these objects.
 """
 import inspect
 from collections.abc import Sequence
+from types import NotImplementedType
 from typing import (
     Any,
     Callable,
@@ -17,6 +18,9 @@ from typing import (
     Optional,
     Type,
     TypeVar,
+    cast,
+    overload,
+    KeysView,
 )
 
 from reporter.client import Reporter
@@ -75,17 +79,17 @@ class RestObject:
     def __dir__(self) -> Iterable[str]:
         return set(self._attrs.keys()).union(super().__dir__())
 
-    def __eq__(self, other: object):
+    def __eq__(self, other: object) -> bool | NotImplementedType:
         if not isinstance(other, RestObject):
             return NotImplemented
-        return self.id == other.id
+        return cast(str | int, self.id) == cast(str | int, other.id)
 
     # This is to ensure that the dict() function can accept this class.
     # See https://stackoverflow.com/a/40667249
-    def keys(self):  # pylint: disable = missing-function-docstring
+    def keys(self) -> KeysView:  # pylint: disable = missing-function-docstring
         return self._attrs.keys()
 
-    def _deserialize_includes(self):
+    def _deserialize_includes(self) -> None:
         for include, cls in self._includes.items():
             if include not in self:
                 continue
@@ -150,10 +154,20 @@ class RestList(Sequence, Generic[ChildOfRestObject]):
         self.links = links
         self.meta = meta
 
-    def __getitem__(self, index):
-        return self._data[index]
+    @overload
+    def __getitem__(self, item: int) -> ChildOfRestObject:
+        ...
 
-    def __len__(self):
+    @overload
+    def __getitem__(self, item: slice) -> Sequence[ChildOfRestObject]:
+        ...
+
+    def __getitem__(
+        self, item: int | slice
+    ) -> ChildOfRestObject | Sequence[ChildOfRestObject]:
+        return self._data[item]
+
+    def __len__(self) -> int:
         return len(self._data)
 
 
@@ -196,10 +210,18 @@ class RestManager(Sequence, Generic[ChildOfRestObject]):
         self._parent = parent
         self._path = self._compute_path()
 
-    def __getitem__(self, index):
-        return self._list[index]
+    @overload
+    def __getitem__(self, item: int) -> RestObject:
+        ...
 
-    def __len__(self):
+    @overload
+    def __getitem__(self, item: slice) -> Sequence[RestObject]:
+        ...
+
+    def __getitem__(self, item: int | slice) -> RestObject | Sequence[RestObject]:
+        return self._list[item]
+
+    def __len__(self) -> int:
         return len(self._list)
 
     def _compute_path(self) -> str:

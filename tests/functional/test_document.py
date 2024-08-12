@@ -1,10 +1,10 @@
-import pytest  # type: ignore
+import pytest
 
 import reporter
 from reporter import Reporter
 
 
-def test_document_operations(rc: Reporter):
+def test_document_operations(rc: Reporter) -> None:
     document = rc.documents.create(
         {
             "documentable_type": "Assessment",

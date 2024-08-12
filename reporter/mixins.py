@@ -98,7 +98,7 @@ class DeleteMixin(Generic[ChildOfRestObject]):
         self,
         id: str,
         **kwargs: Any,
-    ):
+    ) -> None:
         """Delete an object.
 
         Args:

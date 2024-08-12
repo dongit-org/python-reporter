@@ -1,7 +1,8 @@
+import json
 import timeit
 from typing import cast, Dict, Pattern
 
-import pytest  # type: ignore
+import pytest
 import responses
 
 from reporter import Reporter, ReporterHttpError
@@ -10,7 +11,7 @@ from reporter.mixins import ListMixin
 
 
 @responses.activate
-def test_url_trailing_slash():
+def test_url_trailing_slash() -> None:
     # Test that trailing slash is stripped
     rc = Reporter(url="https://localhost/", api_token="secret")
     url = "https://localhost/api/v1/tests"
@@ -25,7 +26,7 @@ def test_url_trailing_slash():
 
 
 @responses.activate
-def test_http_request_headers(rc: Reporter):
+def test_http_request_headers(rc: Reporter) -> None:
     url = "https://localhost/api/v1/tests"
 
     responses.add(
@@ -62,7 +63,7 @@ def test_http_request_headers(rc: Reporter):
 
 
 @responses.activate
-def test_http_request_extra_headers(rc: Reporter):
+def test_http_request_extra_headers(rc: Reporter) -> None:
     url = "https://localhost/api/v1/tests"
     headers = {
         "Authorization": "Bearer test",
@@ -98,7 +99,7 @@ def test_http_request_extra_headers(rc: Reporter):
 
 
 @responses.activate
-def test_http_request_query_string_parameters(rc: Reporter):
+def test_http_request_query_string_parameters(rc: Reporter) -> None:
     url = "https://localhost/api/v1/tests"
     params = {
         "foo": "bar",
@@ -121,7 +122,7 @@ def test_http_request_query_string_parameters(rc: Reporter):
 
 
 @responses.activate
-def test_http_request_file_upload(rc: Reporter):
+def test_http_request_file_upload(rc: Reporter) -> None:
     url = "https://localhost/api/v1/tests"
     post_data = {"foo": "bar", "id": "1234"}
     files = {"file1": "contents1", "file2": "contents2"}
@@ -145,9 +146,9 @@ def test_http_request_file_upload(rc: Reporter):
 
 
 @responses.activate
-def test_http_exception(rc: Reporter):
+def test_http_exception(rc: Reporter) -> None:
     url = "https://localhost/api/v1/tests"
-    json = {
+    body = {
         "message": "error",
         "foo": "bar",
     }
@@ -155,21 +156,23 @@ def test_http_exception(rc: Reporter):
     responses.add(
         method=responses.GET,
         url=url,
-        json=json,
+        json=body,
         status=400,
     )
 
     with pytest.raises(ReporterHttpError) as e:
         rc.http_request(verb="get", path="tests")
 
-        responses.assert_call_count(url, 1)
-        assert e.value.response_code == 400
-        assert e.value.error_message == json
-        assert e.value.response_body == json
+    responses.assert_call_count(url, 1)
+    assert e.value.response_code == 400
+    assert isinstance(e.value.error_message, str)
+    assert json.loads(e.value.error_message) == body
+    assert isinstance(e.value.response_body, str | bytes)
+    assert json.loads(e.value.response_body) == body
 
 
 @responses.activate
-def test_rate_limit(rc: Reporter):
+def test_rate_limit(rc: Reporter) -> None:
     class FakeObject(RestObject):
         pass
 

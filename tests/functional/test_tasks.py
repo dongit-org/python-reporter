@@ -1,11 +1,13 @@
-import pytest  # type: ignore
+from typing import cast
+
+import pytest
 
 import reporter
-from reporter import Reporter
+from reporter import Reporter, Assessment, AssessmentUser, Task
 
 
 @pytest.fixture(scope="session")
-def assessment(rc: Reporter) -> reporter.Assessment:
+def assessment(rc: Reporter) -> Assessment:
     client = rc.clients.create(
         {
             "name": "test_tasks",
@@ -21,11 +23,11 @@ def assessment(rc: Reporter) -> reporter.Assessment:
             "assessment_template_id": assessment_template.id,
         }
     )
-    return assessment
+    return cast(Assessment, assessment)
 
 
 @pytest.fixture(scope="session")
-def assessment_user(rc: Reporter, assessment) -> reporter.AssessmentUser:
+def assessment_user(rc: Reporter, assessment: Assessment) -> AssessmentUser:
     user = rc.users.create(
         {
             "first_name": "Assessment",
@@ -35,10 +37,10 @@ def assessment_user(rc: Reporter, assessment) -> reporter.AssessmentUser:
         }
     )
     assessment_user = assessment.users.create({"user_id": user.id, "type": 1})
-    return assessment_user
+    return cast(AssessmentUser, assessment_user)
 
 
-def test_task_operations(rc: Reporter, assessment):
+def test_task_operations(rc: Reporter, assessment: Assessment) -> None:
     task = assessment.tasks.create(
         {
             "deadline_type": 5,
@@ -66,7 +68,9 @@ def test_task_operations(rc: Reporter, assessment):
         assert e.value.response_code == 404
 
 
-def test_task_set_operations(rc: Reporter, assessment, assessment_user):
+def test_task_set_operations(
+    rc: Reporter, assessment: Assessment, assessment_user: AssessmentUser
+) -> None:
     task_set = rc.task_sets.create(
         {
             "deadline_type": 5,
@@ -99,7 +103,7 @@ def test_task_set_operations(rc: Reporter, assessment, assessment_user):
     )
 
     assert isinstance(tasks, list)
-    assert isinstance(tasks[0], reporter.Task)
+    assert isinstance(tasks[0], Task)
     assert tasks[0].data["title"] == "Task 1"
 
     assessment.task_sets.delete(task_set.id)

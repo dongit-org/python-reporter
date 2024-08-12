@@ -26,7 +26,7 @@ class FakeManager(RestManager):
     _obj_cls = FakeObject
 
 
-def test_create_mixin(rc: Reporter):
+def test_create_mixin(rc: Reporter) -> None:
     class M(FakeManager, CreateMixin):  # type: ignore
         pass
 
@@ -54,7 +54,7 @@ def test_create_mixin(rc: Reporter):
         assert obj.a == 12
 
 
-def test_delete_mixin(rc: Reporter):
+def test_delete_mixin(rc: Reporter) -> None:
     class M(FakeManager, DeleteMixin):  # type: ignore
         pass
 
@@ -78,7 +78,7 @@ def test_delete_mixin(rc: Reporter):
         rsps.assert_call_count(url, 1)
 
 
-def test_get_mixin(rc: Reporter):
+def test_get_mixin(rc: Reporter) -> None:
     class M(FakeManager, GetMixin):  # type: ignore
         pass
 
@@ -105,7 +105,7 @@ def test_get_mixin(rc: Reporter):
         assert obj.a == 12
 
 
-def test_get_raw_mixin(rc: Reporter):
+def test_get_raw_mixin(rc: Reporter) -> None:
     class M(FakeManager, GetRawMixin):  # type: ignore
         pass
 
@@ -131,7 +131,7 @@ def test_get_raw_mixin(rc: Reporter):
         assert obj == b"12345"
 
 
-def test_list_mixin(rc: Reporter):
+def test_list_mixin(rc: Reporter) -> None:
     class M(FakeManager, ListMixin):  # type: ignore
         pass
 
@@ -174,7 +174,7 @@ def test_list_mixin(rc: Reporter):
         assert objs.meta["foo"] == "bar"
 
 
-def test_search_mixin(rc: Reporter):
+def test_search_mixin(rc: Reporter) -> None:
     class M(FakeManager, SearchMixin):  # type: ignore
         pass
 
@@ -217,7 +217,7 @@ def test_search_mixin(rc: Reporter):
         assert objs.meta["foo"] == "bar"
 
 
-def test_update_mixin(rc: Reporter):
+def test_update_mixin(rc: Reporter) -> None:
     class M(FakeManager, UpdateMixin):  # type: ignore
         pass
 

@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
-from typing import TYPE_CHECKING, Optional, List, Mapping
+from typing import TYPE_CHECKING, Optional, List, Mapping, Any
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin
 
@@ -22,7 +22,7 @@ class UserManager(RestManager, CreateMixin, GetMixin, ListMixin, UpdateMixin):
         self,
         include: Optional[List[str]] = None,
         query_data: Optional[Mapping[str, str]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> User:
         """Get the user who owns the API token
 

@@ -1,11 +1,12 @@
-import pytest  # type: ignore
+from typing import cast
 
-import reporter
-from reporter import Reporter
+import pytest
+
+from reporter import Reporter, AssessmentComment
 
 
 @pytest.fixture(scope="session")
-def assessment_comment(rc: Reporter) -> reporter.AssessmentComment:
+def assessment_comment(rc: Reporter) -> AssessmentComment:
     client = rc.clients.create(
         {
             "name": "test_reaction",
@@ -19,17 +20,20 @@ def assessment_comment(rc: Reporter) -> reporter.AssessmentComment:
             "assessment_template_id": assessment_template.id,
         }
     )
-    return assessment.comments.create(
-        {
-            "body": "Hello world!",
-            "is_private": True,
-        }
+    return cast(
+        AssessmentComment,
+        assessment.comments.create(
+            {
+                "body": "Hello world!",
+                "is_private": True,
+            }
+        ),
     )
 
 
 def test_reaction_operations(
-    rc: Reporter, assessment_comment: reporter.AssessmentComment
-):
+    rc: Reporter, assessment_comment: AssessmentComment
+) -> None:
     assessment = rc.assessments.get(assessment_comment.assessment_id)
 
     reaction = rc.reactions.create(

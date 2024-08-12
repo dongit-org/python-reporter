@@ -32,7 +32,7 @@ class AssessmentManager(RestManager, GetMixin, ListMixin, UpdateMixin, DeleteMix
     _path = "assessments"
     _obj_cls = Assessment
 
-    def get_full_report(self, id, **kwargs: Any) -> bytes:
+    def get_full_report(self, id: str, **kwargs: Any) -> bytes:
         """Get the full PDF report of an assessment.
 
         Args:
@@ -59,7 +59,7 @@ class AssessmentManager(RestManager, GetMixin, ListMixin, UpdateMixin, DeleteMix
 
         return result.content
 
-    def get_management_report(self, id, **kwargs: Any) -> bytes:
+    def get_management_report(self, id: str, **kwargs: Any) -> bytes:
         """Get the management PDF report of an assessment.
 
         Args:
