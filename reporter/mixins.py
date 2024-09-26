@@ -260,7 +260,10 @@ class _ListMixin(Generic[ChildOfRestObject]):
         if filter is None:
             filter = {}
         for key, value in filter.items():
-            query_data[f"filter[{key}]"] = value
+            if key == "tags":
+                query_data[f"filter[{key}][]"] = value
+            else:
+                query_data[f"filter[{key}]"] = value
 
         if include:
             query_data["include"] = ",".join(include)
