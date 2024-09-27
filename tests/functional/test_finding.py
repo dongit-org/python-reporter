@@ -1,11 +1,13 @@
-import pytest  # type: ignore
+from typing import cast
+
+import pytest
 
 import reporter
-from reporter import Reporter
+from reporter import Reporter, Assessment, AssessmentSection, Target
 
 
 @pytest.fixture(scope="session")
-def assessment(rc: Reporter) -> reporter.Assessment:
+def assessment(rc: Reporter) -> Assessment:
     client = rc.clients.create(
         {
             "name": "test_finding",
@@ -20,23 +22,24 @@ def assessment(rc: Reporter) -> reporter.Assessment:
         }
     )
     rc.assessments.update(assessment.id, {"scoring_system": "owasp"})
-    return rc.assessments.get(assessment.id, include=["sections"])
+    return cast(Assessment, rc.assessments.get(assessment.id, include=["sections"]))
 
 
 @pytest.fixture(scope="session")
-def target(rc: Reporter, assessment: reporter.Assessment) -> reporter.Target:
-    return assessment.targets.create(
-        {
-            "target_type": 0,
-            "name": "example.com",
-        }
+def target(rc: Reporter, assessment: Assessment) -> Target:
+    return cast(
+        Target,
+        assessment.targets.create(
+            {
+                "target_type": 0,
+                "name": "example.com",
+            }
+        ),
     )
 
 
 @pytest.fixture(scope="session")
-def section(
-    rc: Reporter, assessment: reporter.Assessment
-) -> reporter.AssessmentSection:
+def section(rc: Reporter, assessment: Assessment) -> AssessmentSection:
     section = assessment.sections[0]
     rc.assessment_sections.update(
         section.id,
@@ -44,10 +47,10 @@ def section(
             "can_have_findings": True,
         },
     )
-    return section
+    return cast(AssessmentSection, section)
 
 
-def test_target_operations(rc: Reporter, assessment):
+def test_target_operations(rc: Reporter, assessment: Assessment) -> None:
     target = assessment.targets.create(
         {
             "target_type": 0,
@@ -71,7 +74,7 @@ def test_target_operations(rc: Reporter, assessment):
         assert e.value.response_code == 404
 
 
-def test_finding_operations(rc: Reporter, assessment):
+def test_finding_operations(rc: Reporter, assessment: Assessment) -> None:
     target = assessment.targets.create(
         {
             "target_type": 0,
@@ -110,7 +113,9 @@ def test_finding_operations(rc: Reporter, assessment):
         assert e.value.response_code == 404
 
 
-def test_finding_template_operations(rc: Reporter, assessment, section, target):
+def test_finding_template_operations(
+    rc: Reporter, assessment: Assessment, section: AssessmentSection, target: Target
+) -> None:
     assert len(rc.finding_templates.search("XSS")) > 0
 
     template = rc.finding_templates.create(
@@ -150,7 +155,9 @@ def test_finding_template_operations(rc: Reporter, assessment, section, target):
         assert e.value.response_code == 404
 
 
-def test_finding_event_operations(rc: Reporter, assessment, section, target):
+def test_finding_event_operations(
+    rc: Reporter, assessment: Assessment, section: AssessmentSection, target: Target
+) -> None:
     finding = assessment.findings.create(
         {
             "title": "test_finding",

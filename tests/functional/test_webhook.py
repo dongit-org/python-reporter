@@ -1,11 +1,11 @@
-import pytest  # type: ignore
+import pytest
 from uuid import uuid4
 
 import reporter
 from reporter import Reporter
 
 
-def test_webhook_operations(rc: Reporter):
+def test_webhook_operations(rc: Reporter) -> None:
     webhook = rc.webhooks.create(
         {
             "url": "https://example.com/webhooks/1",

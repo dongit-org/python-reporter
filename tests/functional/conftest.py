@@ -1,10 +1,11 @@
-import pathlib
+from pathlib import Path
 import os
 import platform
 import time
 
 import docker  # type: ignore
-import pytest  # type: ignore
+import pytest
+from pytest_docker.plugin import Services
 import requests
 from urllib3.exceptions import ProtocolError
 
@@ -12,34 +13,33 @@ from reporter import Reporter
 
 
 @pytest.fixture(scope="session")
-def base_path() -> pathlib.Path:
-    return pathlib.Path(__file__).parent
+def base_path() -> Path:
+    return Path(__file__).parent
 
 
 @pytest.fixture(scope="session")
-def docker_compose_file(base_path):
+def docker_compose_file(base_path: Path) -> Path:
     return base_path / "docker-compose/docker-compose.yml"
 
 
 @pytest.fixture(scope="session")
-def reporter_host():
+def reporter_host() -> str:
     if "REPORTER_HOST" in os.environ:
         return os.environ["REPORTER_HOST"]
     else:
         return "localhost:8080"
 
 
-def is_up(url):
+def is_up(url: str) -> bool:
     try:
         response = requests.get(f"{url}/login")
-        if response.status_code == 200:
-            return True
+        return response.status_code == 200
     except (ConnectionError, ConnectionRefusedError, ProtocolError):
         return False
 
 
 @pytest.fixture(scope="session")
-def rc(docker_services, reporter_host) -> Reporter:
+def rc(docker_services: Services, reporter_host: str) -> Reporter:
     """Starts Reporter and returns a Reporter client instance."""
     time.sleep(1)
     url = f"http://{reporter_host}"
@@ -51,7 +51,7 @@ def rc(docker_services, reporter_host) -> Reporter:
 
     docker_client = docker.from_env()
     phpfpm = docker_client.containers.get("phpfpm")
-    sock = phpfpm.exec_run(  # type: ignore
+    sock = phpfpm.exec_run(
         "php artisan user:create --api-token a@a.com a a",
         stdin=True,
         socket=True,

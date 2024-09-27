@@ -96,7 +96,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         query_data: Optional[Mapping[str, Any]] = None,
         post_data: Optional[Mapping[str, Any]] = None,
         files: Optional[Mapping[str, Any]] = None,
-        obey_rate_limit=True,
+        obey_rate_limit: bool = True,
     ) -> requests.Response:
         """Make an HTTP request to the Reporter server.
 
@@ -148,7 +148,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
             break
 
         if TYPE_CHECKING:
-            assert isinstance(result, requests.Response)  # type: ignore
+            assert isinstance(result, requests.Response)
 
         if 200 <= result.status_code < 300:
             return result
@@ -162,8 +162,8 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
     def get_raw_file(
         self,
         path: str,
-        headers=None,
-        **kwargs,
+        headers: Mapping[str, str] | None = None,
+        **kwargs: Any,
     ) -> bytes:
         """Wrapper around :func:`http_request` for downloading a raw file as bytestring.
 

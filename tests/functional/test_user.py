@@ -1,10 +1,10 @@
-import pytest  # type: ignore
+import pytest
 
 import reporter
 from reporter import Reporter
 
 
-def test_user_operations(rc: Reporter):
+def test_user_operations(rc: Reporter) -> None:
     user_data = {
         "first_name": "First",
         "last_name": "Last",
@@ -26,7 +26,7 @@ def test_user_operations(rc: Reporter):
     assert me.email == "a@a.com"
 
 
-def test_client_operations(rc: Reporter):
+def test_client_operations(rc: Reporter) -> None:
     client = rc.clients.create(
         {
             "name": "test_client_operations",
@@ -50,7 +50,7 @@ def test_client_operations(rc: Reporter):
         assert e.value.response_code == 404
 
 
-def test_user_group_operations(rc: Reporter):
+def test_user_group_operations(rc: Reporter) -> None:
     client = rc.clients.create(
         {
             "name": "test_user_group_operations",

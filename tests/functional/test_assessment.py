@@ -1,29 +1,32 @@
 import os
+from typing import cast
 
-import pytest  # type: ignore
+import pytest
 
 import reporter
-from reporter import Reporter
+from reporter import Reporter, AssessmentTemplate, Client
 
 
 @pytest.fixture(scope="session")
-def client(rc: Reporter) -> reporter.Client:
+def client(rc: Reporter) -> Client:
     client = rc.clients.create(
         {
             "name": "test_assessment",
             "description": "foo",
         }
     )
-    return client
+    return cast(Client, client)
 
 
 @pytest.fixture(scope="session")
-def assessment_template(rc: Reporter) -> reporter.AssessmentTemplate:
+def assessment_template(rc: Reporter) -> AssessmentTemplate:
     template = rc.assessment_templates.list()[0]
-    return template
+    return cast(AssessmentTemplate, template)
 
 
-def test_assessment_operations(rc: Reporter, client, assessment_template):
+def test_assessment_operations(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate
+) -> None:
     assessment = client.assessments.create(
         {
             "title": "test_assessment_operations",
@@ -42,7 +45,9 @@ def test_assessment_operations(rc: Reporter, client, assessment_template):
     assert gotten.internal_details == "foo"
 
 
-def test_assessment_comments_and_replies(rc: Reporter, client, assessment_template):
+def test_assessment_comments_and_replies(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate
+) -> None:
     assessment = client.assessments.create(
         {
             "title": "test_assessment_comments_and_replies",
@@ -97,7 +102,9 @@ def test_assessment_comments_and_replies(rc: Reporter, client, assessment_templa
     assert not any(c for c in comments if c.id == comment.id)
 
 
-def test_assessment_phases_and_sections(rc: Reporter, client, assessment_template):
+def test_assessment_phases_and_sections(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate
+) -> None:
     assessment = client.assessments.create(
         {
             "title": "test_assessment_phases_and_sections",
@@ -130,7 +137,9 @@ def test_assessment_phases_and_sections(rc: Reporter, client, assessment_templat
         assert getattr(section, attr) == val
 
 
-def test_assessment_section_comments(rc: Reporter, client, assessment_template):
+def test_assessment_section_comments(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate
+) -> None:
     assessment = client.assessments.create(
         {
             "title": "test_assessment_phases_and_sections",
@@ -181,7 +190,9 @@ def test_assessment_section_comments(rc: Reporter, client, assessment_template):
     )
 
 
-def test_assessment_users(rc: Reporter, client, assessment_template):
+def test_assessment_users(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate
+) -> None:
     assessment = client.assessments.create(
         {
             "title": "test_assessment_users",
@@ -207,7 +218,9 @@ def test_assessment_users(rc: Reporter, client, assessment_template):
     assert assessment_user.type == 2
 
 
-def test_activities(rc: Reporter, client, assessment_template):
+def test_activities(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate
+) -> None:
     assessment = client.assessments.create(
         {
             "title": "test_activities",
@@ -246,7 +259,9 @@ def test_activities(rc: Reporter, client, assessment_template):
     assert activity.finding_id == finding.id
 
 
-def test_output_files(rc: Reporter, client, assessment_template):
+def test_output_files(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate
+) -> None:
     assessment = client.assessments.create(
         {
             "title": "test_output_files",
