@@ -216,7 +216,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
     _obj_cast: Callable
     reporter: Reporter
 
-    def _get_list(  # pylint: disable = too-many-arguments, too-many-locals, redefined-builtin
+    def _get_list(  # pylint: disable = too-many-arguments, too-many-positional-arguments, too-many-locals, redefined-builtin
         self,
         extra_path: str = "",
         term: Optional[str] = None,
@@ -297,7 +297,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
 class ListMixin(_ListMixin):
     """Manager can list objects."""
 
-    def list(  # pylint: disable = too-many-arguments, redefined-builtin
+    def list(  # pylint: disable = too-many-arguments, too-many-positional-arguments, redefined-builtin
         self,
         filter: Optional[Mapping[str, str]] = None,
         sort: Optional[List[str]] = None,

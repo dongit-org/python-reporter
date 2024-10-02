@@ -88,7 +88,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         self.users = objects.UserManager(self)
         self.webhooks = objects.WebhookManager(self)
 
-    def http_request(  # pylint: disable = too-many-arguments
+    def http_request(  # pylint: disable = too-many-arguments, too-many-positional-arguments
         self,
         verb: str,
         path: str,
