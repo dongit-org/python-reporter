@@ -1,4 +1,5 @@
 import responses
+from urllib.parse import quote
 
 from reporter import (
     Reporter,
@@ -242,3 +243,59 @@ def test_update_mixin(rc: Reporter) -> None:
         assert isinstance(obj, FakeObject)
         assert obj.id == "1234"
         assert obj.a == 12
+
+
+def test_mixin_filter_include_sort(rc: Reporter) -> None:
+    class M(FakeManager, ListMixin):  # type: ignore
+        pass
+
+    manager = M(rc)
+    url = "https://localhost/api/v1/tests"
+
+    with responses.RequestsMock() as rsps:
+        rsps.add(
+            method=responses.GET,
+            url=url,
+            json={
+                "data": [
+                    {"id": "1234", "a": 12, "foo": {}, "bar": {}},
+                    {"id": "1234", "a": 12, "foo": {}, "bar": {}},
+                ],
+                "links": {
+                    "foo": "bar",
+                },
+                "meta": {
+                    "foo": "bar",
+                },
+            },
+            content_type="application/json",
+            status=200,
+            match=[
+                responses.matchers.header_matcher({"Accept": "application/json"}),
+            ],
+        )
+
+        # Test that sort can be passed as either an array or a comma-separated string
+        query_string = quote("sort[]=foo&sort[]=bar", safe="&=")
+        manager.list(sort=["foo", "bar"])
+        rsps.assert_call_count(f"{url}?{query_string}", 1)
+
+        query_string = quote("sort=foo,bar", safe="&=")
+        manager.list(sort="foo,bar")
+        rsps.assert_call_count(f"{url}?{query_string}", 1)
+
+        # Test that include can be passed as either an array or a comma-separated string
+        query_string = quote("include[]=foo&include[]=bar", safe="&=")
+        manager.list(include=["foo", "bar"])
+        rsps.assert_call_count(f"{url}?{query_string}", 1)
+
+        query_string = quote("include=foo,bar", safe="&=")
+        manager.list(include="foo,bar")
+        rsps.assert_call_count(f"{url}?{query_string}", 1)
+
+        # Test that filters can be passed as either arrays or comma-separated strings
+        query_string = quote(
+            "filter[foo][]=a&filter[foo][]=b&filter[bar]=c,d", safe="&="
+        )
+        manager.list(filter={"foo": ["a", "b"], "bar": "c,d"})
+        rsps.assert_call_count(f"{url}?{query_string}", 1)

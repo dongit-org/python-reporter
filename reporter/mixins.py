@@ -131,8 +131,8 @@ class GetMixin(Generic[ChildOfRestObject]):
     def get(
         self,
         id: str,
-        include: Optional[List[str]] = None,
-        query_data: Optional[Mapping[str, str]] = None,
+        include: Optional[str | List[str]] = None,
+        query_data: Optional[Mapping[str, Any]] = None,
         **kwargs: Any,
     ) -> ChildOfRestObject:
         """Retrieve a single object.
@@ -156,7 +156,8 @@ class GetMixin(Generic[ChildOfRestObject]):
         query_data = dict(query_data) if query_data else {}
 
         if include:
-            query_data["include"] = ",".join(include)
+            query_data["include"] = include
+
         path = f"{self._path}/{id}"
 
         result = self.reporter.http_request(
@@ -220,12 +221,12 @@ class _ListMixin(Generic[ChildOfRestObject]):
         self,
         extra_path: str = "",
         term: Optional[str] = None,
-        filter: Optional[Mapping[str, str]] = None,
-        sort: Optional[List[str]] = None,
-        include: Optional[List[str]] = None,
+        filter: Optional[Mapping[str, str | int | List[str | int]]] = None,
+        sort: Optional[str | List[str]] = None,
+        include: Optional[str | List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
-        query_data: Optional[Mapping[str, str]] = None,
+        query_data: Optional[Mapping[str, Any]] = None,
         **kwargs: Any,
     ) -> RestList:
         """Retrieve a list of objects.
@@ -263,10 +264,10 @@ class _ListMixin(Generic[ChildOfRestObject]):
             query_data[f"filter[{key}]"] = value
 
         if include:
-            query_data["include"] = ",".join(include)
+            query_data["include"] = include
 
-        if sort is not None and sort != []:
-            query_data["sort"] = ",".join(sort)
+        if sort:
+            query_data["sort"] = sort
 
         if page is not None:
             query_data["page[number]"] = str(page)
@@ -299,12 +300,12 @@ class ListMixin(_ListMixin):
 
     def list(  # pylint: disable = too-many-arguments, too-many-positional-arguments, redefined-builtin
         self,
-        filter: Optional[Mapping[str, str]] = None,
-        sort: Optional[List[str]] = None,
-        include: Optional[List[str]] = None,
+        filter: Optional[Mapping[str, str | int | List[str | int]]] = None,
+        sort: Optional[str | List[str]] = None,
+        include: Optional[str | List[str]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
-        query_data: Optional[Mapping[str, str]] = None,
+        query_data: Optional[Mapping[str, Any]] = None,
         **kwargs: Any,
     ) -> RestList:
         """Retrieve a list of objects.
@@ -348,7 +349,7 @@ class SearchMixin(_ListMixin):
         term: Optional[str] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
-        query_data: Optional[Mapping[str, str]] = None,
+        query_data: Optional[Mapping[str, Any]] = None,
         **kwargs: Any,
     ) -> RestList:
         """Search for a list of objects.

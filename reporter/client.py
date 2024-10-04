@@ -88,7 +88,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         self.users = objects.UserManager(self)
         self.webhooks = objects.WebhookManager(self)
 
-    def http_request(  # pylint: disable = too-many-arguments, too-many-positional-arguments
+    def http_request(  # pylint: disable = too-many-arguments, too-many-positional-arguments, too-many-locals
         self,
         verb: str,
         path: str,
@@ -131,12 +131,20 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
             data = None
             json = post_data
 
+        params = {}
+        if query_data:
+            for key, value in query_data.items():
+                if isinstance(value, list):
+                    params[f"{key}[]"] = value
+                else:
+                    params[key] = value
+
         for i in range(2):
             result = self.session.request(  # pylint: disable = too-many-arguments
                 method=verb,
                 url=url,
                 headers=headers,
-                params=query_data,
+                params=params,
                 data=data,
                 json=json,
                 files=files,
