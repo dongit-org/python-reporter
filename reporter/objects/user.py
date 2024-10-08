@@ -20,8 +20,8 @@ class UserManager(RestManager, CreateMixin, GetMixin, ListMixin, UpdateMixin):
 
     def me(
         self,
-        include: Optional[List[str]] = None,
-        query_data: Optional[Mapping[str, str]] = None,
+        include: Optional[str | List[str]] = None,
+        query_data: Optional[Mapping[str, Any]] = None,
         **kwargs: Any,
     ) -> User:
         """Get the user who owns the API token
@@ -44,7 +44,7 @@ class UserManager(RestManager, CreateMixin, GetMixin, ListMixin, UpdateMixin):
         query_data = dict(query_data) if query_data else {}
 
         if include:
-            query_data["include"] = ",".join(include)
+            query_data["include"] = include
 
         result = self.reporter.http_request(
             verb="get",
