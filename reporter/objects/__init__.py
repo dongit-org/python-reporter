@@ -17,10 +17,16 @@ from .auto_assignment import *
 from .client import *
 from .document import *
 from .finding import *
+from .finding_clone_event import *
 from .finding_comment import *
 from .finding_created_event import *
+from .finding_event import *
+from .finding_resolver_event import *
 from .finding_retest import *
+from .finding_retest_cancelled_event import *
 from .finding_retest_inquiry import *
+from .finding_review_event import *
+from .finding_status_change import *
 from .finding_template import *
 from .language import *
 from .output_file import *
