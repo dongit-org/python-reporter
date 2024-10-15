@@ -1,5 +1,5 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
-from typing import List, TYPE_CHECKING, Mapping, Any
+from typing import TYPE_CHECKING, Mapping, Any
 
 from reporter.base import RestManager, RestObject
 from reporter.helpers import Polymorphic

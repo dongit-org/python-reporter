@@ -3,7 +3,16 @@ from typing import cast
 import pytest
 
 import reporter
-from reporter import Reporter, Assessment, AssessmentSection, Target
+from reporter import (
+    Reporter,
+    Assessment,
+    AssessmentSection,
+    FindingComment,
+    FindingCreatedEvent,
+    FindingRetest,
+    FindingRetestInquiry,
+    Target,
+)
 
 
 @pytest.fixture(scope="session")
@@ -199,6 +208,23 @@ def test_finding_event_operations(
     reply = next(r for r in comment.replies if r.id == reply.id)
     assert reply is not None and reply.body == "Updated reply"
 
+    # List finding events
+    events = rc.finding_events.list(filter={"finding_id": finding.id})
+    assert any(e for e in events if isinstance(e, FindingCreatedEvent))
+    assert any(
+        event
+        for event in events
+        if isinstance(event, FindingComment) and event.body == "Updated comment"
+    )
+    assert any(
+        event
+        for event in events
+        if isinstance(event, FindingComment)
+        and event.body == "Updated reply"
+        and event.parent_id == comment.id
+    )
+    assert len(events) == 3
+
     # Delete comments and replies
     rc.finding_comments.delete(reply.id)
     finding = rc.findings.get(finding.id, include=["comments.replies"])
@@ -236,6 +262,17 @@ def test_finding_event_operations(
     rc.finding_retests.update(retest.id, {"body": "Solved", "review_status": 2})
     retest = rc.findings.get(finding.id, include=["retests"]).retests[0]
     assert retest.body == "Solved"
+
+    # List more finding events
+    events = rc.finding_events.list(filter={"finding_id": finding.id})
+    assert any(e for e in events if isinstance(e, FindingCreatedEvent))
+    assert any(
+        event
+        for event in events
+        if isinstance(event, FindingRetestInquiry) and event.body == "New inquiry!"
+    )
+    assert any(e for e in events if isinstance(e, FindingRetest) and e.body == "Solved")
+    assert len(events) == 3
 
     # Delete retests
     rc.finding_retests.delete(retest.id)
