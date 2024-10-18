@@ -173,6 +173,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
     def get_raw_file(
         self,
         path: str,
+        verb: str = "get",
         headers: Mapping[str, str] | None = None,
         **kwargs: Any,
     ) -> bytes:
@@ -180,6 +181,8 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
 
         Args:
             path: URL path of the raw file.
+            verb: The HTTP method to call (e.g. ``get``, ``post``, ``put``, ``delete``).
+                Default: ``get``.
             headers: Request headers. Default: ``{"Accept": "*/*"}``.
             **kwargs: Extra options to pass to the underlying :func:`http_request` call.
 
@@ -190,7 +193,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
             headers = {"Accept": "*/*"}
 
         result = self.http_request(
-            verb="get",
+            verb=verb,
             path=path,
             headers=headers,
             **kwargs,
