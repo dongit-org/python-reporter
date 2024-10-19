@@ -1,5 +1,4 @@
 """RestObject _includes - see RestObject._deserialize_includes"""
-
 # pylint: disable = wildcard-import, unused-wildcard-import, protected-access
 
 from reporter.objects import *
@@ -99,21 +98,41 @@ FindingComment._includes = {
     "createdBy": User,
     "updatedBy": User,
     "documents": Document,
+    "parent": FindingEvent,
     "reactions": Reaction,
     "replies": FindingComment,
+}
+
+FindingCloneEvent._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "users": User,
 }
 
 FindingCreatedEvent._includes = {
     "assessment": Assessment,
     "finding": Finding,
     "createdBy": User,
-    "reactions": Reaction,
     "replies": FindingComment,
+    "reactions": Reaction,
+    "resolvedTargets": Target,
+}
+
+FindingResolverEvent._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "replies": FindingComment,
+    "addedUsers": User,
+    "removedUsers": User,
 }
 
 FindingRetest._includes = {
-    "assessments": Assessment,
+    "assessment": Assessment,
     "finding": Finding,
+    "relatedEvents": FindingEvent,
+    "relatedEvent": FindingEvent,
     "createdBy": User,
     "updatedBy": User,
     "reviewedBy": User,
@@ -121,18 +140,59 @@ FindingRetest._includes = {
     "reactions": Reaction,
     "retestInquiry": FindingRetestInquiry,
     "replies": FindingComment,
+    "resolvedTargets": Target,
+    "nextStatusChange": FindingEvent,
+    "previousStatusChange": FindingEvent,
+}
+
+FindingRetestCancelledEvent._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "relatedEvent": FindingEvent,
+    "createdBy": User,
+    "updatedBy": User,
+    "documents": Document,
+    "retestInquiry": FindingRetestInquiry,
+    "replies": FindingComment,
+    "resolvedTargets": Target,
+    "nextStatusChange": FindingEvent,
+    "previousStatusChange": FindingEvent,
 }
 
 FindingRetestInquiry._includes = {
-    "assessments": Assessment,
+    "assessment": Assessment,
     "finding": Finding,
     "createdBy": User,
     "updatedBy": User,
+    "relatedEvents": FindingEvent,
     "convertedFromCommentBy": User,
     "documents": Document,
     "reactions": Reaction,
     "retest": FindingRetest,
     "replies": FindingComment,
+    "resolvedTargets": Target,
+    "nextStatusChange": FindingEvent,
+    "previousStatusChange": FindingEvent,
+}
+
+FindingReviewEvent._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
+    "findingRetest": User,
+    "relatedEvents": FindingEvent,
+    "parent": FindingEvent,
+}
+
+FindingStatusChange._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
+    "nextStatusChange": FindingEvent,
+    "previousStatusChange": FindingEvent,
+    "resolvedTargets": Target,
 }
 
 FindingTemplate._includes = {
@@ -146,6 +206,7 @@ Finding._includes = {
     "comments": FindingComment,
     "createdEvent": FindingCreatedEvent,
     "documents": Document,
+    "events": FindingEvent,
     "resolvedTargets": Target,
     "resolvers": User,
     "retestInquiries": FindingRetestInquiry,

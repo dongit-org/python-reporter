@@ -50,11 +50,10 @@ def test_reaction_operations(
     reaction = assessment.comments[-1].reactions[-1]
     assert reaction.reaction == "👍"
 
-    # # Uncomment in next version
-    # rc.reactions.delete(reaction.id)
-    #
-    # assessment = rc.assessments.get(
-    #     assessment_comment.assessment_id, include=["comments.reactions"]
-    # )
-    #
-    # assert len(assessment.comments[-1].reactions) == 0
+    rc.reactions.delete(reaction.id)
+
+    assessment = rc.assessments.get(
+        assessment_comment.assessment_id, include=["comments.reactions"]
+    )
+
+    assert len(assessment.comments[-1].reactions) == 0

@@ -67,12 +67,14 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         self.assessments = objects.AssessmentManager(self)
         self.assessment_comments = objects.AssessmentCommentManager(self)
         self.assessment_phases = objects.AssessmentPhaseManager(self)
+        self.assessment_roles = objects.AssessmentRoleManager(self)
         self.assessment_sections = objects.AssessmentSectionManager(self)
         self.assessment_section_comments = objects.AssessmentSectionCommentManager(self)
         self.assessment_templates = objects.AssessmentTemplateManager(self)
         self.clients = objects.ClientManager(self)
         self.documents = objects.DocumentManager(self)
         self.findings = objects.FindingManager(self)
+        self.finding_events = objects.FindingEventManager(self)
         self.finding_comments = objects.FindingCommentManager(self)
         self.finding_retest_inquiries = objects.FindingRetestInquiryManager(self)
         self.finding_retests = objects.FindingRetestManager(self)
@@ -80,6 +82,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         self.languages = objects.LanguageManager(self)
         self.output_files = objects.OutputFileManager(self)
         self.reactions = objects.ReactionManager(self)
+        self.roles = objects.GlobalRoleManager(self)
         self.targets = objects.TargetManager(self)
         self.tasks = objects.TaskManager(self)
         self.task_sets = objects.TaskSetManager(self)
@@ -170,6 +173,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
     def get_raw_file(
         self,
         path: str,
+        verb: str = "get",
         headers: Mapping[str, str] | None = None,
         **kwargs: Any,
     ) -> bytes:
@@ -177,6 +181,8 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
 
         Args:
             path: URL path of the raw file.
+            verb: The HTTP method to call (e.g. ``get``, ``post``, ``put``, ``delete``).
+                Default: ``get``.
             headers: Request headers. Default: ``{"Accept": "*/*"}``.
             **kwargs: Extra options to pass to the underlying :func:`http_request` call.
 
@@ -187,7 +193,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
             headers = {"Accept": "*/*"}
 
         result = self.http_request(
-            verb="get",
+            verb=verb,
             path=path,
             headers=headers,
             **kwargs,

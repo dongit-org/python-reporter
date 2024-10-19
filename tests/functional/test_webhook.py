@@ -11,6 +11,7 @@ def test_webhook_operations(rc: Reporter) -> None:
             "url": "https://example.com/webhooks/1",
             "name": "onAssessmentCreated",
             "secret": str(uuid4()),
+            "auth_method": 0,
             "types": ["assessment:created"],
             "mode": 1,
         }
