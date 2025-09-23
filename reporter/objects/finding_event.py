@@ -11,7 +11,7 @@ from .finding_retest_inquiry import FindingRetestInquiry
 from .finding_retest import FindingRetest
 from .finding_retest_cancelled_event import FindingRetestCancelledEvent
 from .finding_status_change import FindingStatusChange
-from .finding_clone_event import FindingCloneEvent
+from .finding_import_event import FindingImportEvent
 from .finding_resolver_event import FindingResolverEvent
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ FindingEvent = Polymorphic(
         FindingRetest,
         FindingRetestCancelledEvent,
         FindingStatusChange,
-        FindingCloneEvent,
+        FindingImportEvent,
         FindingResolverEvent,
     ],
     "finding_event_type",
