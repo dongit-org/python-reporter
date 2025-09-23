@@ -19,12 +19,12 @@ python-reporter
 
 A Python wrapper around the `Reporter <https://securityreporter.app>`_ API.
 
-Currently compatible with Reporter version `2024.10.19 <https://securityreporter.app/releases/20241019>`_.
+Currently compatible with Reporter version `2025.08.27 <https://securityreporter.app/releases/20250827>`_.
 
 Installation
 ------------
 
-Currently, :code:`python-reporter` is compatible with Python 3.8+.
+Currently, :code:`python-reporter` is compatible with Python 3.10+.
 
 Use :code:`pip` to install the package:
 
