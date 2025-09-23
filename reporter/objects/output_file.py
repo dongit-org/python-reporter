@@ -1,7 +1,7 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
 from reporter.base import RestManager, RestObject
-from reporter.mixins import CreateMixin, DeleteMixin
+from reporter.mixins import CreateMixin, DeleteMixin, ListMixin
 
 
 __all__ = [
@@ -15,7 +15,7 @@ class OutputFile(RestObject):
     pass
 
 
-class OutputFileManager(RestManager, DeleteMixin):
+class OutputFileManager(RestManager, DeleteMixin, ListMixin):
     _path = "output-files"
     _obj_cls = OutputFile
 
