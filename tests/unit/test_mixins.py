@@ -28,7 +28,7 @@ class FakeManager(RestManager):
 
 
 def test_create_mixin(rc: Reporter) -> None:
-    class M(FakeManager, CreateMixin):  # type: ignore
+    class M(FakeManager, CreateMixin):
         pass
 
     manager = M(rc)
@@ -56,7 +56,7 @@ def test_create_mixin(rc: Reporter) -> None:
 
 
 def test_delete_mixin(rc: Reporter) -> None:
-    class M(FakeManager, DeleteMixin):  # type: ignore
+    class M(FakeManager, DeleteMixin):
         pass
 
     manager = M(rc)
@@ -80,7 +80,7 @@ def test_delete_mixin(rc: Reporter) -> None:
 
 
 def test_get_mixin(rc: Reporter) -> None:
-    class M(FakeManager, GetMixin):  # type: ignore
+    class M(FakeManager, GetMixin):
         pass
 
     manager = M(rc)
@@ -107,7 +107,7 @@ def test_get_mixin(rc: Reporter) -> None:
 
 
 def test_get_raw_mixin(rc: Reporter) -> None:
-    class M(FakeManager, GetRawMixin):  # type: ignore
+    class M(FakeManager, GetRawMixin):
         pass
 
     manager = M(rc)
@@ -133,7 +133,7 @@ def test_get_raw_mixin(rc: Reporter) -> None:
 
 
 def test_list_mixin(rc: Reporter) -> None:
-    class M(FakeManager, ListMixin):  # type: ignore
+    class M(FakeManager, ListMixin):
         pass
 
     manager = M(rc)
@@ -176,7 +176,7 @@ def test_list_mixin(rc: Reporter) -> None:
 
 
 def test_search_mixin(rc: Reporter) -> None:
-    class M(FakeManager, SearchMixin):  # type: ignore
+    class M(FakeManager, SearchMixin):
         pass
 
     manager = M(rc)
@@ -219,7 +219,7 @@ def test_search_mixin(rc: Reporter) -> None:
 
 
 def test_update_mixin(rc: Reporter) -> None:
-    class M(FakeManager, UpdateMixin):  # type: ignore
+    class M(FakeManager, UpdateMixin):
         pass
 
     manager = M(rc)
@@ -246,7 +246,7 @@ def test_update_mixin(rc: Reporter) -> None:
 
 
 def test_mixin_filter_include_sort(rc: Reporter) -> None:
-    class M(FakeManager, ListMixin):  # type: ignore
+    class M(FakeManager, ListMixin):
         pass
 
     manager = M(rc)

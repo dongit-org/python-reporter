@@ -41,7 +41,7 @@ class CreateMixin(Generic[ChildOfRestObject]):
     """Manager can create object."""
 
     _path: str
-    _obj_cast: Callable
+    _obj_cast: Callable[[Reporter, Any], ChildOfRestObject]
     _obj_cls: Type[ChildOfRestObject]
     reporter: Reporter
 
@@ -91,7 +91,7 @@ class DeleteMixin(Generic[ChildOfRestObject]):
 
     _path: str
     _obj_cls: Type[ChildOfRestObject]
-    _obj_cast: Callable
+    _obj_cast: Callable[[Reporter, Any], ChildOfRestObject]
     reporter: Reporter
 
     def delete(
@@ -125,7 +125,7 @@ class GetMixin(Generic[ChildOfRestObject]):
 
     _path: str
     _obj_cls: Type[ChildOfRestObject]
-    _obj_cast: Callable
+    _obj_cast: Callable[[Reporter, Any], ChildOfRestObject]
     reporter: Reporter
 
     def get(
@@ -180,7 +180,7 @@ class GetRawMixin(Generic[ChildOfRestObject]):
 
     _path: str
     _obj_cls: Type[ChildOfRestObject]
-    _obj_cast: Callable
+    _obj_cast: Callable[[Reporter, Any], ChildOfRestObject]
     reporter: Reporter
 
     def get(
@@ -214,7 +214,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
 
     _path: str
     _obj_cls: Type[ChildOfRestObject]
-    _obj_cast: Callable
+    _obj_cast: Callable[[Reporter, Any], ChildOfRestObject]
     reporter: Reporter
 
     def _get_list(  # pylint: disable = too-many-arguments, too-many-positional-arguments, too-many-locals, redefined-builtin
@@ -386,7 +386,7 @@ class UpdateMixin(Generic[ChildOfRestObject]):
 
     _path: str
     _obj_cls: Type[ChildOfRestObject]
-    _obj_cast: Callable
+    _obj_cast: Callable[[Reporter, Any], ChildOfRestObject]
     reporter: Reporter
 
     def update(

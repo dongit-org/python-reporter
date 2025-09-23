@@ -201,7 +201,7 @@ class RestManager(Sequence, Generic[ChildOfRestObject]):
     # For example client.assessments refers to both the assessments manager and
     # a retrieved list of assessments, and can be used in both ways.
     _obj_cls: Type[ChildOfRestObject]
-    _obj_cast: Callable
+    _obj_cast: Callable[[Reporter, Any], ChildOfRestObject]
     _list: List[RestObject] = []
 
     def __init__(
