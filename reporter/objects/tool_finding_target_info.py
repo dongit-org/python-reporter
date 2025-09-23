@@ -3,9 +3,9 @@
 from reporter.base import RestObject
 
 __all__ = [
-    "FindingCloneEvent",
+    "ToolFindingTargetInfo",
 ]
 
 
-class FindingCloneEvent(RestObject):
+class ToolFindingTargetInfo(RestObject):
     pass
