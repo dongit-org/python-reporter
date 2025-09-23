@@ -18,6 +18,7 @@ Assessment._includes = {
     "comments": AssessmentComment,
     "documents": Document,
     "findings": Finding,
+    "findingLayout": FindingLayout,
     "language": Language,
     "nestedSections": AssessmentSection,
     "outputFiles": OutputFile,
@@ -27,6 +28,7 @@ Assessment._includes = {
     "targets": Target,
     "tasks": Task,
     "taskSets": TaskSet,
+    "testCases": TestCase,
     "theme": Theme,
     "userGroups": UserGroup,
     "users": User,
@@ -88,6 +90,10 @@ Client._includes = {
     "users": User,
 }
 
+CustomField._includes = {
+    "documents": Document,
+}
+
 Document._includes = {
     "uploadedBy": User,
 }
@@ -103,7 +109,7 @@ FindingComment._includes = {
     "replies": FindingComment,
 }
 
-FindingCloneEvent._includes = {
+FindingImportEvent._includes = {
     "assessment": Assessment,
     "finding": Finding,
     "createdBy": User,
@@ -117,6 +123,24 @@ FindingCreatedEvent._includes = {
     "replies": FindingComment,
     "reactions": Reaction,
     "resolvedTargets": Target,
+}
+
+FindingLayout._includes = {
+    "assessments": Assessment,
+    "fields": FindingLayoutField,
+}
+
+FindingLayoutField._includes = {
+    "findingLayout": FindingLayout,
+}
+
+FindingPublishedEvent._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
+    "relatedEvent": FindingEvent,
+    "parent": FindingEvent,
 }
 
 FindingResolverEvent._includes = {
@@ -201,17 +225,29 @@ FindingTemplate._includes = {
 
 Finding._includes = {
     "activities": Activity,
+    "allComments": FindingComment,
+    "allEvents": FindingEvent,
     "assessment": Assessment,
     "assessmentSection": AssessmentSection,
     "comments": FindingComment,
     "createdEvent": FindingCreatedEvent,
     "documents": Document,
     "events": FindingEvent,
+    "importEvents": FindingImportEvent,
+    "importedFrom": Finding,
+    "importedTo": Finding,
+    "publishedEvents": FindingPublishedEvent,
     "resolvedTargets": Target,
     "resolvers": User,
+    "resolverEvents": FindingResolverEvent,
+    "retestCancelledEvents": FindingRetestCancelledEvent,
     "retestInquiries": FindingRetestInquiry,
     "retests": FindingRetest,
+    "reviewEvents": FindingReviewEvent,
+    "statusChanges": FindingStatusChange,
     "targets": Target,
+    "testCases": TestCase,
+    "toolFindings": ToolFinding,
     "userGroups": UserGroup,
     "user": User,
 }
@@ -223,11 +259,17 @@ Language._includes = {
 OutputFile._includes = {
     "assessment": Assessment,
     "documents": Document,
+    "toolFindings": ToolFinding,
 }
 
 Reaction._includes = {
     "assessment": Assessment,
     "user": User,
+}
+
+ReportPage._includes = {
+    "customField": CustomField,
+    "theme": Theme,
 }
 
 Target._includes = {
@@ -251,11 +293,33 @@ TaskSet._includes = {
     "copiedTasks": Task,
 }
 
+TestCase._includes = {
+    "assessment": Assessment,
+    "findings": Finding,
+    "updatedBy": User,
+}
+
 Theme._includes = {
     "assessments": Assessment,
     "assessmentTemplates": AssessmentTemplate,
     "documents": Document,
     "languages": Language,
+    "pages": ReportPage,
+}
+
+ToolFinding._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "importStatusBy": User,
+    "outputFile": OutputFile,
+    "toolTargetInfos": ToolFindingTargetInfo,
+    "toolTargets": ToolTarget,
+}
+
+ToolTarget._includes = {
+    "assessment": Assessment,
+    "target": Target,
+    "toolFindings": ToolFinding,
 }
 
 User._includes = {
