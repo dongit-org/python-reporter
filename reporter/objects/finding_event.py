@@ -6,6 +6,7 @@ from reporter.helpers import Polymorphic
 from reporter.mixins import ListMixin
 from .finding_created_event import FindingCreatedEvent
 from .finding_review_event import FindingReviewEvent
+from .finding_published_event import FindingPublishedEvent
 from .finding_comment import FindingComment
 from .finding_retest_inquiry import FindingRetestInquiry
 from .finding_retest import FindingRetest
@@ -27,6 +28,7 @@ FindingEvent = Polymorphic(
     [
         FindingCreatedEvent,
         FindingReviewEvent,
+        FindingPublishedEvent,
         FindingComment,
         FindingRetestInquiry,
         FindingRetest,
