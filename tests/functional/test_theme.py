@@ -9,4 +9,3 @@ def test_theme_operations(rc: Reporter) -> None:
     assert len(themes[0].pages) == 2
     assert isinstance(themes[0].pages[0], ReportPage)
     assert themes[0].pages[0].name == "Front Page"
-

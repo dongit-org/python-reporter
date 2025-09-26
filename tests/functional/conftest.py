@@ -1,14 +1,14 @@
 from pathlib import Path
 import os
-import platform
 import time
-
-import docker  # type: ignore
+from textwrap import dedent
+from typing import Protocol, Optional
+import docker
 import pytest
+from docker.models.containers import Container
 from pytest_docker.plugin import Services
 import requests
 from urllib3.exceptions import ProtocolError
-
 from reporter import Reporter
 
 
@@ -39,7 +39,7 @@ def is_up(url: str) -> bool:
 
 
 @pytest.fixture(scope="session")
-def rc(docker_services: Services, reporter_host: str) -> Reporter:
+def phpfpm(docker_services: Services, reporter_host: str) -> Container:
     """Starts Reporter and returns a Reporter client instance."""
     time.sleep(1)
     url = f"http://{reporter_host}"
@@ -50,7 +50,47 @@ def rc(docker_services: Services, reporter_host: str) -> Reporter:
     )
 
     docker_client = docker.from_env()
-    phpfpm = docker_client.containers.get("phpfpm")
+    return docker_client.containers.get("phpfpm")
+
+
+class Artisan(Protocol):
+    def __call__(
+        self,
+        command: Optional[str | list[str]] = None,
+        *,
+        execute: Optional[str] = None,
+    ) -> str:
+        ...
+
+
+@pytest.fixture(scope="session")
+def artisan(phpfpm: Container) -> Artisan:
+    def _run(
+        command: Optional[str | list[str]] = None, execute: Optional[str | None] = None
+    ) -> str:
+        if execute is not None:
+            execute = dedent(execute).strip()
+            command = ["tinker", "--execute=" + execute]
+
+        if command is None:
+            raise ValueError(
+                "Either an Artisan command or an execute command must be specified."
+            )
+
+        if isinstance(command, str):
+            full_command: str | list[str] = "php artisan " + command
+        else:
+            full_command = ["php", "artisan"] + command
+
+        output: bytes = phpfpm.exec_run(full_command).output
+        return output.decode("utf-8")
+
+    return _run
+
+
+@pytest.fixture(scope="session")
+def rc(phpfpm: Container, reporter_host: str) -> Reporter:
+    url = f"http://{reporter_host}"
     sock = phpfpm.exec_run(
         "php artisan user:create --api-token a@a.com a a",
         stdin=True,
@@ -66,11 +106,6 @@ def rc(docker_services: Services, reporter_host: str) -> Reporter:
         output += sock.recv(100)
         time.sleep(0.1)
     token = output.decode("utf-8").split("api token is: ")[1].splitlines()[0]
-
-    # Create a custom field, as there is currently no way to do so through the API
-    phpfpm.exec_run(
-        'php artisan tinker --execute=\'\App\Models\CustomField::factory()->create(["name" => "test_custom_field"])\'',
-    )
 
     client = Reporter(
         url=url,
