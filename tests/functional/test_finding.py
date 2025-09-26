@@ -9,6 +9,7 @@ from reporter import (
     AssessmentSection,
     FindingComment,
     FindingCreatedEvent,
+    FindingPublishedEvent,
     FindingRetest,
     FindingRetestInquiry,
     Target,
@@ -103,6 +104,8 @@ def test_finding_operations(rc: Reporter, assessment: Assessment) -> None:
             "assessment_section_id": section.id,
             "is_vulnerability": False,
             "description": "foo",
+            "review_status": 0,
+            "is_published": False,
         }
     )
 
@@ -112,7 +115,13 @@ def test_finding_operations(rc: Reporter, assessment: Assessment) -> None:
     gotten = rc.findings.get(finding.id)
 
     assert finding == gotten
-    for attr in ["title", "assessment_section_id", "is_vulnerability"]:
+    for attr in [
+        "title",
+        "assessment_section_id",
+        "is_vulnerability",
+        "review_status",
+        "is_published",
+    ]:
         assert getattr(finding, attr) == getattr(gotten, attr)
     assert gotten.description == "bar"
 
@@ -179,6 +188,8 @@ def test_finding_event_operations(
                 "scoring_system": "owasp",
             },
             "description": "foo",
+            "review_status": 0,
+            "is_published": False,
         }
     )
 
@@ -187,6 +198,7 @@ def test_finding_event_operations(
         {
             "status": 0,
             "review_status": 2,
+            "is_published": True,
         },
     )
 
@@ -211,6 +223,7 @@ def test_finding_event_operations(
     # List finding events
     events = rc.finding_events.list(filter={"finding_id": finding.id})
     assert any(e for e in events if isinstance(e, FindingCreatedEvent))
+    assert any(event for event in events if isinstance(event, FindingPublishedEvent))
     assert any(
         event
         for event in events
@@ -223,7 +236,7 @@ def test_finding_event_operations(
         and event.body == "Updated reply"
         and event.parent_id == comment.id
     )
-    assert len(events) == 3
+    assert len(events) == 4
 
     # Delete comments and replies
     rc.finding_comments.delete(reply.id)
@@ -254,7 +267,9 @@ def test_finding_event_operations(
 
     # Create retests
     finding.retestInquiries.create({"body": "New inquiry!"})
-    finding.retests.create({"status": 1, "body": "TODO"})
+    finding.retests.create(
+        {"status": 1, "review_status": 0, "is_published": False, "body": "TODO"}
+    )
     retest = rc.findings.get(finding.id, include=["retests"]).retests[0]
     assert retest.body == "TODO"
 
@@ -266,13 +281,14 @@ def test_finding_event_operations(
     # List more finding events
     events = rc.finding_events.list(filter={"finding_id": finding.id})
     assert any(e for e in events if isinstance(e, FindingCreatedEvent))
+    assert any(event for event in events if isinstance(event, FindingPublishedEvent))
     assert any(
         event
         for event in events
         if isinstance(event, FindingRetestInquiry) and event.body == "New inquiry!"
     )
     assert any(e for e in events if isinstance(e, FindingRetest) and e.body == "Solved")
-    assert len(events) == 3
+    assert len(events) == 4
 
     # Delete retests
     rc.finding_retests.delete(retest.id)

@@ -246,17 +246,20 @@ def test_activities(
             "assessment_section_id": section.id,
             "is_vulnerability": False,
             "description": "foo",
+            "review_status": 0,
+            "is_published": False,
         }
     )
 
-    activity = rc.activities.list(
+    created_activities = rc.activities.list(
         filter={
             "assessment_id": assessment.id,
             "type": "40",
         }
-    )[0]
-    assert activity.assessment_id == assessment.id
-    assert activity.finding_id == finding.id
+    )
+    assert len(created_activities) == 1
+    assert created_activities[0].assessment_id == assessment.id
+    assert created_activities[0].finding_id == finding.id
 
 
 def test_output_files(
