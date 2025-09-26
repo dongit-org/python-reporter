@@ -55,18 +55,22 @@ def rc(docker_services: Services, reporter_host: str) -> Reporter:
         "php artisan user:create --api-token a@a.com a a",
         stdin=True,
         socket=True,
+        tty=True,
     ).output
-    if platform.system() == "Linux":
-        sock._sock.sendall(b"Password1!\nPassword1!\n")
-        token = sock.readlines()[-1].split()[-1].decode("utf-8")
-    elif platform.system() == "Windows":
-        sock.sendall(b"Password1!\nPassword1!\n")
-        # ensure that reporter has time to process
-        # the password before trying to retrieve output
-        time.sleep(3)
-        token = sock.recv(500)[8:].decode("utf-8").split("\n")[-2].split()[-1]
-    else:
-        raise Exception(f"Unsupported platform {platform.system()}")
+    sock.sendall(b"Password1!\nPassword1!\n")
+    output = b""
+    start_time = time.time()
+    while b"api token is: " not in output:
+        if time.time() > start_time + 10:
+            raise TimeoutError("API token not found in output within timeout")
+        output += sock.recv(100)
+        time.sleep(0.1)
+    token = output.decode("utf-8").split("api token is: ")[1].splitlines()[0]
+
+    # Create a custom field, as there is currently no way to do so through the API
+    phpfpm.exec_run(
+        'php artisan tinker --execute=\'\App\Models\CustomField::factory()->create(["name" => "test_custom_field"])\'',
+    )
 
     client = Reporter(
         url=url,
