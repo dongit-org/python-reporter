@@ -22,7 +22,9 @@ def test_user_operations(rc: Reporter) -> None:
         assert getattr(user, attr) == getattr(gotten, attr)
     assert gotten.phone == "foo"
 
-    me = rc.users.me()
+    me = rc.users.me(include=["roles"])
+    assert len(me.roles) == 1
+    assert me.roles[0].name == "admin"
     assert me.email == "a@a.com"
 
 
