@@ -1,8 +1,6 @@
 from pathlib import Path
 import os
 import time
-from textwrap import dedent
-from typing import Protocol, Optional
 import docker
 import pytest
 from docker.models.containers import Container
@@ -10,6 +8,7 @@ from pytest_docker.plugin import Services
 import requests
 from urllib3.exceptions import ProtocolError
 from reporter import Reporter
+from .utils import Artisan
 
 
 @pytest.fixture(scope="session")
@@ -53,39 +52,9 @@ def phpfpm(docker_services: Services, reporter_host: str) -> Container:
     return docker_client.containers.get("phpfpm")
 
 
-class Artisan(Protocol):
-    def __call__(
-        self,
-        command: Optional[str | list[str]] = None,
-        *,
-        execute: Optional[str] = None,
-    ) -> str:
-        ...
-
-
 @pytest.fixture(scope="session")
 def artisan(phpfpm: Container) -> Artisan:
-    def _run(
-        command: Optional[str | list[str]] = None, execute: Optional[str | None] = None
-    ) -> str:
-        if execute is not None:
-            execute = dedent(execute).strip()
-            command = ["tinker", "--execute=" + execute]
-
-        if command is None:
-            raise ValueError(
-                "Either an Artisan command or an execute command must be specified."
-            )
-
-        if isinstance(command, str):
-            full_command: str | list[str] = "php artisan " + command
-        else:
-            full_command = ["php", "artisan"] + command
-
-        output: bytes = phpfpm.exec_run(full_command).output
-        return output.decode("utf-8")
-
-    return _run
+    return Artisan(phpfpm)
 
 
 @pytest.fixture(scope="session")
