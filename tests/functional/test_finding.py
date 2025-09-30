@@ -103,6 +103,7 @@ def test_finding_operations(rc: Reporter, assessment: Assessment) -> None:
             "targets": [target.id],
             "assessment_section_id": section.id,
             "is_vulnerability": False,
+            "severity": 1,
             "description": "foo",
             "review_status": 0,
             "is_published": False,
