@@ -4,7 +4,9 @@ from typing import cast
 import pytest
 
 import reporter
+from .utils import Artisan
 from reporter import Reporter, AssessmentTemplate, Client
+from hashlib import sha256
 
 
 @pytest.fixture(scope="session")
@@ -294,3 +296,34 @@ def test_output_files(
     assert (
         len(rc.assessments.get(assessment.id, include=["outputFiles"]).outputFiles) == 0
     )
+
+def test_assessment_pdf_reports(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate, artisan: Artisan
+) -> None:
+    assessment = client.assessments.create(
+        {
+            "title": "test_assessment_pdf_reports",
+            "assessment_template_id": assessment_template.id,
+        }
+    )
+
+    rc.assessments.update(assessment.id, {
+        "status": 12,
+        "auto_generate_pdf": False,
+        "auto_generate_management_pdf": False,
+    })
+
+    # Instead of generating PDFs, we just copy a test file into place
+    artisan.execute(
+        """
+        $examplePdf = \\File::get(database_path('seeders/files/trial-data/documents/attachment.pdf'));
+        $assessment = \\App\\Models\\Assessment::firstWhere('title', 'test_assessment_pdf_reports');
+        \\Storage::disk('reports')->put($assessment->getPdfPath(\\ReportType::FULL), $examplePdf);
+        \\Storage::disk('reports')->put($assessment->getPdfPath(\\ReportType::MANAGEMENT), $examplePdf);
+        """
+    )
+
+    full_report = rc.assessments.get_full_report(assessment.id)
+    assert len(full_report) > 0
+    management_report = rc.assessments.get_management_report(assessment.id)
+    assert len(management_report) > 0
