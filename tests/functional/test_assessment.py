@@ -297,8 +297,12 @@ def test_output_files(
         len(rc.assessments.get(assessment.id, include=["outputFiles"]).outputFiles) == 0
     )
 
+
 def test_assessment_pdf_reports(
-    rc: Reporter, client: Client, assessment_template: AssessmentTemplate, artisan: Artisan
+    rc: Reporter,
+    client: Client,
+    assessment_template: AssessmentTemplate,
+    artisan: Artisan,
 ) -> None:
     assessment = client.assessments.create(
         {
@@ -307,11 +311,14 @@ def test_assessment_pdf_reports(
         }
     )
 
-    rc.assessments.update(assessment.id, {
-        "status": 12,
-        "auto_generate_pdf": False,
-        "auto_generate_management_pdf": False,
-    })
+    rc.assessments.update(
+        assessment.id,
+        {
+            "status": 12,
+            "auto_generate_pdf": False,
+            "auto_generate_management_pdf": False,
+        },
+    )
 
     # Instead of generating PDFs, we just copy a test file into place
     artisan.execute(
