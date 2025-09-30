@@ -30,9 +30,10 @@ class Artisan:
 
         result = self.container.exec_run(full_command)
         if result.exit_code != 0:
-            raise Exception(f"Artisan command failed: {full_command}\n{result.output.decode('utf-8')}")
+            raise Exception(
+                f"Artisan command failed: {full_command}\n{result.output.decode('utf-8')}"
+            )
         return result.output.decode("utf-8")
-
 
     def execute(self, php_code: str) -> str:
         """
