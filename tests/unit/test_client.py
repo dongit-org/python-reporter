@@ -1,6 +1,7 @@
 import json
+import os
 import timeit
-from typing import cast, Dict, Pattern, TYPE_CHECKING
+from typing import cast, Dict, Pattern
 
 import pytest
 import responses
@@ -8,7 +9,7 @@ import responses
 from reporter import Reporter, ReporterHttpError
 from reporter.base import RestManager, RestObject
 from reporter.mixins import ListMixin
-from reporter.types import FileSpec
+from reporter.types import FileSpec, FileLike
 
 
 @responses.activate
@@ -126,34 +127,25 @@ def test_http_request_query_string_parameters(rc: Reporter) -> None:
 def test_http_request_file_upload(rc: Reporter) -> None:
     url = "https://localhost/api/v1/tests"
     post_data = {"foo": "bar", "id": "1234"}
-    files = {"file1": "contents1", "file2": "contents2"}
+    file_path = f"{os.path.dirname(os.path.abspath(__file__))}/test_client.py"
 
-    responses.add(
-        method=responses.POST,
-        url=url,
-        status=200,
-        match=[
-            responses.matchers.multipart_matcher(files, post_data),
-        ],
-    )
-
-    rc.http_request(
-        verb="post",
-        path="tests",
-        post_data=post_data,
-        files=files,
-    )
-    responses.assert_call_count(url, 1)
-
-
-@responses.activate
-def test_http_request_file_upload_with_tuples(rc: Reporter) -> None:
-    """Test http_request with files as tuples (filename, content)."""
-    url = "https://localhost/api/v1/tests"
-    post_data = {"foo": "bar"}
     files: dict[str, FileSpec] = {
-        "file1": ("report.pdf", b"pdf content"),
-        "file2": ("image.png", b"png content", "image/png"),
+        "file1": open(file_path, "rb"),
+        "file2": "contents2",
+        "file3": ("test.json", '{"key": "value"}'),
+        "file4": ("test.json", '{"key": "value"}', "application/json"),
+        "file5": (
+            "test.json",
+            '{"key": "value"}',
+            "application/json",
+            {"X-Header": "value"},
+        ),
+        "file6": (
+            "test.json",
+            open(file_path, "rb"),
+            "application/json",
+            {"X-Header": "value"},
+        ),
     }
 
     responses.add(
@@ -165,35 +157,14 @@ def test_http_request_file_upload_with_tuples(rc: Reporter) -> None:
         ],
     )
 
-    rc.http_request(
-        verb="post",
-        path="tests",
-        post_data=post_data,
-        files=files,
-    )
-    responses.assert_call_count(url, 1)
-
-
-@responses.activate
-def test_http_request_multiple_files_mixed_formats(rc: Reporter) -> None:
-    """Test http_request with multiple files in different formats."""
-    url = "https://localhost/api/v1/tests"
-    post_data = {"foo": "bar"}
-
-    # Mix of simple content and tuples
-    files: dict[str, FileSpec] = {
-        "simple": b"simple content",
-        "with_filename": ("document.txt", b"document content"),
-        "with_type": ("data.json", b'{"key": "value"}', "application/json"),
-    }
-
-    responses.add(
-        method=responses.POST,
-        url=url,
-        status=200,
-        match=[
-            responses.matchers.multipart_matcher(files, post_data),
-        ],
+    # The file objects in files are read by multipart_matcher.
+    # They need to be reopened before passing them to http_request
+    files["file1"] = cast(FileSpec, open(file_path, "rb"))
+    files["file6"] = (
+        "test.json",
+        open(file_path, "rb"),
+        "application/json",
+        {"X-Header": "value"},
     )
 
     rc.http_request(
