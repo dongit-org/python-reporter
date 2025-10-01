@@ -62,14 +62,14 @@ class CreateMixin(Generic[ChildOfRestObject]):
                     manager.create(attrs, file="content")
                     manager.create(attrs, file=b"content")
 
+                    # Using file object (recommended)
+                    manager.create(attrs, file=open("file.json", "rb"))
+
                     # With filename
                     manager.create(attrs, file=("file.json", json_string))
 
                     # With filename and content-type
                     manager.create(attrs, file=("file.json", json_string, "application/json"))
-
-                    # Using file object
-                    manager.create(attrs, file=("file.json", open("file.json", "rb")))
 
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.

@@ -286,7 +286,7 @@ def test_output_files(
                 "name": "output_file_test",
                 "tool": "generic",
             },
-            file=("output_file.json", f),
+            file=f,
         )
 
     gotten = rc.assessments.get(assessment.id, include=["outputFiles"]).outputFiles[0]

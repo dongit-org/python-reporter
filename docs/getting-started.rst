@@ -87,19 +87,30 @@ These endpoints must be called from the parent object.
        "description": "White-box test",
    })
 
-Some endpoints require you to upload files:
+Uploading Files
+---------------
+
+Some endpoints require you to upload files. The ``create()`` method on managers that support file uploads
+accepts a ``file`` parameter:
 
 .. code:: python
 
    from reporter import Reporter
    rc = Reporter(url="https://reporter.example.com", api_token="secret")
 
-   f = open(path, "rb")
-   document = rc.documents.create(
-       {
-           "documentable_type": "User",
-           "documentable_id": user.id,
-           "section": "avatar",
-       },
-       file=f,
-   )
+   # Using a file object (recommended)
+   with open("avatar.png", "rb") as f:
+       document = rc.documents.create(
+           {
+               "documentable_type": "User",
+               "documentable_id": user.id,
+               "section": "avatar",
+           },
+           file=f,
+       )
+
+   # Or with a tuple specifying filename and content
+   rc.documents.create(attrs, file=("report.pdf", pdf_bytes))
+
+   # Or with content-type
+   rc.documents.create(attrs, file=("data.json", json_string, "application/json"))
