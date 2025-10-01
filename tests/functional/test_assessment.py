@@ -3,17 +3,13 @@ from typing import cast
 
 import pytest
 
-import reporter
 from .utils import Artisan, wait_for
 from reporter import (
     Reporter,
     AssessmentTemplate,
     Client,
-    RestList,
-    ToolFinding,
-    ToolTarget,
+    OutputFile,
 )
-from hashlib import sha256
 
 
 @pytest.fixture(scope="session")
@@ -300,20 +296,20 @@ def test_output_files(
     assert gotten.tool == "generic"
 
     # The output file processing job runs in the background, and the tool findings/targets are not available immediately
-    def get_tool_findings_and_targets() -> (
-        tuple[RestList[ToolFinding], RestList[ToolTarget]]
-    ):
-        try_tool_findings = rc.tool_findings.list(
-            filter={"assessment_id": assessment.id}
-        )
-        assert len(try_tool_findings) == 2
-        try_tool_targets = rc.tool_targets.list(filter={"assessment_id": assessment.id})
-        assert len(try_tool_targets) == 2
-        return try_tool_findings, try_tool_targets
+    def output_file_is_processed() -> OutputFile:
+        output_file: OutputFile = rc.assessments.get(
+            assessment.id, include=["outputFiles"]
+        ).outputFiles[0]
+        assert output_file.processed == True
+        return output_file
 
-    tool_findings, tool_targets = wait_for(
-        get_tool_findings_and_targets, timeout=20, interval=1
-    )
+    output_file = wait_for(output_file_is_processed, timeout=20, interval=1)
+
+    tool_findings = rc.tool_findings.list(filter={"assessment_id": assessment.id})
+    assert len(tool_findings) == 2
+
+    tool_targets = rc.tool_targets.list(filter={"assessment_id": assessment.id})
+    assert len(tool_targets) == 2
 
     tool_finding = next((tf for tf in tool_findings if tf.title == "test title"), None)
     assert tool_finding is not None
