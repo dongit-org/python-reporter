@@ -277,18 +277,17 @@ def test_output_files(
         }
     )
 
+    # Create an output file
     with open(
         f"{os.path.dirname(os.path.abspath(__file__))}/output_file.json", "r"
     ) as f:
-        output_file_contents = f.read()
-
-    output_file = assessment.output_files.create(
-        {
-            "name": "output_file_test",
-            "tool": "generic",
-        },
-        file=output_file_contents,
-    )
+        output_file = assessment.output_files.create(
+            {
+                "name": "output_file_test",
+                "tool": "generic",
+            },
+            file=("output_file.json", f),
+        )
 
     gotten = rc.assessments.get(assessment.id, include=["outputFiles"]).outputFiles[0]
     assert output_file == gotten

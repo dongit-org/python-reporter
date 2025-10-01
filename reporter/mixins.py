@@ -6,7 +6,7 @@ operations possible on their corresponding :class:`~reporter.base.RestObject` in
 """
 
 # pylint: disable = too-few-public-methods, redefined-builtin, invalid-name
-
+from __future__ import annotations
 from typing import (
     Any,
     Callable,
@@ -21,7 +21,7 @@ from typing import (
 
 from reporter.base import RestList, RestManager, RestObject
 from reporter.client import Reporter
-
+from reporter.types import FileSpec
 
 __all__ = [
     "CreateMixin",
@@ -32,7 +32,6 @@ __all__ = [
     "SearchMixin",
     "UpdateMixin",
 ]
-
 
 ChildOfRestObject = TypeVar("ChildOfRestObject", bound=RestObject)
 
@@ -48,14 +47,30 @@ class CreateMixin(Generic[ChildOfRestObject]):
     def create(
         self,
         attrs: Mapping[str, Any],
-        file: Optional[Any] = None,
+        file: Optional[FileSpec] = None,
         **kwargs: Any,
     ) -> ChildOfRestObject:
         """Create a new object.
 
         Args:
             attrs: Attributes for the created object.
-            file: A file to upload when creating the object, if any.
+            file: A file to upload when creating the object, if any. Type: :class:`reporter.types.FileSpec`.
+
+                Examples::
+
+                    # Simple content (not recommended, loses filename)
+                    manager.create(attrs, file="content")
+                    manager.create(attrs, file=b"content")
+
+                    # With filename
+                    manager.create(attrs, file=("file.json", json_string))
+
+                    # With filename and content-type
+                    manager.create(attrs, file=("file.json", json_string, "application/json"))
+
+                    # Using file object
+                    manager.create(attrs, file=("file.json", open("file.json", "rb")))
+
             kwargs: Extra options to pass to the underlying
                 :func:`reporter.Reporter.http_request` call.
 

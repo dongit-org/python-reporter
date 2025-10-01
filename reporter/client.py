@@ -1,12 +1,13 @@
 """This module exposes the :class:`~reporter.client.Reporter` object."""
 
+from __future__ import annotations
 import time
 from typing import Any, Mapping, Optional, TYPE_CHECKING
 
 import requests
 
 import reporter.exceptions
-
+from reporter.types import FileSpec
 
 __all__ = [
     "Reporter",
@@ -103,7 +104,7 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         headers: Optional[Mapping[str, str]] = None,
         query_data: Optional[Mapping[str, Any]] = None,
         post_data: Optional[Mapping[str, Any]] = None,
-        files: Optional[Mapping[str, Any]] = None,
+        files: Optional[Mapping[str, FileSpec]] = None,
         obey_rate_limit: bool = True,
     ) -> requests.Response:
         """Make an HTTP request to the Reporter server.
@@ -115,8 +116,26 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
             query_data: Data to send as query string parameters.
             post_data: Data to send in the body. This will be converted to JSON unless
                 ``files`` is not ``None``.
-            files: The files to send in the request. If this is not ``None``, then the
-                request will be a ``multipart/form-data`` request.
+            files: The files to send in the request. A mapping whose keys are field names,
+                and whose values contain file specifications
+                (:class:`~reporter.types.FileSpec`).
+                If this is not ``None``, then the request will be a ``multipart/form-data``
+                request.
+
+                Examples::
+
+                    # Single file with simple content
+                    files = {"file": b"content"}
+
+                    # Single file with filename
+                    files = {"file": ("report.pdf", pdf_content)}
+
+                    # Multiple files with metadata
+                    files = {
+                        "document": ("report.pdf", pdf_content, "application/pdf"),
+                        "image": ("screenshot.png", image_data, "image/png"),
+                    }
+
             obey_rate_limit: If ``True``, when receiving a 429 response, sleep
                 for the amount of seconds specified in the response ``Retry-After``
                 header before retrying the request.

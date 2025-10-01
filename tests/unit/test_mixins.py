@@ -1,3 +1,4 @@
+import io
 import responses
 from urllib.parse import quote
 
@@ -53,6 +54,148 @@ def test_create_mixin(rc: Reporter) -> None:
         assert isinstance(obj, FakeObject)
         assert obj.id == "1234"
         assert obj.a == 12
+
+
+def test_create_mixin_with_file_string(rc: Reporter) -> None:
+    """Test CreateMixin with simple string file content (backward compatible)."""
+    class M(FakeManager, CreateMixin):
+        pass
+
+    manager = M(rc)
+    url = "https://localhost/api/v1/tests"
+
+    with responses.RequestsMock() as rsps:
+        rsps.add(
+            method=responses.POST,
+            url=url,
+            json={"id": "1234", "a": 12},
+            content_type="application/json",
+            status=200,
+            match=[
+                responses.matchers.multipart_matcher(
+                    {"file": "test content"}, {"a": "12"}
+                ),
+            ],
+        )
+        obj = manager.create({"a": 12}, file="test content")
+
+        rsps.assert_call_count(url, 1)
+        assert isinstance(obj, FakeObject)
+        assert obj.id == "1234"
+
+
+def test_create_mixin_with_file_bytes(rc: Reporter) -> None:
+    """Test CreateMixin with bytes file content (backward compatible)."""
+    class M(FakeManager, CreateMixin):
+        pass
+
+    manager = M(rc)
+    url = "https://localhost/api/v1/tests"
+
+    with responses.RequestsMock() as rsps:
+        rsps.add(
+            method=responses.POST,
+            url=url,
+            json={"id": "1234", "a": 12},
+            content_type="application/json",
+            status=200,
+            match=[
+                responses.matchers.multipart_matcher(
+                    {"file": b"test content"}, {"a": "12"}
+                ),
+            ],
+        )
+        obj = manager.create({"a": 12}, file=b"test content")
+
+        rsps.assert_call_count(url, 1)
+        assert isinstance(obj, FakeObject)
+        assert obj.id == "1234"
+
+
+def test_create_mixin_with_file_tuple_filename(rc: Reporter) -> None:
+    """Test CreateMixin with tuple (filename, content) to preserve filename."""
+    class M(FakeManager, CreateMixin):
+        pass
+
+    manager = M(rc)
+    url = "https://localhost/api/v1/tests"
+
+    with responses.RequestsMock() as rsps:
+        rsps.add(
+            method=responses.POST,
+            url=url,
+            json={"id": "1234", "a": 12},
+            content_type="application/json",
+            status=200,
+            match=[
+                responses.matchers.multipart_matcher(
+                    {"file": ("report.pdf", b"pdf content")}, {"a": "12"}
+                ),
+            ],
+        )
+        obj = manager.create({"a": 12}, file=("report.pdf", b"pdf content"))
+
+        rsps.assert_call_count(url, 1)
+        assert isinstance(obj, FakeObject)
+        assert obj.id == "1234"
+
+
+def test_create_mixin_with_file_tuple_full(rc: Reporter) -> None:
+    """Test CreateMixin with full tuple (filename, content, content_type)."""
+    class M(FakeManager, CreateMixin):
+        pass
+
+    manager = M(rc)
+    url = "https://localhost/api/v1/tests"
+
+    with responses.RequestsMock() as rsps:
+        rsps.add(
+            method=responses.POST,
+            url=url,
+            json={"id": "1234", "a": 12},
+            content_type="application/json",
+            status=200,
+            match=[
+                responses.matchers.multipart_matcher(
+                    {"file": ("report.pdf", b"pdf content", "application/pdf")},
+                    {"a": "12"},
+                ),
+            ],
+        )
+        obj = manager.create(
+            {"a": 12}, file=("report.pdf", b"pdf content", "application/pdf")
+        )
+
+        rsps.assert_call_count(url, 1)
+        assert isinstance(obj, FakeObject)
+        assert obj.id == "1234"
+
+
+def test_create_mixin_with_file_object(rc: Reporter) -> None:
+    """Test CreateMixin with file-like object (e.g., from open())."""
+    class M(FakeManager, CreateMixin):
+        pass
+
+    manager = M(rc)
+    url = "https://localhost/api/v1/tests"
+
+    # Create a file-like object with a name attribute
+    file_obj = io.BytesIO(b"file content")
+    file_obj.name = "document.txt"
+
+    with responses.RequestsMock() as rsps:
+        rsps.add(
+            method=responses.POST,
+            url=url,
+            json={"id": "1234", "a": 12},
+            content_type="application/json",
+            status=200,
+        )
+        obj = manager.create({"a": 12}, file=file_obj)
+
+        rsps.assert_call_count(url, 1)
+        assert isinstance(obj, FakeObject)
+        assert obj.id == "1234"
 
 
 def test_delete_mixin(rc: Reporter) -> None:

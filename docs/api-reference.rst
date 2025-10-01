@@ -23,3 +23,9 @@ Exceptions
 ----------
 
 .. automodule:: reporter.exceptions
+
+Types
+----------
+
+.. automodule:: reporter.types
+

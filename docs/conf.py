@@ -12,6 +12,7 @@
 #
 import os
 import sys
+import reporter.types as reporter_types
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -31,7 +32,7 @@ author = "Alexander Krigsman"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx_toolbox.more_autodoc.typehints",
+    # "sphinx_toolbox.more_autodoc.typehints",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -54,7 +55,12 @@ html_theme = "sphinx_rtd_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
-autodoc_typehints = "both"
+autodoc_typehints = "description"
+
+autodoc_type_aliases = dict()
+for name in reporter_types.__all__:
+    autodoc_type_aliases[name] = name
+    autodoc_type_aliases[f"reporter.types.{name}"] = name
 
 autodoc_default_options = {
     "members": True,
@@ -69,3 +75,28 @@ html_theme_options = {
 
 
 html_favicon = "_static/favicon.ico"
+
+
+# List of type aliases that should be cross-referenced
+
+def resolve_type_aliases(app, env, node, contnode):
+    """Resolve :class: references to our type aliases as :data: instead.
+
+    This is a workaround for https://github.com/sphinx-doc/sphinx/issues/10785
+    where autodoc generates py:data entries for TypeAlias definitions, but
+    type annotations try to resolve them as py:class references.
+    """
+    if (
+        node["refdomain"] == "py"
+        and node["reftype"] == "class"
+        and node["reftarget"] in reporter_types.__all__
+    ):
+        # Try to resolve as py:data instead
+        return app.env.get_domain("py").resolve_xref(
+            env, node["refdoc"], app.builder, "data", node["reftarget"], node, contnode
+        )
+
+
+def setup(app):
+    """Setup function for Sphinx extension."""
+    app.connect("missing-reference", resolve_type_aliases)

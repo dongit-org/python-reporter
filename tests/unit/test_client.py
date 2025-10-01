@@ -1,6 +1,6 @@
 import json
 import timeit
-from typing import cast, Dict, Pattern
+from typing import cast, Dict, Pattern, TYPE_CHECKING
 
 import pytest
 import responses
@@ -8,6 +8,7 @@ import responses
 from reporter import Reporter, ReporterHttpError
 from reporter.base import RestManager, RestObject
 from reporter.mixins import ListMixin
+from reporter.types import FileSpec
 
 
 @responses.activate
@@ -126,6 +127,65 @@ def test_http_request_file_upload(rc: Reporter) -> None:
     url = "https://localhost/api/v1/tests"
     post_data = {"foo": "bar", "id": "1234"}
     files = {"file1": "contents1", "file2": "contents2"}
+
+    responses.add(
+        method=responses.POST,
+        url=url,
+        status=200,
+        match=[
+            responses.matchers.multipart_matcher(files, post_data),
+        ],
+    )
+
+    rc.http_request(
+        verb="post",
+        path="tests",
+        post_data=post_data,
+        files=files,
+    )
+    responses.assert_call_count(url, 1)
+
+
+@responses.activate
+def test_http_request_file_upload_with_tuples(rc: Reporter) -> None:
+    """Test http_request with files as tuples (filename, content)."""
+    url = "https://localhost/api/v1/tests"
+    post_data = {"foo": "bar"}
+    files: dict[str, FileSpec] = {
+        "file1": ("report.pdf", b"pdf content"),
+        "file2": ("image.png", b"png content", "image/png"),
+    }
+
+    responses.add(
+        method=responses.POST,
+        url=url,
+        status=200,
+        match=[
+            responses.matchers.multipart_matcher(files, post_data),
+        ],
+    )
+
+    rc.http_request(
+        verb="post",
+        path="tests",
+        post_data=post_data,
+        files=files,
+    )
+    responses.assert_call_count(url, 1)
+
+
+@responses.activate
+def test_http_request_multiple_files_mixed_formats(rc: Reporter) -> None:
+    """Test http_request with multiple files in different formats."""
+    url = "https://localhost/api/v1/tests"
+    post_data = {"foo": "bar"}
+
+    # Mix of simple content and tuples
+    files: dict[str, FileSpec] = {
+        "simple": b"simple content",
+        "with_filename": ("document.txt", b"document content"),
+        "with_type": ("data.json", b'{"key": "value"}', "application/json"),
+    }
 
     responses.add(
         method=responses.POST,
