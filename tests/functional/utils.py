@@ -1,5 +1,11 @@
 from textwrap import dedent
+from typing import Optional, TypeVar, Callable
+
 from docker.models.containers import Container
+import time
+
+
+T = TypeVar("T")
 
 
 class Artisan:
@@ -55,3 +61,20 @@ class Artisan:
         php_code = dedent(php_code).strip()
         command = ["tinker", "--execute=" + php_code]
         return self.command(command)
+
+
+def wait_for(
+    assertion: Callable[[], T], timeout: float = 5.0, interval: float = 0.1
+) -> T:
+    """Retry assertion until timeout. Raises last error if still failing."""
+    end = time.time() + timeout
+    last_error: Optional[AssertionError] = None
+    while time.time() < end:
+        try:
+            return assertion()
+        except AssertionError as e:
+            last_error = e
+        time.sleep(interval)
+    if last_error is None:
+        last_error = AssertionError("Timeout")
+    raise last_error

@@ -4,8 +4,15 @@ from typing import cast
 import pytest
 
 import reporter
-from .utils import Artisan
-from reporter import Reporter, AssessmentTemplate, Client
+from .utils import Artisan, wait_for
+from reporter import (
+    Reporter,
+    AssessmentTemplate,
+    Client,
+    RestList,
+    ToolFinding,
+    ToolTarget,
+)
 from hashlib import sha256
 
 
@@ -291,6 +298,39 @@ def test_output_files(
     assert output_file == gotten
     assert gotten.name == "output_file_test"
     assert gotten.tool == "generic"
+
+    # The output file processing job runs in the background, and the tool findings/targets are not available immediately
+    def get_tool_findings_and_targets() -> (
+        tuple[RestList[ToolFinding], RestList[ToolTarget]]
+    ):
+        try_tool_findings = rc.tool_findings.list(
+            filter={"assessment_id": assessment.id}
+        )
+        assert len(try_tool_findings) == 2
+        try_tool_targets = rc.tool_targets.list(filter={"assessment_id": assessment.id})
+        assert len(try_tool_targets) == 2
+        return try_tool_findings, try_tool_targets
+
+    tool_findings, tool_targets = wait_for(
+        get_tool_findings_and_targets, timeout=20, interval=1
+    )
+
+    tool_finding = next((tf for tf in tool_findings if tf.title == "test title"), None)
+    assert tool_finding is not None
+    rc.tool_findings.update(tool_finding.id, {"comment": "test tool finding"})
+
+    tool_target = next((tt for tt in tool_targets if tt.host == "example.com"), None)
+    assert tool_target is not None
+    rc.tool_targets.update(tool_target.id, {"in_scope": not tool_target.in_scope})
+
+    gotten = rc.tool_findings.get(tool_finding.id, include=["toolTargets"])
+    assert tool_finding == gotten
+    assert gotten.comment == "test tool finding"
+    gotten_target = next(
+        (tt for tt in gotten.toolTargets if tt.host == "example.com"), None
+    )
+    assert tool_target == gotten_target
+    assert gotten_target.in_scope != tool_target.in_scope
 
     rc.output_files.delete(output_file.id)
     assert (
