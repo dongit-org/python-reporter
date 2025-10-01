@@ -3,19 +3,23 @@ from __future__ import annotations
 from typing import Protocol, TypeVar, TypeAlias, Optional, Union, Mapping
 
 __all__ = [
+    "FileLike",
     "FileContent",
     "FileSpec",
 ]
 
 T_co = TypeVar("T_co", covariant=True)
 
-class SupportsRead(Protocol[T_co]):
-    """Protocol for objects that support read()."""
+class FileLike(Protocol[T_co]):
+    """Protocol for file-like objects that support read() and have a name attribute."""
+
+    name: str
+
     def read(self, n: int = ...) -> T_co:
         """Read n bytes from the object."""
 
 # File content can be a string, bytes, or file-like object
-FileContent: TypeAlias = SupportsRead[str | bytes] | str | bytes
+FileContent: TypeAlias = FileLike[str | bytes] | str | bytes
 """
 Represents the content of a file, can be bytes, str, or a file-like object that supports read().
 """
