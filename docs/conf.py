@@ -78,6 +78,7 @@ html_favicon = "_static/favicon.ico"
 
 # List of type aliases that should be cross-referenced
 
+
 def resolve_type_aliases(app, env, node, contnode):
     """Resolve :class: references to our type aliases as :data: instead.
 

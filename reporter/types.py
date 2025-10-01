@@ -10,6 +10,7 @@ __all__ = [
 
 T_co = TypeVar("T_co", covariant=True)
 
+
 class FileLike(Protocol[T_co]):
     """Protocol for file-like objects that support read() and have a name attribute."""
 
@@ -17,6 +18,7 @@ class FileLike(Protocol[T_co]):
 
     def read(self, n: int = ...) -> T_co:
         """Read n bytes from the object."""
+
 
 # File content can be a string, bytes, or file-like object
 FileContent: TypeAlias = FileLike[str | bytes] | str | bytes
