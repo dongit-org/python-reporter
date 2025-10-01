@@ -14,7 +14,9 @@ T_co = TypeVar("T_co", covariant=True)
 class FileLike(Protocol[T_co]):
     """Protocol for file-like objects that support read() and have a name attribute."""
 
-    name: str
+    @property
+    def name(self) -> str:
+        """Name of the file."""
 
     def read(self, n: int = ...) -> T_co:
         """Read n bytes from the object."""
