@@ -54,16 +54,16 @@ class CreateMixin(Generic[ChildOfRestObject]):
 
         Args:
             attrs: Attributes for the created object.
-            file: A file to upload when creating the object, if any. Type: :class:`reporter.types.FileSpec`.
+            file: A file to upload when creating the object, if any.
+                Type: :class:`reporter.types.FileSpec`.
 
                 Examples::
+                    # Using file object (recommended)
+                    manager.create(attrs, file=open("file.json", "rb"))
 
                     # Simple content (not recommended, loses filename)
                     manager.create(attrs, file="content")
                     manager.create(attrs, file=b"content")
-
-                    # Using file object (recommended)
-                    manager.create(attrs, file=open("file.json", "rb"))
 
                     # With filename
                     manager.create(attrs, file=("file.json", json_string))
