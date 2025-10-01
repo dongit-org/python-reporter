@@ -124,11 +124,11 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
 
                 Examples::
 
+                    # Single file with file-like object (recommended)
+                    files = {"file": open("file.json", "rb")}
+
                     # Single file with simple content
                     files = {"file": b"content"}
-
-                    # Single file with file-like object
-                    files = {"file": open("file.json", "rb")}
 
                     # Single file with filename
                     files = {"file": ("report.pdf", pdf_content)}
