@@ -58,6 +58,7 @@ class CreateMixin(Generic[ChildOfRestObject]):
                 Type: :class:`reporter.types.FileSpec`.
 
                 Examples::
+
                     # Using file object (recommended)
                     manager.create(attrs, file=open("file.json", "rb"))
 
