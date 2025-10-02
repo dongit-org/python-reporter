@@ -9,7 +9,7 @@ import responses
 from reporter import Reporter, ReporterHttpError
 from reporter.base import RestManager, RestObject
 from reporter.mixins import ListMixin
-from reporter.types import FileSpec, FileLike
+from reporter.types import FileSpec
 
 
 @responses.activate
