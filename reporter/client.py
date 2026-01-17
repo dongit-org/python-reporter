@@ -20,13 +20,14 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
     Args:
         api_token: The Reporter API token to use for authentication.
         ssl_verify: Whether to verify the server's SSL certificate.
+        ca_certs: Path to CA bundle to use.
         url: The URL of the Reporter server. Must start with URL scheme (i.e. :code:`https://`).
-
     """
 
     api_token: str
     ssl_verify: bool
     url: str
+    ca_certs: str
 
     session: requests.Session
     """The ``requests.Session`` object used to make HTTP requests."""
@@ -36,17 +37,22 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         api_token: str,
         url: str,
         ssl_verify: bool = True,
+        ca_certs: str = ''
     ) -> None:
         """Initialize the Reporter instance.
 
         Args:
             api_token: The Reporter API token to use for authentication.
             ssl_verify: Whether to verify the server's SSL certificate.
+            ca_certs: Path to CA bundle to use.
             url: The URL of the Reporter server.
 
         """
         self.api_token = api_token
-        self.ssl_verify = ssl_verify
+        if not ca_certs:
+            self.ssl_verify = ssl_verify
+        else:
+            self.ssl_verify = ca_certs
         # Reporter does not accept double slash, but the user shouldn't be
         # expected to know that.
         self.url = url.rstrip("/")
