@@ -2,8 +2,10 @@ import json
 import os
 import timeit
 from typing import cast, Dict, Pattern
+from unittest.mock import patch
 
 import pytest
+import requests
 import responses
 
 from reporter import Reporter, ReporterHttpError
@@ -249,3 +251,37 @@ def test_rate_limit(rc: Reporter) -> None:
     assert 1 < end - start < 2
 
     responses.assert_call_count(url, 5)
+
+
+@pytest.mark.parametrize("ssl_verify", [None, True, False, "/path/to/cert"])
+@responses.activate
+def test_ssl_verify_argument(ssl_verify: bool | str) -> None:
+    kwargs = {}
+    if ssl_verify is not None:
+        kwargs["ssl_verify"] = ssl_verify
+
+    rc = Reporter(
+        url="https://localhost/",
+        api_token="secret",
+        **kwargs,
+    )
+
+    responses.add(
+        responses.GET,
+        "https://localhost/api/v1/tests",
+        status=200,
+    )
+
+    with patch.object(
+        requests.Session,
+        "request",
+        autospec=True,
+        wraps=requests.Session.request,
+    ) as spy:
+        rc.http_request(verb="get", path="tests")
+
+        spy.assert_called_once()
+        _, kwargs = spy.call_args
+
+        assert "verify" in kwargs
+        assert kwargs["verify"] == ssl_verify if ssl_verify is not None else True
