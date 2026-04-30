@@ -60,21 +60,19 @@ def artisan(phpfpm: Container) -> Artisan:
 @pytest.fixture(scope="session")
 def rc(phpfpm: Container, reporter_host: str) -> Reporter:
     url = f"http://{reporter_host}"
-    sock = phpfpm.exec_run(
-        "php artisan user:create --api-token a@a.com a a",
-        stdin=True,
-        socket=True,
-        tty=True,
-    ).output
-    sock.sendall(b"Password1!\nPassword1!\n")
-    output = b""
-    start_time = time.time()
-    while b"api token is: " not in output:
-        if time.time() > start_time + 10:
-            raise TimeoutError("API token not found in output within timeout")
-        output += sock.recv(100)
-        time.sleep(0.1)
-    token = output.decode("utf-8").split("api token is: ")[1].splitlines()[0]
+    result = phpfpm.exec_run(
+        [
+            "sh",
+            "-c",
+            'printf "\nPassword1!\nPassword1!\n" '
+            "| php artisan user:create --api-token a@a.com a a",
+        ]
+    )
+    output_bytes = result.output
+    if not isinstance(output_bytes, bytes):
+        output_bytes = b"".join(output_bytes)
+    output = output_bytes.decode("utf-8")
+    token = output.split("api token is: ")[1].splitlines()[0]
 
     client = Reporter(
         url=url,
