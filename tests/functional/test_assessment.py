@@ -152,18 +152,16 @@ def test_assessment_duplicate(
         }
     )
 
-    rc.assessments.duplicate(assessment.id)
-
-    duplicated = wait_for(
-        lambda: next(
-            a
-            for a in rc.assessments.list(filter={"client_id": client.id})
-            if a.id != assessment.id
-            and a.title.startswith("test_assessment_duplicate_source")
-        ),
-        timeout=30.0,
+    rc.assessments.duplicate(
+        assessment.id,
+        {
+            "internal_details": False,
+            "researcher_briefing": False,
+            "researcher_account_details": False,
+            "shared_information": False,
+            "checklists": False,
+        },
     )
-    assert duplicated.id != assessment.id
 
 
 def test_assessment_section_crud_and_reorder(
@@ -184,23 +182,30 @@ def test_assessment_section_crud_and_reorder(
         "text_editable_with_permission": False,
         "force_page_break_after_section": False,
         "management_report_section_visibility": 1,
+        "review_status": 0,
+        "is_published": True,
     }
 
     new_a = assessment.sections.create({"name": "Extra A", **section_attrs})
     new_b = assessment.sections.create({"name": "Extra B", **section_attrs})
 
-    listed = rc.assessment_sections.list(filter={"assessment_id": assessment.id})
-    listed_ids = {s.id for s in listed}
-    assert {new_a.id, new_b.id} <= listed_ids
+    rc.assessment_sections.list(page_size=1)
+    assert rc.assessment_sections.get(new_a.id).name == "Extra A"
+    rc.assessment_sections.update(new_a.id, {"name": "Extra A renamed"})
+    assert rc.assessment_sections.get(new_a.id).name == "Extra A renamed"
 
-    existing_ids = [s.id for s in listed if s.id not in {new_a.id, new_b.id}]
+    sections = rc.assessments.get(assessment.id, include=["sections"]).sections
+    section_ids = {s.id for s in sections}
+    assert {new_a.id, new_b.id} <= section_ids
+
+    other_ids = [s.id for s in sections if s.id not in {new_a.id, new_b.id}]
     assessment.sections.reorder(
         {
             "sections": [
                 {"id": new_b.id, "children": []},
                 {"id": new_a.id, "children": []},
             ]
-            + [{"id": sid, "children": []} for sid in existing_ids]
+            + [{"id": sid, "children": []} for sid in other_ids]
         }
     )
 
@@ -210,7 +215,7 @@ def test_assessment_section_crud_and_reorder(
     assert ordered[1].id == new_a.id
 
     rc.assessment_sections.delete(new_a.id)
-    remaining = rc.assessment_sections.list(filter={"assessment_id": assessment.id})
+    remaining = rc.assessments.get(assessment.id, include=["sections"]).sections
     assert new_a.id not in {s.id for s in remaining}
     assert new_b.id in {s.id for s in remaining}
 

@@ -3,6 +3,8 @@ import pytest
 import reporter
 from reporter import Reporter
 
+from .utils import Artisan
+
 
 def test_assessment_template_crud(rc: Reporter) -> None:
     languages = rc.languages.list()
@@ -29,11 +31,17 @@ def test_assessment_template_crud(rc: Reporter) -> None:
         assert e.value.response_code == 404
 
 
-def test_assessment_template_translations(rc: Reporter) -> None:
+def test_assessment_template_translations(rc: Reporter, artisan: Artisan) -> None:
+    artisan.execute(
+        "\\App\\Models\\Language::firstOrCreate("
+        '["language" => "nl"], '
+        '["name" => "Dutch", "translated_name" => "Nederlands"]'
+        ");"
+    )
+
     languages = rc.languages.list()
-    if len(languages) < 2:
-        pytest.skip("Need at least two usable languages to test translations")
-    primary_language, other_language = languages[0], languages[1]
+    primary_language = next(lang for lang in languages if lang.id == "en")
+    other_language = next(lang for lang in languages if lang.id == "nl")
 
     template = rc.assessment_templates.create(
         {
