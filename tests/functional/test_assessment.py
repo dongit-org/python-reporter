@@ -142,6 +142,55 @@ def test_assessment_phases_and_sections(
         assert getattr(section, attr) == val
 
 
+def test_assessment_section_crud_and_reorder(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate
+) -> None:
+    assessment = client.assessments.create(
+        {
+            "title": "test_assessment_section_crud_and_reorder",
+            "assessment_template_id": assessment_template.id,
+        }
+    )
+
+    section_attrs = {
+        "can_have_findings": True,
+        "finding_is_required": False,
+        "report_section_visibility": 1,
+        "is_visible_in_assessment_overview": True,
+        "text_editable_with_permission": False,
+        "force_page_break_after_section": False,
+        "management_report_section_visibility": 1,
+    }
+
+    new_a = assessment.sections.create({"name": "Extra A", **section_attrs})
+    new_b = assessment.sections.create({"name": "Extra B", **section_attrs})
+
+    listed = rc.assessment_sections.list(filter={"assessment_id": assessment.id})
+    listed_ids = {s.id for s in listed}
+    assert {new_a.id, new_b.id} <= listed_ids
+
+    existing_ids = [s.id for s in listed if s.id not in {new_a.id, new_b.id}]
+    assessment.sections.reorder(
+        {
+            "sections": [
+                {"id": new_b.id, "children": []},
+                {"id": new_a.id, "children": []},
+            ]
+            + [{"id": sid, "children": []} for sid in existing_ids]
+        }
+    )
+
+    sections = rc.assessments.get(assessment.id, include=["sections"]).sections
+    ordered = sorted(sections, key=lambda s: s.order)
+    assert ordered[0].id == new_b.id
+    assert ordered[1].id == new_a.id
+
+    rc.assessment_sections.delete(new_a.id)
+    remaining = rc.assessment_sections.list(filter={"assessment_id": assessment.id})
+    assert new_a.id not in {s.id for s in remaining}
+    assert new_b.id in {s.id for s in remaining}
+
+
 def test_assessment_section_comments(
     rc: Reporter, client: Client, assessment_template: AssessmentTemplate
 ) -> None:

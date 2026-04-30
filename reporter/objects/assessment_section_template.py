@@ -1,5 +1,4 @@
-# pylint: disable = missing-module-docstring, missing-class-docstring
-from __future__ import annotations
+# pylint: disable = missing-module-docstring, missing-class-docstring, duplicate-code
 from typing import Any, Mapping
 
 from reporter.base import RestManager, RestObject
