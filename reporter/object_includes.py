@@ -30,7 +30,7 @@ Assessment._includes = {
     "taskSets": TaskSet,
     "testCases": TestCase,
     "theme": Theme,
-    "userGroups": UserGroup,
+    "teams": Team,
     "users": User,
 }
 
@@ -86,7 +86,7 @@ AutoAssignment._includes = {
 Client._includes = {
     "assessments": Assessment,
     "documents": Document,
-    "userGroups": UserGroup,
+    "teams": Team,
     "users": User,
 }
 
@@ -248,7 +248,7 @@ Finding._includes = {
     "targets": Target,
     "testCases": TestCase,
     "toolFindings": ToolFinding,
-    "userGroups": UserGroup,
+    "teams": Team,
     "user": User,
 }
 
@@ -328,12 +328,17 @@ User._includes = {
     "documents": Document,
     "roles": Role,
     "tasks": Task,
-    "userGroups": UserGroup,
+    "teams": Team,
 }
 
-UserGroup._includes = {
+Team._includes = {
     "assessments": Assessment,
     "client": Client,
     "users": User,
     "findings": Finding,
+}
+
+TeamUser._includes = {
+    "team": Team,
+    "user": User,
 }
