@@ -139,6 +139,7 @@ def test_finding_template_operations(
 
     template = rc.finding_templates.create(
         {
+            "primary_language_id": "en",
             "title": "test_finding_template_operations",
             "is_vulnerability": False,
             "severity": 3,
