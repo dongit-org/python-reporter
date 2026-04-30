@@ -3,9 +3,9 @@
 from reporter.base import RestObject
 
 __all__ = [
-    "FindingResolverEvent",
+    "FindingAssigneeEvent",
 ]
 
 
-class FindingResolverEvent(RestObject):
+class FindingAssigneeEvent(RestObject):
     pass

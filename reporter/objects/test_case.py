@@ -1,7 +1,7 @@
 # pylint: disable = missing-module-docstring, missing-class-docstring
 
 from reporter.base import RestManager, RestObject
-from reporter.mixins import GetMixin, UpdateMixin
+from reporter.mixins import GetMixin, ListMixin, UpdateMixin
 
 __all__ = [
     "TestCase",
@@ -13,6 +13,6 @@ class TestCase(RestObject):
     pass
 
 
-class TestCaseManager(RestManager, GetMixin, UpdateMixin):
+class TestCaseManager(RestManager, GetMixin, ListMixin, UpdateMixin):
     _path = "test-cases"
     _obj_cls = TestCase
