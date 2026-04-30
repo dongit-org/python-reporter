@@ -52,6 +52,37 @@ def test_client_operations(rc: Reporter) -> None:
         assert e.value.response_code == 404
 
 
+def test_client_manager_endpoints(rc: Reporter) -> None:
+    client = rc.clients.create(
+        {
+            "name": "test_client_manager_endpoints",
+            "description": "foo",
+        }
+    )
+    manager = rc.users.create(
+        {
+            "first_name": "Manager",
+            "last_name": "User",
+            "email": "test_client_manager_endpoints@example.com",
+            "clients": [client.id],
+            "roles": ["admin"],
+        }
+    )
+
+    client.client_managers.update({"client_managers": [manager.id]})
+
+    try:
+        client.account_managers.assign({"user_id": manager.id})
+    except reporter.ReporterHttpError as e:
+        if e.response_code != 422:
+            raise
+        pytest.skip(
+            "Account manager endpoints require a configured default account manager role"
+        )
+
+    client.account_managers.remove(manager.id)
+
+
 def test_team_operations(rc: Reporter) -> None:
     client = rc.clients.create(
         {

@@ -34,6 +34,36 @@ class AssessmentManager(RestManager, GetMixin, ListMixin, UpdateMixin, DeleteMix
     _path = "assessments"
     _obj_cls = Assessment
 
+    def duplicate(
+        self,
+        id: str,
+        attrs: Optional[Mapping[str, Any]] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Duplicate an assessment.
+
+        The duplication is performed asynchronously by the server. This method
+        returns once the job has been queued.
+
+        Args:
+            id: The ID of the assessment to duplicate.
+            attrs: Optional attributes controlling what to copy (e.g.
+                ``targets``, ``team_access``, ``auto_assignments``,
+                ``client_access``, ``checklists``, ``findings``).
+            kwargs: Extra options to pass to the underlying
+                :func:`reporter.Reporter.http_request` call.
+
+        Raises:
+            ReporterHttpError: If raised by the underlying call to
+                :func:`reporter.Reporter.http_request`.
+        """
+        self.reporter.http_request(
+            verb="post",
+            path=f"{self._path}/{id}/duplicate",
+            post_data=attrs if attrs is not None else {},
+            **kwargs,
+        )
+
     def get_full_report(
         self,
         id: str,
