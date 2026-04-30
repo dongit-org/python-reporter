@@ -142,6 +142,30 @@ def test_assessment_phases_and_sections(
         assert getattr(section, attr) == val
 
 
+def test_assessment_duplicate(
+    rc: Reporter, client: Client, assessment_template: AssessmentTemplate
+) -> None:
+    assessment = client.assessments.create(
+        {
+            "title": "test_assessment_duplicate_source",
+            "assessment_template_id": assessment_template.id,
+        }
+    )
+
+    rc.assessments.duplicate(assessment.id)
+
+    duplicated = wait_for(
+        lambda: next(
+            a
+            for a in rc.assessments.list(filter={"client_id": client.id})
+            if a.id != assessment.id
+            and a.title.startswith("test_assessment_duplicate_source")
+        ),
+        timeout=30.0,
+    )
+    assert duplicated.id != assessment.id
+
+
 def test_assessment_section_crud_and_reorder(
     rc: Reporter, client: Client, assessment_template: AssessmentTemplate
 ) -> None:
