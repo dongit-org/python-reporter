@@ -35,7 +35,9 @@ class Artisan:
             full_command = ["php", "artisan"] + command
 
         result = self.container.exec_run(full_command)
-        output: bytes = result.output
+        output = result.output
+        if not isinstance(output, bytes):
+            output = b"".join(output)
         if result.exit_code != 0:
             raise Exception(
                 f"Artisan command failed: {full_command}\n{output.decode('utf-8')}"
