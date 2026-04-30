@@ -66,8 +66,17 @@ AssessmentSectionComment._includes = {
     "replies": AssessmentSectionComment,
 }
 
+AssessmentSectionTemplate._includes = {
+    "assessmentTemplate": AssessmentTemplate,
+    "children": AssessmentSectionTemplate,
+    "documents": Document,
+    "findingTemplates": FindingTemplate,
+}
+
 AssessmentTemplate._includes = {
     "languages": Language,
+    "nestedSections": AssessmentSectionTemplate,
+    "sections": AssessmentSectionTemplate,
     "taskSets": TaskSet,
 }
 

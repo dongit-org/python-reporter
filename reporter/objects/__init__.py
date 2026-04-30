@@ -11,6 +11,7 @@ from .assessment_comment import *
 from .assessment_phase import *
 from .assessment_section import *
 from .assessment_section_comment import *
+from .assessment_section_template import *
 from .assessment_template import *
 from .assessment_user import *
 from .auto_assignment import *
