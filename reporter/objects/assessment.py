@@ -4,6 +4,7 @@ from typing import Any, Mapping, Optional
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, GetMixin, ListMixin, UpdateMixin, DeleteMixin
 from .assessment_comment import AssessmentAssessmentCommentManager
+from .assessment_section import AssessmentAssessmentSectionManager
 from .assessment_user import AssessmentAssessmentUserManager
 from .finding import AssessmentFindingManager
 from .output_file import AssessmentOutputFileManager
@@ -22,6 +23,7 @@ class Assessment(RestObject):
     comments: AssessmentAssessmentCommentManager
     findings: AssessmentFindingManager
     output_files: AssessmentOutputFileManager
+    sections: AssessmentAssessmentSectionManager
     targets: AssessmentTargetManager
     tasks: AssessmentTaskManager
     task_sets: AssessmentTaskSetManager
