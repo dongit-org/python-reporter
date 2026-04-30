@@ -152,13 +152,20 @@ FindingPublishedEvent._includes = {
     "parent": FindingEvent,
 }
 
-FindingResolverEvent._includes = {
+FindingAssigneeEvent._includes = {
     "assessment": Assessment,
     "finding": Finding,
     "createdBy": User,
     "replies": FindingComment,
     "addedUsers": User,
     "removedUsers": User,
+}
+
+FindingRemediationStatusChange._includes = {
+    "assessment": Assessment,
+    "finding": Finding,
+    "createdBy": User,
+    "updatedBy": User,
 }
 
 FindingRetest._includes = {
@@ -248,7 +255,8 @@ Finding._includes = {
     "publishedEvents": FindingPublishedEvent,
     "resolvedTargets": Target,
     "resolvers": User,
-    "resolverEvents": FindingResolverEvent,
+    "assigneeEvents": FindingAssigneeEvent,
+    "remediationStatusChanges": FindingRemediationStatusChange,
     "retestCancelledEvents": FindingRetestCancelledEvent,
     "retestInquiries": FindingRetestInquiry,
     "retests": FindingRetest,

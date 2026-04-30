@@ -25,8 +25,9 @@ from .finding_created_event import *
 from .finding_event import *
 from .finding_layout import *
 from .finding_layout_field import *
+from .finding_assignee_event import *
 from .finding_published_event import *
-from .finding_resolver_event import *
+from .finding_remediation_status_change import *
 from .finding_retest import *
 from .finding_retest_cancelled_event import *
 from .finding_retest_inquiry import *
