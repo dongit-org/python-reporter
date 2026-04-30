@@ -91,9 +91,9 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         self.task_sets = objects.TaskSetManager(self)
         self.test_cases = objects.TestCaseManager(self)
         self.themes = objects.ThemeManager(self)
+        self.teams = objects.TeamManager(self)
         self.tool_findings = objects.ToolFindingManager(self)
         self.tool_targets = objects.ToolTargetManager(self)
-        self.user_groups = objects.UserGroupManager(self)
         self.users = objects.UserManager(self)
         self.webhooks = objects.WebhookManager(self)
 

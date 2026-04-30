@@ -52,10 +52,10 @@ def test_client_operations(rc: Reporter) -> None:
         assert e.value.response_code == 404
 
 
-def test_user_group_operations(rc: Reporter) -> None:
+def test_team_operations(rc: Reporter) -> None:
     client = rc.clients.create(
         {
-            "name": "test_user_group_operations",
+            "name": "test_team_operations",
             "description": "foo",
         }
     )
@@ -63,7 +63,7 @@ def test_user_group_operations(rc: Reporter) -> None:
         {
             "first_name": "First",
             "last_name": "Last",
-            "email": "test_user_group_operations_1@example.com",
+            "email": "test_team_operations_1@example.com",
             "clients": [client.id],
         }
     )
@@ -71,29 +71,49 @@ def test_user_group_operations(rc: Reporter) -> None:
         {
             "first_name": "First",
             "last_name": "Last",
-            "email": "test_user_group_operations_2@example.com",
+            "email": "test_team_operations_2@example.com",
             "clients": [client.id],
         }
     )
 
-    group = client.user_groups.create(
+    team = client.teams.create(
         {
-            "name": "test_user_group_operations",
+            "name": "test_team_operations",
             "color": "#000000",
-            "users": [user1.id, user2.id],
+            "type": 0,
+            "assessment_access_scope": 1,
         }
     )
 
-    assert group in rc.user_groups.list(filter={"id": group.id})
+    client_with_teams = rc.clients.get(client.id, include="teams")
+    assert team in client_with_teams.teams
 
-    rc.user_groups.update(group.id, {"color": "#111111"})
-    gotten = rc.user_groups.get(group.id)
+    rc.teams.update(team.id, {"color": "#111111"})
+    client_with_teams = rc.clients.get(client.id, include="teams")
+    updated = next(t for t in client_with_teams.teams if t.id == team.id)
+    assert updated.color == "#111111"
+    assert updated.name == team.name
 
-    assert group == gotten
-    assert group.name == gotten.name
-    assert gotten.color == "#111111"
+    tu1 = team.users.create({"user_id": user1.id, "type": 0})
+    assert tu1.user_id == user1.id
+    assert tu1.team_id == team.id
+    assert tu1.type == 0
+    assert tu1.read_only is False
 
-    rc.user_groups.delete(group.id)
-    with pytest.raises(reporter.ReporterHttpError) as e:
-        rc.user_groups.get(group.id)
-        assert e.value.response_code == 404
+    tu2 = team.users.create({"user_id": user2.id, "type": 3})
+    assert tu2.user_id == user2.id
+    assert tu2.type == 3
+
+    updated_tu2 = team.users.update(user2.id, {"type": 0, "read_only": True})
+    assert updated_tu2.type == 0
+    assert updated_tu2.read_only is True
+
+    client_with_team_users = rc.clients.get(client.id, include="teams.users")
+    team_with_users = next(t for t in client_with_team_users.teams if t.id == team.id)
+    assert {u.id for u in team_with_users.users} == {user1.id, user2.id}
+
+    team.users.delete(user1.id)
+
+    rc.teams.delete(team.id)
+    client_with_teams = rc.clients.get(client.id, include="teams")
+    assert team not in client_with_teams.teams

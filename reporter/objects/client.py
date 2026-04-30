@@ -3,7 +3,7 @@
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CrudMixin, ListMixin
 from .assessment import ClientAssessmentManager
-from .user_group import ClientUserGroupManager
+from .team import ClientTeamManager
 
 __all__ = [
     "Client",
@@ -13,7 +13,7 @@ __all__ = [
 
 class Client(RestObject):
     assessments: ClientAssessmentManager
-    user_groups: ClientUserGroupManager
+    teams: ClientTeamManager
 
 
 class ClientManager(

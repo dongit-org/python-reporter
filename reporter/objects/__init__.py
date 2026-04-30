@@ -40,11 +40,12 @@ from .role import *
 from .target import *
 from .task import *
 from .task_set import *
+from .team import *
+from .team_user import *
 from .test_case import *
 from .theme import *
 from .tool_finding import *
 from .tool_finding_target_info import *
 from .tool_target import *
 from .user import *
-from .user_group import *
 from .webhook import *
