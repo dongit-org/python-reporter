@@ -254,7 +254,7 @@ Finding._includes = {
     "importedTo": Finding,
     "publishedEvents": FindingPublishedEvent,
     "resolvedTargets": Target,
-    "resolvers": User,
+    "assignees": User,
     "assigneeEvents": FindingAssigneeEvent,
     "remediationStatusChanges": FindingRemediationStatusChange,
     "retestCancelledEvents": FindingRetestCancelledEvent,
