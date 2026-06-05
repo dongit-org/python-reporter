@@ -6,6 +6,8 @@ respectively.
 """
 
 from .activity import *
+from .announcement import *
+from .api_token import *
 from .assessment import *
 from .assessment_comment import *
 from .assessment_phase import *

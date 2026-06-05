@@ -21,3 +21,6 @@ def test_custom_field_operations(rc: Reporter, artisan: Artisan) -> None:
     assert custom_fields[0].id == custom_field_id
     assert custom_fields[0].name == "c_test_custom_field"
     assert custom_fields[0].description == "Test custom field"
+
+    with_languages = rc.custom_fields.list(include=["languages"])
+    assert with_languages[0].languages is not None

@@ -69,6 +69,8 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         )
 
         self.activities = objects.ActivityManager(self)
+        self.announcements = objects.AnnouncementManager(self)
+        self.api_tokens = objects.ApiTokenManager(self)
         self.assessments = objects.AssessmentManager(self)
         self.assessment_comments = objects.AssessmentCommentManager(self)
         self.assessment_phases = objects.AssessmentPhaseManager(self)
@@ -86,6 +88,9 @@ class Reporter:  # pylint: disable = too-many-instance-attributes, too-few-publi
         self.finding_events = objects.FindingEventManager(self)
         self.finding_comments = objects.FindingCommentManager(self)
         self.finding_layouts = objects.FindingLayoutManager(self)
+        self.finding_retest_cancelled_events = (
+            objects.FindingRetestCancelledEventManager(self)
+        )
         self.finding_retest_inquiries = objects.FindingRetestInquiryManager(self)
         self.finding_retests = objects.FindingRetestManager(self)
         self.finding_templates = objects.FindingTemplateManager(self)
