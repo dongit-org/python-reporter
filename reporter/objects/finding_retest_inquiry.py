@@ -3,6 +3,9 @@
 from reporter.base import RestManager, RestObject
 from reporter.mixins import CreateMixin, DeleteMixin, UpdateMixin
 from .finding_comment import FindingEventReplyManager
+from .finding_retest_cancelled_event import (
+    FindingRetestInquiryFindingRetestCancelledEventManager,
+)
 
 __all__ = [
     "FindingRetestInquiry",
@@ -13,6 +16,7 @@ __all__ = [
 
 class FindingRetestInquiry(RestObject):
     replies: FindingEventReplyManager
+    retestCancelledEvents: FindingRetestInquiryFindingRetestCancelledEventManager
 
 
 class FindingRetestInquiryManager(RestManager, UpdateMixin, DeleteMixin):

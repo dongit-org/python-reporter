@@ -237,7 +237,7 @@ class _ListMixin(Generic[ChildOfRestObject]):
         self,
         extra_path: str = "",
         term: Optional[str] = None,
-        filter: Optional[Mapping[str, str | int | List[str | int]]] = None,
+        filter: Optional[Mapping[str, str | int | List[str | int] | None]] = None,
         sort: Optional[str | List[str]] = None,
         include: Optional[str | List[str]] = None,
         page: Optional[int] = None,
@@ -277,7 +277,11 @@ class _ListMixin(Generic[ChildOfRestObject]):
         if filter is None:
             filter = {}
         for key, value in filter.items():
-            query_data[f"filter[{key}]"] = value
+            # Reporter expects the empty string to match null (and "<>" to match
+            # not-null); Python callers should be able to write ``None`` for the
+            # null case. ``requests`` drops ``None`` query params entirely, so
+            # translate here.
+            query_data[f"filter[{key}]"] = "" if value is None else value
 
         if include:
             query_data["include"] = include
@@ -316,7 +320,7 @@ class ListMixin(_ListMixin):
 
     def list(  # pylint: disable = too-many-arguments, too-many-positional-arguments, redefined-builtin
         self,
-        filter: Optional[Mapping[str, str | int | List[str | int]]] = None,
+        filter: Optional[Mapping[str, str | int | List[str | int] | None]] = None,
         sort: Optional[str | List[str]] = None,
         include: Optional[str | List[str]] = None,
         page: Optional[int] = None,
@@ -360,9 +364,10 @@ class ListMixin(_ListMixin):
 class SearchMixin(_ListMixin):
     """Manager can search for objects."""
 
-    def search(  # pylint: disable = too-many-arguments
+    def search(  # pylint: disable = too-many-arguments, too-many-positional-arguments
         self,
         term: Optional[str] = None,
+        filter: Optional[Mapping[str, str | int | List[str | int] | None]] = None,
         page: Optional[int] = None,
         page_size: Optional[int] = None,
         query_data: Optional[Mapping[str, Any]] = None,
@@ -372,6 +377,8 @@ class SearchMixin(_ListMixin):
 
         Args:
             term: Term to search for
+            filter: query string parameters for HTTP request of the form
+                filter[field]
             page: ID of the page to return - page[number]
             page_size: Number of items to return per page - page[size]
             query_data: Dict of additional query parameters
@@ -389,6 +396,7 @@ class SearchMixin(_ListMixin):
 
         return self._get_list(
             extra_path="/search",
+            filter=filter,
             page=page,
             page_size=page_size,
             term=term,

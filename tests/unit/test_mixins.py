@@ -219,6 +219,40 @@ def test_search_mixin(rc: Reporter) -> None:
         assert objs.meta["foo"] == "bar"
 
 
+def test_search_mixin_filter(rc: Reporter) -> None:
+    class M(FakeManager, SearchMixin):
+        pass
+
+    manager = M(rc)
+    url = "https://localhost/api/v1/tests/search"
+    json: dict = {
+        "data": [],
+        "links": {},
+        "meta": {},
+    }
+
+    with responses.RequestsMock() as rsps:
+        rsps.add(
+            method=responses.GET,
+            url=url,
+            json=json,
+            status=200,
+            match=[
+                responses.matchers.header_matcher({"Accept": "application/json"}),
+            ],
+        )
+
+        query_string = quote(
+            "term=asdf&filter[severity][]=1&filter[severity][]=2&filter[tags]=a,b",
+            safe="&=",
+        )
+        manager.search(
+            term="asdf",
+            filter={"severity": [1, 2], "tags": "a,b"},
+        )
+        rsps.assert_call_count(f"{url}?{query_string}", 1)
+
+
 def test_update_mixin(rc: Reporter) -> None:
     class M(FakeManager, UpdateMixin):
         pass
@@ -299,4 +333,9 @@ def test_mixin_filter_include_sort(rc: Reporter) -> None:
             "filter[foo][]=a&filter[foo][]=b&filter[bar]=c,d", safe="&="
         )
         manager.list(filter={"foo": ["a", "b"], "bar": "c,d"})
+        rsps.assert_call_count(f"{url}?{query_string}", 1)
+
+        # Test that None is translated to empty string for null filtering
+        query_string = quote("filter[foo]=&filter[bar]=<>", safe="&=")
+        manager.list(filter={"foo": None, "bar": "<>"})
         rsps.assert_call_count(f"{url}?{query_string}", 1)

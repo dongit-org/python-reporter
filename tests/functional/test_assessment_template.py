@@ -130,6 +130,11 @@ def test_assessment_section_template_crud(rc: Reporter) -> None:
     ordered = sorted(template_with_sections.sections, key=lambda s: s.order)
     assert [s.id for s in ordered] == [section_b.id, section_a.id]
 
+    with_languages = rc.assessment_section_templates.get(
+        section_b.id, include=["languages"]
+    )
+    assert hasattr(with_languages, "languages")
+
     rc.assessment_section_templates.delete(section_a.id)
     remaining = rc.assessment_section_templates.list(
         filter={"assessment_template_id": template.id}

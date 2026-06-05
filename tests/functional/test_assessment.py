@@ -6,6 +6,7 @@ import pytest
 from .utils import Artisan, wait_for
 from reporter import (
     Reporter,
+    Assessment,
     AssessmentTemplate,
     Client,
     OutputFile,
@@ -163,6 +164,29 @@ def test_assessment_duplicate(
         },
     )
 
+    def duplicate_visible() -> Assessment:
+        source = rc.assessments.get(assessment.id, include=["duplicatedTo"])
+        assert len(source.duplicatedTo) > 0
+        return cast(Assessment, source)
+
+    source = wait_for(duplicate_visible, timeout=20, interval=1)
+    duplicate = source.duplicatedTo[0]
+
+    duplicate_with_dup_from = rc.assessments.get(
+        duplicate.id, include=["duplicatedFrom"]
+    )
+    assert duplicate_with_dup_from.duplicatedFrom.id == assessment.id
+
+    # The source has no duplicated_from; the duplicate does. Verify null
+    # filtering: ``None`` matches null and ``"<>"`` matches non-null.
+    non_null = rc.assessments.list(filter={"duplicated_from": "<>"})
+    assert duplicate in non_null
+    assert assessment not in non_null
+
+    is_null = rc.assessments.list(filter={"duplicated_from": None})
+    assert assessment in is_null
+    assert duplicate not in is_null
+
 
 def test_assessment_section_crud_and_reorder(
     rc: Reporter, client: Client, assessment_template: AssessmentTemplate
@@ -213,6 +237,10 @@ def test_assessment_section_crud_and_reorder(
     ordered = sorted(sections, key=lambda s: s.order)
     assert ordered[0].id == new_b.id
     assert ordered[1].id == new_a.id
+
+    # The `children` include is exposed on each section (renamed from `items`)
+    parent_with_children = rc.assessment_sections.get(new_a.id, include=["children"])
+    assert hasattr(parent_with_children, "children")
 
     rc.assessment_sections.delete(new_a.id)
     remaining = rc.assessments.get(assessment.id, include=["sections"]).sections

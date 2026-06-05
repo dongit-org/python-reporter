@@ -15,6 +15,8 @@ from reporter import (
     Target,
 )
 
+from .utils import Artisan, wait_for
+
 
 @pytest.fixture(scope="session")
 def assessment(rc: Reporter) -> Assessment:
@@ -135,7 +137,13 @@ def test_finding_operations(rc: Reporter, assessment: Assessment) -> None:
 def test_finding_template_operations(
     rc: Reporter, assessment: Assessment, section: AssessmentSection, target: Target
 ) -> None:
-    assert len(rc.finding_templates.search("XSS")) > 0
+    # The seeded finding templates are indexed asynchronously by Horizon
+    # (Scout queue), so the search may not return results immediately after
+    # the stack comes up.
+    def xss_template_indexed() -> None:
+        assert len(rc.finding_templates.search("XSS")) > 0
+
+    wait_for(xss_template_indexed, timeout=20, interval=1)
 
     template = rc.finding_templates.create(
         {
@@ -169,10 +177,65 @@ def test_finding_template_operations(
     for attr in ["title", "risk", "description"]:
         assert getattr(finding, attr) == getattr(gotten, attr)
 
+    with_languages = rc.finding_templates.get(template.id, include=["languages"])
+    assert hasattr(with_languages, "languages")
+
     rc.finding_templates.delete(template.id)
     with pytest.raises(reporter.ReporterHttpError) as e:
         rc.finding_templates.get(template.id)
         assert e.value.response_code == 404
+
+
+def test_finding_template_translations(rc: Reporter, artisan: Artisan) -> None:
+    # Ensure a second language exists so we can translate into it.
+    artisan.execute(
+        "\\App\\Models\\Language::firstOrCreate("
+        '["language" => "nl"], '
+        '["name" => "Dutch", "translated_name" => "Nederlands"]'
+        ");"
+    )
+
+    template = rc.finding_templates.create(
+        {
+            "primary_language_id": "en",
+            "title": "test_finding_template_translations_en",
+            "is_vulnerability": False,
+            "severity": 3,
+            "description": "English description",
+        }
+    )
+
+    # Translatable models without a dedicated add-translation route create the
+    # translation implicitly on update when ``language_id`` references a language
+    # the model has not been translated into yet.
+    rc.finding_templates.update(
+        template.id,
+        {
+            "language_id": "nl",
+            "title": "test_finding_template_translations_nl",
+            "description": "Nederlandse beschrijving",
+        },
+    )
+
+    in_nl = rc.finding_templates.get(template.id, query_data={"language_id": "nl"})
+    assert in_nl.title == "test_finding_template_translations_nl"
+    assert in_nl.description == "Nederlandse beschrijving"
+    assert "nl" in in_nl.language_ids
+    assert "en" in in_nl.language_ids
+
+    in_en = rc.finding_templates.get(template.id, query_data={"language_id": "en"})
+    assert in_en.title == "test_finding_template_translations_en"
+
+    listed_any = rc.finding_templates.list(
+        filter={"id": template.id, "language_ids": "nl"}
+    )
+    assert template in listed_any
+    listed_all = rc.finding_templates.list(
+        filter={"id": template.id, "and_language_ids": "en,nl"}
+    )
+    assert template in listed_all
+
+    rc.finding_templates.delete(template.id)
 
 
 def test_finding_event_operations(

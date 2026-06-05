@@ -10,6 +10,15 @@ Activity._includes = {
     "user": User,
 }
 
+ApiToken._includes = {
+    "user": User,
+    "creator": User,
+    "parent": ApiToken,
+    "children": ApiToken,
+    "scopedClients": Client,
+    "scopedAssessments": Assessment,
+}
+
 Assessment._includes = {
     "activities": Activity,
     "assessmentTemplate": AssessmentTemplate,
@@ -17,6 +26,8 @@ Assessment._includes = {
     "client": Client,
     "comments": AssessmentComment,
     "documents": Document,
+    "duplicatedFrom": Assessment,
+    "duplicatedTo": Assessment,
     "findings": Finding,
     "findingLayout": FindingLayout,
     "language": Language,
@@ -51,9 +62,9 @@ AssessmentPhase._includes = {
 
 AssessmentSection._includes = {
     "assessment": Assessment,
-    "documents": User,
+    "documents": Document,
     "findings": Finding,
-    "items": AssessmentSection,
+    "children": AssessmentSection,
     "comments": AssessmentSectionComment,
 }
 
@@ -71,6 +82,7 @@ AssessmentSectionTemplate._includes = {
     "children": AssessmentSectionTemplate,
     "documents": Document,
     "findingTemplates": FindingTemplate,
+    "languages": Language,
 }
 
 AssessmentTemplate._includes = {
@@ -101,6 +113,7 @@ Client._includes = {
 
 CustomField._includes = {
     "documents": Document,
+    "languages": Language,
 }
 
 Document._includes = {
@@ -220,7 +233,7 @@ FindingReviewEvent._includes = {
     "finding": Finding,
     "createdBy": User,
     "updatedBy": User,
-    "findingRetest": User,
+    "findingRetest": FindingRetest,
     "relatedEvents": FindingEvent,
     "parent": FindingEvent,
 }
@@ -237,6 +250,7 @@ FindingStatusChange._includes = {
 
 FindingTemplate._includes = {
     "documents": Document,
+    "languages": Language,
 }
 
 Finding._includes = {
@@ -286,6 +300,7 @@ Reaction._includes = {
 
 ReportPage._includes = {
     "customField": CustomField,
+    "languages": Language,
     "theme": Theme,
 }
 
