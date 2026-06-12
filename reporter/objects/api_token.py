@@ -3,8 +3,7 @@
 from typing import TYPE_CHECKING, Any, List, Mapping, Optional
 
 from reporter.base import RestManager, RestObject
-from reporter.mixins import DeleteMixin, GetMixin, ListMixin
-from reporter.types import FileSpec
+from reporter.mixins import CreateMixin, DeleteMixin, GetMixin, ListMixin
 
 __all__ = [
     "ApiToken",
@@ -16,51 +15,14 @@ class ApiToken(RestObject):
     pass
 
 
-class ApiTokenManager(RestManager, GetMixin, ListMixin, DeleteMixin):
+class ApiTokenManager(RestManager, CreateMixin, GetMixin, ListMixin, DeleteMixin):
     _path = "api-tokens"
     _obj_cls = ApiToken
 
-    def create(
-        self,
-        attrs: Mapping[str, Any],
-        file: Optional[FileSpec] = None,
-        **kwargs: Any,
-    ) -> ApiToken:
-        """Create a new API token.
-
-        The plaintext ``token`` is included once in the response and exposed as
-        an attribute on the returned :class:`ApiToken`.
-
-        Args:
-            attrs: Attributes for the created object. Required: ``name``,
-                ``abilities``. Optional: ``expires_at``, ``scope``, ``clients``,
-                ``assessments``, ``user_id``.
-            file: Unused; accepted for signature parity with
-                :meth:`reporter.mixins.CreateMixin.create`.
-            kwargs: Extra options to pass to the underlying
-                :func:`reporter.Reporter.http_request` call.
-
-        Returns:
-            The created :class:`ApiToken`, with the plaintext ``token`` attribute.
-
-        Raises:
-            ReporterHttpError: If raised by the underlying call to
-                :func:`reporter.Reporter.http_request`.
-        """
-        files = {"file": file} if file is not None else None
-        result = self.reporter.http_request(
-            verb="post",
-            path=self._path,
-            post_data=attrs,
-            files=files,
-            **kwargs,
-        )
-        # Workaround for a Reporter bug: this endpoint returns the resource
-        # wrapped in a ``data`` envelope rather than the flat shape every other
-        # create endpoint (and the OpenAPI spec) uses. Revert this override
-        # (and inherit ``CreateMixin``) once Reporter is fixed.
-        body = result.json()
-        return ApiToken(self.reporter, {**body["data"], "token": body["token"]})
+    # ``create`` is inherited from :class:`CreateMixin`. The endpoint returns
+    # the created resource as a flat JSON object (as of Reporter 2026.06.30),
+    # including the plaintext ``token`` field, which is therefore exposed as an
+    # attribute on the returned :class:`ApiToken`.
 
     def me(
         self,
