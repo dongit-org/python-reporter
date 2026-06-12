@@ -19,7 +19,7 @@ python-reporter
 
 A Python wrapper around the `Reporter <https://securityreporter.app>`_ API.
 
-Currently compatible with Reporter version `2026.06.02 <https://securityreporter.app/releases/20260602>`_.
+Currently compatible with Reporter version `2026.06.30 <https://securityreporter.app/releases/20260630>`_.
 
 Installation
 ------------
